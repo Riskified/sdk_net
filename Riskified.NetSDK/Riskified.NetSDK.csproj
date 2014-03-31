@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="Control\NotificationHandler.cs" />
     <Compile Include="Exceptions\RiskifiedGatewayException.cs" />
+    <Compile Include="Definitions\HttpDefinitions.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogWrapper.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\DiscountCode.cs" />
     <Compile Include="Model\InputValidators.cs" />

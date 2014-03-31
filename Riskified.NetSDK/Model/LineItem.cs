@@ -12,7 +12,7 @@ namespace Riskified.NetSDK.Model
         public double Price { get; set; }
 
         [JsonProperty(PropertyName = "product_id", Required = Required.Default)]
-        public string ProductId { get; set; }
+        public int ProductId { get; set; }
 
         [JsonProperty(PropertyName = "quantity", Required = Required.Always)]
         public int QuantityPurchased { get; set; }

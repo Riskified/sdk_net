@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Riskified.NetSDK.Definitions
 {
-    internal class HttpDefinitions
+    internal static class HttpDefinitions
     {
         public const string ShopDomainHeaderName = "X_RISKIFIED_SHOP_DOMAIN";
         public const string SubmitHeaderName = "X_RISKIFIED_SUBMIT_NOW";
@@ -19,7 +19,6 @@ namespace Riskified.NetSDK.Definitions
             byte[] byteArray = Encoding.UTF8.GetBytes(data);
             MemoryStream stream = new MemoryStream(byteArray);
             string result = myhmacsha256.ComputeHash(stream).Aggregate("", (s, e) => s + String.Format("{0:x2}", e), s => s);
-            Console.WriteLine(result);
             return result;
         }
     }
