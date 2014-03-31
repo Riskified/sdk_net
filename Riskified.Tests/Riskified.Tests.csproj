@@ -46,14 +46,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control.Tests\RiskifiedGatewayTests.cs" />
+    <Compile Include="Model.Tests\InputValidatorsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model.Tests\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Riskified.NetSDK\Riskified.NetSDK.csproj">
       <Project>{1bd71c22-04ad-4520-a331-c6b3e3bb7793}</Project>

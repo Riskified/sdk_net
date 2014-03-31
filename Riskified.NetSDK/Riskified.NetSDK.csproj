@@ -44,8 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\NotificationHandler.cs" />
+    <Compile Include="Exceptions\RiskifiedGatewayException.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\DiscountCode.cs" />
+    <Compile Include="Model\InputValidators.cs" />
     <Compile Include="Model\LineItem.cs" />
     <Compile Include="Model\Notification.cs" />
     <Compile Include="Model\OrderStatus.cs" />

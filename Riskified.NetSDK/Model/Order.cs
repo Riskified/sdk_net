@@ -6,6 +6,9 @@ namespace Riskified.NetSDK.Model
 
     public class Order
     {
+        
+        private string _email;
+
         [JsonProperty(PropertyName = "cancel_reason", Required = Required.Default)]
         public string CancelReason { get; set; }
 
@@ -25,7 +28,15 @@ namespace Riskified.NetSDK.Model
         public string Currency { get; set; }
 
         [JsonProperty(PropertyName = "email", Required = Required.Always)]
-        public string Email { get; set; }
+        public string Email
+        {
+            get { return _email; }
+            set
+            {
+                InputValidators.ValidateEmail(value);
+                _email = value;
+            }
+        }
 
         [JsonProperty(PropertyName = "gateway", Required = Required.Always)]
         public string Gateway { get; set; }

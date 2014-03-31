@@ -1,34 +1,56 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
+using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
+using Riskified.NetSDK.Definitions;
 using Riskified.NetSDK.Model;
+using Riskified.NetSDK.Exceptions;
 
 namespace Riskified.NetSDK.Control
 {
-    // TODO documantation
+    /// <summary>
+    /// Main class to handle order creation and submittion to Riskified Servers
+    /// </summary>
     public class RiskifiedGateway
     {
-        private readonly Uri _riskifiedServer;
+        private static readonly string ProductVersion;
+        private readonly Uri _riskifiedOrdersTransferAddr;
         private readonly string _signature;
         private readonly string _shopDomain;
 
-        public RiskifiedGateway(Uri riskifiedServerAddress, string authToken, string shopDomain)
+        static RiskifiedGateway()
         {
-            _riskifiedServer = riskifiedServerAddress;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            ProductVersion = fileVersionInfo.ProductVersion;
+        }
+
+        public RiskifiedGateway(Uri riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain)
+        {
+            _riskifiedOrdersTransferAddr = riskifiedOrdersTransferAddrAddress;
             // TODO make sure signature and domain are of valid structure
             _signature = authToken;
             _shopDomain = shopDomain;
         }
 
+        /// <summary>
+        /// Sends an order created/updated to Riskified Servers (without Submit for analysis)
+        /// </summary>
+        /// <param name="order">The Order to create or update</param>
+        /// <returns>an order transfer unique id on riskified servers</returns>
         public int CreateOrUpdateOrder(Order order)
         {
             return SendOrder(order, false);
         }
 
+        /// <summary>
+        /// Sends an order to Riskified Servers and submits it for analysis
+        /// </summary>
+        /// <param name="order">The Order to submit</param>
+        /// <returns>an order transfer unique id on riskified servers</returns>
         public int SubmitOrder(Order order)
         {
             return SendOrder(order, true);
@@ -39,18 +61,18 @@ namespace Riskified.NetSDK.Control
             string jsonOrder = JsonConvert.SerializeObject(order);
             byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(_riskifiedServer);
+            HttpWebRequest request = HttpWebRequest.CreateHttp(_riskifiedOrdersTransferAddr);
             // Set custom Riskified headers
-            string hashCode = calcHmac(jsonOrder,_signature);
-            request.Headers.Add("X_RISKIFIED_HMAC_SHA256", hashCode);
-            request.Headers.Add("X_RISKIFIED_SHOP_DOMAIN", _shopDomain);
+            string hashCode = HttpDefinitions.CalcHmac(jsonOrder,_signature);
+            request.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
+            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
             request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
             if(isSubmit)
-                request.Headers.Add("HTTP_X_RISKIFIED_SUBMIT_NOW", "");
+                request.Headers.Add(HttpDefinitions.SubmitHeaderName,"true");
             request.Method = "POST";
             request.ContentType = "application/json";
-            // TODO change version control and numbering 
-            request.UserAgent = "Riskified.NetSDK - Version 0.9";
+            
+            request.UserAgent = "Riskified.NetSDK/" + ProductVersion;
             request.Accept = "*/*";
             request.ContentLength = bodyBytes.Length;
             // TODO set other http request fields if required
@@ -65,44 +87,36 @@ namespace Riskified.NetSDK.Control
             }
             catch (Exception e)
             {
-                throw e;
+                throw new RiskifiedGatewayException("There was an error sending order to server. More Info: "+ e.Message,e);
             }
-            // TODO handle exceptions and errors with receiving response (try-catch and response properties)
-
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-
+            // todo validate the response data
             body = response.GetResponseStream();
+            if (body != null)
+            {
+                // Open the stream using a StreamReader for easy access.
+                StreamReader reader = new StreamReader(body);
 
-            // Open the stream using a StreamReader for easy access.
-            StreamReader reader = new StreamReader(body);
+                // Read the content.
+                string responseFromServer = reader.ReadToEnd();
 
-            // Read the content.
-            string responseFromServer = reader.ReadToEnd();
+                // Display the content.
+                Console.WriteLine(responseFromServer);
 
-            // Display the content.
-            Console.WriteLine(responseFromServer);
+                dynamic arr = JsonConvert.DeserializeObject(responseFromServer);
 
-            dynamic arr = JsonConvert.DeserializeObject(responseFromServer);
+                int id = int.Parse(arr[0].obj.order.id);
+
+                reader.Close();
+                body.Close();
+                response.Close();
+                return id;
+            }
             
-            int id = int.Parse(arr[0].obj.order.id);
-            
-            reader.Close();
-            body.Close();
-            response.Close();
-
-            return id;
         }
 
-        static string calcHmac(string data,string authToken)
-        {
-            byte[] key = Encoding.ASCII.GetBytes(authToken);
-            HMACSHA256 myhmacsha256 = new HMACSHA256(key);
-            byte[] byteArray = Encoding.UTF8.GetBytes(data);
-            MemoryStream stream = new MemoryStream(byteArray);
-            string result = myhmacsha256.ComputeHash(stream).Aggregate("", (s, e) => s + String.Format("{0:x2}", e), s => s);
-            Console.WriteLine(result);
-            return result;
-        }
+        
 
     }
+
+    
 }
