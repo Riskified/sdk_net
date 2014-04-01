@@ -8,21 +8,21 @@ namespace Riskified.NetSDK.Model
     {
         
         private string _email;
-
+        //tODO consider adding empty strings validations or invalid numbers (negative etc..)
         [JsonProperty(PropertyName = "cancel_reason", Required = Required.Default)]
         public string CancelReason { get; set; }
 
         [JsonProperty(PropertyName = "cancelled_at", Required = Required.Default)]
-        public DateTime OrderCancellationTime { get; set; }
+        public DateTime? OrderCancellationTime { get; set; }
 
         [JsonProperty(PropertyName = "cart_token", Required = Required.Default)]
         public string CartToken { get; set; }
 
-        [JsonProperty(PropertyName = "closed_at", Required = Required.Default)]
-        public DateTime OrderCloseTime { get; set; }
+        [JsonProperty(PropertyName = "closed_at", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        public DateTime? ClosedAt { get; set; }
 
         [JsonProperty(PropertyName = "created_at", Required = Required.Always)]
-        public DateTime OrderCreationTime { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "currency", Required = Required.Always)]
         public string Currency { get; set; }
@@ -42,26 +42,23 @@ namespace Riskified.NetSDK.Model
         public string Gateway { get; set; }
 
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
-        public string Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonProperty(PropertyName = "total_discounts", Required = Required.Default)]
-        public double TotalDiscounts { get; set; }
+        public double? TotalDiscounts { get; set; }
 
         [JsonProperty(PropertyName = "total_price", Required = Required.Always)]
-        public double TotalPrice { get; set; }
+        public double? TotalPrice { get; set; }
 
         [JsonProperty(PropertyName = "total_price_usd",Required = Required.Default)]
-        public double TotalPriceUsd { get; set; }
+        public double? TotalPriceUsd { get; set; }
 
         [JsonProperty(PropertyName = "updated_at", Required = Required.Always)]
-        public DateTime OrderLastModifiedTime { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [JsonProperty(PropertyName = "browser_ip", Required = Required.Always)]
         public string CustomerIp { get; set; }
-        /*
-        [JsonProperty(PropertyName = "order_number",Required = Required.Default)]
-        public int OrderNumber { get; set; }
-        */
+        
         [JsonProperty(PropertyName = "discount_codes", Required = Required.Default)]
         public DiscountCode[] DiscountCodes { get; set; }
 

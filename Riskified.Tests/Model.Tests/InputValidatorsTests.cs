@@ -60,19 +60,35 @@ namespace Riskified.Tests
         }
 
         [Test]
-        public void ValidateAvsOrCvvCode_ValidValueSet_DoesntThrowException()
+        public void ValidateAvsCode_ValidValueSet_DoesntThrowException()
         {
             string[] vals = { "U", "y", "N" };
 
-            Validate_ValidValueSet_DoesntThrowException(InputValidators.ValidateAvsOrCvvResultCode, vals);
+            Validate_ValidValueSet_DoesntThrowException(InputValidators.ValidateAvsResultCode, vals);
         }
 
         [Test]
-        public void ValidateAvsOrCvvCode_InvalidValueSet_ThrowsException()
+        public void ValidateAvsCode_InvalidValueSet_ThrowsException()
         {
             string[] vals = { "Paa", "Ii", "22" };
 
-            Validate_InvalidValueSet_ThrowsException(InputValidators.ValidateAvsOrCvvResultCode, vals);
+            Validate_InvalidValueSet_ThrowsException(InputValidators.ValidateAvsResultCode, vals);
+        }
+
+        [Test]
+        public void ValidateCvvCode_ValidValueSet_DoesntThrowException()
+        {
+            string[] vals = { "u", "", "N" };
+
+            Validate_ValidValueSet_DoesntThrowException(InputValidators.ValidateCvvResultCode, vals);
+        }
+
+        [Test]
+        public void ValidateCvvCode_InvalidValueSet_ThrowsException()
+        {
+            string[] vals = { "Paa", "Ii", "22", null };
+
+            Validate_InvalidValueSet_ThrowsException(InputValidators.ValidateCvvResultCode, vals);
         }
 
         private void Validate_ValidValueSet_DoesntThrowException(Action<string> validatorToTest, string[] validValues)

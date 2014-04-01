@@ -11,7 +11,7 @@ namespace Riskified.NetSDK.Model
     public class DiscountCode
     {
         [JsonProperty(PropertyName = "amount", Required = Required.Default)]
-        public double MoneyDiscountSum { get; set; }
+        public double? MoneyDiscountSum { get; set; }
 
         [JsonProperty(PropertyName = "code", Required = Required.Default)]
         public string Code { get; set; }

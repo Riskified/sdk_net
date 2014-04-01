@@ -36,6 +36,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,6 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\NotificationHandler.cs" />
+    <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />
+    <Compile Include="Exceptions\RiskifiedException.cs" />
     <Compile Include="Exceptions\RiskifiedGatewayException.cs" />
     <Compile Include="Definitions\HttpDefinitions.cs" />
     <Compile Include="Logging\ILogger.cs" />

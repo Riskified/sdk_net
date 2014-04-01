@@ -8,8 +8,10 @@ namespace Riskified.NetSDK.Model
     {
         private string _email;
 
+
+
         [JsonProperty(PropertyName = "created_at", Required = Required.Default)]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "email", Required = Required.Default)]
         public string Email
@@ -27,7 +29,7 @@ namespace Riskified.NetSDK.Model
 
         //todo validate customer ID
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonProperty(PropertyName = "last_name", Required = Required.Always)]
         public string LastName { get; set; }
@@ -36,9 +38,9 @@ namespace Riskified.NetSDK.Model
         public string Note { get; set; }
 
         [JsonProperty(PropertyName = "orders_count", Required = Required.Default)]
-        public int OrdersCount { get; set; }
+        public int? OrdersCount { get; set; }
 
         [JsonProperty(PropertyName = "verified_email",Required = Required.Default)]
-        public bool VerifiedEmail { get; set; }
+        public bool? VerifiedEmail { get; set; }
     }
 }

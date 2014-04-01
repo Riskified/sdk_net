@@ -31,13 +31,19 @@ namespace Riskified.NetSDK.Model
         public static void ValidateCountryOrProvinceCode(string locationCode)
         {
             if (!ValidateInputByRegex(locationCode, @"^[A-Za-z]{2}$"))
-                throw new ArgumentException(string.Format("Location Code field invalid. Should be exactly 2 letters. Was \"{0}\"", locationCode));
+                throw new ArgumentException(string.Format("Location Code field invalid. Should be exactly 2 letters. Value was \"{0}\"", locationCode));
         }
 
-        public static void ValidateAvsOrCvvResultCode(string resultCode)
+        public static void ValidateAvsResultCode(string resultCode)
         {
             if (!ValidateInputByRegex(resultCode, @"^[A-Za-z]$"))
-                throw new ArgumentException(string.Format("Result Code field invalid. Should be exactly 1 letters. Was \"{0}\"", resultCode));   
+                throw new ArgumentException(string.Format("Avs result Code field invalid. Should be exactly 1 letter. Value was \"{0}\"", resultCode));   
+        }
+
+        public static void ValidateCvvResultCode(string resultCode)
+        {
+            if (!ValidateInputByRegex(resultCode, @"^[A-Za-z]?$"))
+                throw new ArgumentException(string.Format("Cvv result Code field invalid. Should be 1 letter or empty-string. Value was \"{0}\"", resultCode));
         }
     }
 }

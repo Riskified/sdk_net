@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 using Riskified.NetSDK.Definitions;
+using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Model;
 using Riskified.NetSDK.Exceptions;
 
@@ -24,45 +25,72 @@ namespace Riskified.NetSDK.Control
         //TODO add Logging messages
         static RiskifiedGateway()
         {
+            // Extracting the product version for later use
             Assembly assembly = Assembly.GetExecutingAssembly();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             ProductVersion = fileVersionInfo.ProductVersion;
         }
 
-        public RiskifiedGateway(Uri riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain)
+        public RiskifiedGateway(Uri riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain,ILogger logger=null)
         {
             _riskifiedOrdersTransferAddr = riskifiedOrdersTransferAddrAddress;
             // TODO make sure signature and domain are of valid structure
             _signature = authToken;
             _shopDomain = shopDomain;
+            LogWrapper.InitializeLogger(logger);
         }
 
         /// <summary>
+        /// Validates the Order object fields
         /// Sends an order created/updated to Riskified Servers (without Submit for analysis)
         /// </summary>
         /// <param name="order">The Order to create or update</param>
-        /// <returns>an order transfer unique id on riskified servers</returns>
+        /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         public int CreateOrUpdateOrder(Order order)
         {
             return SendOrder(order, false);
         }
 
         /// <summary>
+        /// Validates the Order object fields
         /// Sends an order to Riskified Servers and submits it for analysis
         /// </summary>
         /// <param name="order">The Order to submit</param>
-        /// <returns>an order transfer unique id on riskified servers</returns>
+        /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         public int SubmitOrder(Order order)
         {
             return SendOrder(order, true);
         }
 
+        /// <summary>
+        /// Validates the Order object fields
+        /// Sends the order to riskified server endpoint as configured in the ctor
+        /// </summary>
+        /// <param name="order">The order object to send</param>
+        /// <param name="isSubmit">if the order should be submitted for inspection/analysis, flag should be true </param>
+        /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         private int SendOrder(Order order,bool isSubmit)
         {
-            string jsonOrder = JsonConvert.SerializeObject(order);
+            string jsonOrder;
+            try
+            {
+                jsonOrder = JsonConvert.SerializeObject(order);
+            }
+            catch (Exception e)
+            {
+                throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
+            }
+            
             byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);
 
-            HttpWebRequest request = HttpWebRequest.CreateHttp(_riskifiedOrdersTransferAddr);
+            HttpWebRequest request = WebRequest.CreateHttp(_riskifiedOrdersTransferAddr);
             // Set custom Riskified headers
             string hashCode = HttpDefinitions.CalcHmac(jsonOrder,_signature);
             request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
@@ -119,7 +147,7 @@ namespace Riskified.NetSDK.Control
                 reader.Close();
                 body.Close();
                 response.Close();
-                return transactionResult.SuccessfulResult.Id;
+                if (transactionResult.SuccessfulResult.Id != null) return transactionResult.SuccessfulResult.Id.Value;
             }
             throw new OrderTransactionException("Received empty response from riskified server - contact Riskified");
 

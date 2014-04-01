@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,74 +9,86 @@ namespace Riskified.NetSDK.Logging
 {
     internal class LogWrapper : ILogger
     {
-        private ILogger _logger;
+        private static ILogger _loggerProxy;
+        private static LogWrapper _sdkLogger;
 
-        public LogWrapper(ILogger logger)
+        public static LogWrapper GetInstance()
         {
-            _logger = logger;
+            if (_sdkLogger == null)
+                _sdkLogger = new LogWrapper();
+            return _sdkLogger;
+        }
+
+        private LogWrapper()
+        {
+        }
+
+        public static void InitializeLogger(ILogger logger)
+        {
+            _loggerProxy = logger;
         }
 
         public void Debug(string message)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Debug(message);
+                _loggerProxy.Debug(message);
             }
         }
 
         public void Debug(string message, Exception exception)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Debug(message,exception);
+                _loggerProxy.Debug(message,exception);
             }
         }
 
         public void Info(string message)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Info(message);
+                _loggerProxy.Info(message);
             }
         }
 
         public void Info(string message, Exception exception)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Info(message,exception);
+                _loggerProxy.Info(message,exception);
             }
         }
 
         public void Error(string message)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Error(message);
+                _loggerProxy.Error(message);
             }
         }
 
         public void Error(string message, Exception exception)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Error(message,exception);
+                _loggerProxy.Error(message,exception);
             }
         }
 
         public void Fatal(string message)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Fatal(message);
+                _loggerProxy.Fatal(message);
             }
         }
 
         public void Fatal(string message, Exception exception)
         {
-            if (_logger != null)
+            if (_loggerProxy != null)
             {
-                _logger.Fatal(message,exception);
+                _loggerProxy.Fatal(message,exception);
             }
         }
     }

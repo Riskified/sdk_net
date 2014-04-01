@@ -2,7 +2,7 @@
 
 namespace Riskified.NetSDK.Exceptions
 {
-    public class OrderTransactionException : Exception
+    public class OrderTransactionException : RiskifiedException
     {
         public OrderTransactionException(string message, Exception innerException) : base(message, innerException)
         {

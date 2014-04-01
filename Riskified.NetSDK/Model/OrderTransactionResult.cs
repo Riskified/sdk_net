@@ -33,7 +33,7 @@ namespace Riskified.NetSDK.Model
     {
 
         [JsonProperty(PropertyName = "id",Required = Required.Always)]
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         [JsonProperty(PropertyName = "status", Required = Required.Always)]
         public string Status { get; set; }

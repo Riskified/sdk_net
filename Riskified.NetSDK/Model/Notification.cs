@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Riskified.NetSDK.Model
+﻿namespace Riskified.NetSDK.Model
 {
     public struct Notification
     {
@@ -20,10 +14,16 @@ namespace Riskified.NetSDK.Model
         /// </summary>
         public OrderStatus Status { get; private set; }
 
-        public Notification(int orderId, OrderStatus status) : this()
+        /// <summary>
+        /// Flag that signs that the notification message was validated to match the specific merchant Auth Token
+        /// </summary>
+        public bool IsValidatedNotification { get; private set; }
+
+        public Notification(int orderId, OrderStatus status,bool isValidatedNotification) : this()
         {
             OrderId = orderId;
             Status = status;
+            IsValidatedNotification = isValidatedNotification;
         }
     }
 }
