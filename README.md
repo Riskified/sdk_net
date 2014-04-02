@@ -1,4 +1,5 @@
 sdk_net
 =======
 
-An implementation of the Riskified API implemented in C# for .NET 
+An implementation of the Riskified API in C# for .NET 
+See Riskified.SDK.Sample for usage example
