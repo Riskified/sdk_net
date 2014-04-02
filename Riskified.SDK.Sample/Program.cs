@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
 using Riskified.NetSDK.Control;
 using Riskified.NetSDK.Exceptions;
@@ -9,15 +10,18 @@ namespace Riskified.SDK.Sample
 {
     static class Program
     {
-        private const string ClientWebhook = "http://192.168.1.236:4000/notifications/";// "http://requestb.in/16y9j7s1";
-        private const string Domain = "test.pass.com";
-        private const string AuthToken = "1388add8a99252fc1a4974de471e73cd";
-        private const string RiskifiedUrl = "http://192.168.1.32:3000/webhooks/merchant_order_created";
+        
             //"http://sandbox.riskified.com/webhooks/merchant_order_created";
         //"http://192.168.1.32:3000/webhooks/merchant_order_created";
 
         static void Main(string[] args)
         {
+            string ClientWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
+            string domain = ConfigurationManager.AppSettings["MerchantDomain"];  
+            string AuthToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
+            string RiskifiedUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
+
+
             #region logger setup [Optional]
             
             // setting up a logger facade to the system logger using the ILog interface
@@ -31,7 +35,7 @@ namespace Riskified.SDK.Sample
             // setup of a notification server listening to incoming notification from riskified
             // the webhook is the url on the local server which the httpServer will be listening at
             // make sure the url is correct (internet reachable ip/address and port, firewall rules etc.)
-            var notifier = new NotificationHandler(ClientWebhook,NotificationReceived,AuthToken,Domain,logger);
+            var notifier = new NotificationHandler(ClientWebhook,NotificationReceived,AuthToken,domain,logger);
             // the call to notifier.ReceiveNotifications() is blocking and will not return until we call StopReceiveNotifications 
             // so we run it on a different task in this example
             var t = new Task(notifier.ReceiveNotifications);
@@ -65,7 +69,7 @@ namespace Riskified.SDK.Sample
                     orderNum++;
 
                     // the RiskifieGateway is responsible for sending orders to Riskified servers
-                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(RiskifiedUrl), AuthToken, Domain);
+                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(RiskifiedUrl), AuthToken, domain,logger);
 
                     int orderIdAtRiskified;
 
@@ -204,7 +208,7 @@ namespace Riskified.SDK.Sample
 
         public void Fatal(string message, Exception exception)
         {
-            Fatal(string.Format("{0}. Exception was: message: {1}. StackTrace {2}",message,exception.Message,exception.StackTrace));
+            Fatal(string.Format("{0}. Exception was: {1} StackTrace: {2}",message,exception.Message,exception.StackTrace));
         }
     }
     

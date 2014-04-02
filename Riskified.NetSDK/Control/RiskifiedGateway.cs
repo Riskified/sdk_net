@@ -17,7 +17,7 @@ namespace Riskified.NetSDK.Control
     /// </summary>
     public class RiskifiedGateway
     {
-        private static readonly string ProductVersion;
+        private static readonly string AssemblyVersion;
         private readonly Uri _riskifiedOrdersTransferAddr;
         private readonly string _authToken;
         private readonly string _shopDomain;
@@ -26,9 +26,7 @@ namespace Riskified.NetSDK.Control
         static RiskifiedGateway()
         {
             // Extracting the product version for later use
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
-            ProductVersion = fileVersionInfo.ProductVersion;
+            AssemblyVersion = typeof(RiskifiedGateway).Assembly.GetName().Version.ToString();
         }
 
         public RiskifiedGateway(Uri riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain,ILogger logger=null)
@@ -99,7 +97,7 @@ namespace Riskified.NetSDK.Control
             request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
             request.Method = "POST";
             request.ContentType = "application/json";
-            request.UserAgent = "Riskified.NetSDK/" + ProductVersion;
+            request.UserAgent = "Riskified.NetSDK/" + AssemblyVersion;
             request.Accept = "*/*";
             
             byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);

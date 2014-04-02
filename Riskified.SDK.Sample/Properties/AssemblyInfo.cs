@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Riskified.SDK.Sample")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Windows User")]
+[assembly: AssemblyCompany("Riskified")]
 [assembly: AssemblyProduct("Riskified.SDK.Sample")]
-[assembly: AssemblyCopyright("Copyright © Windows User 2014")]
+[assembly: AssemblyCopyright("Copyright © Riskified 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

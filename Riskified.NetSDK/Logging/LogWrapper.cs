@@ -23,7 +23,8 @@ namespace Riskified.NetSDK.Logging
 
         public static void InitializeLogger(ILogger logger)
         {
-            _loggerProxy = logger;
+            if(logger != null)
+                _loggerProxy = logger;
         }
 
         public void Debug(string message)
