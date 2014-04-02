@@ -5,13 +5,13 @@ namespace Riskified.NetSDK.Model
 {
     public class OrderTransactionResult
     {
-        [JsonProperty(PropertyName = "order",Required = Required.Default)]
+        [JsonProperty(PropertyName = "order",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public SuccessfulOrderTransactionData SuccessfulResult { get; set; }
 
-        [JsonProperty(PropertyName = "error", Required = Required.Default)]
+        // TODO simulate the case of failure message received from riskified without order...
+        [JsonProperty(PropertyName = "error", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public FailedTransactionData FailedResult { get; set; }
-
-
+        
         /// <summary>
         /// A flag that signs if the transaction was finished successfully
         /// Values of SuccessfulResult and FailedResult will be set accordingly (one will be null)

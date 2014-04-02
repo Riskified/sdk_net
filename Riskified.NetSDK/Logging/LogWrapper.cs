@@ -14,9 +14,7 @@ namespace Riskified.NetSDK.Logging
 
         public static LogWrapper GetInstance()
         {
-            if (_sdkLogger == null)
-                _sdkLogger = new LogWrapper();
-            return _sdkLogger;
+            return _sdkLogger ?? (_sdkLogger = new LogWrapper());
         }
 
         private LogWrapper()

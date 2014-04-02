@@ -3,7 +3,6 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Riskified.NetSDK.Definitions;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
@@ -17,9 +16,9 @@ namespace Riskified.NetSDK.Control
         private readonly Action<Notification> _notificationReceivedCallback;
         private bool _isStopped;
         private readonly string _localListeningEndpoint;
-        private readonly string _authToken;
+        private readonly string _authToken,_shopDomain;
         // TODO add test class
-        public NotificationHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, ILogger logger = null)
+        public NotificationHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain, ILogger logger = null)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add(localListeningEndpoint);
@@ -27,6 +26,7 @@ namespace Riskified.NetSDK.Control
             _notificationReceivedCallback = notificationReceived;
             _localListeningEndpoint = localListeningEndpoint;
             _authToken = authToken;
+            _shopDomain = shopDomain;
             LogWrapper.InitializeLogger(logger);
         }
 
@@ -38,44 +38,48 @@ namespace Riskified.NetSDK.Control
         /// <param name="newLocalEndpoint"></param>
         /// <param name="shopUrl"></param>
         /// <param name="password"></param>
-        /// <exception cref=""></exception>
         public void RegisterEndPointForNotifications(string riskifiedRegistrationEndpoint, string newLocalEndpoint, string shopUrl, string password)
         {
             //TODO implement this on server side as well as here
             throw new Exception("Not Implemented Yet");
         }
 
-        /// <summary>
-        /// Starts a new 
-        /// </summary>
-        /// <exception cref="RiskifiedException"></exception>
-        public void Start()
-        {
-            try
-            {
-                _listener.Start();
-            }
-            catch (Exception e)
-            {
-                string errorMsg =
-                    string.Format(
-                        "Unable to start the HTTP webhook listener on: {0}. Check firewall configuration and make sure the app is running under admin privleges",_localListeningEndpoint);
-                LogWrapper.GetInstance().Fatal(errorMsg, e);
-                throw new RiskifiedException(errorMsg, e);
-            }
-            var t = new Task(ReceiveNotifications);
-            _isStopped = false;
-            t.Start();
-        }
-
-        public void Stop()
+        public void StopReceiveNotifications()
         {
             _isStopped = true;
             _listener.Stop();
         }
 
-        private void ReceiveNotifications()
+        /// <summary>
+        /// Runs the notification server
+        /// This method is blocking and will not return until StopReceiveNotifications is called
+        /// </summary>
+        /// <exception cref="NotifierServerFailedToStartException">Thrown when the listener was unable to start due to server network configuration errors</exception>
+        /// <exception cref="NotifierAlreadyRunningException">Thrown when server is already running</exception>
+        public void ReceiveNotifications()
         {
+            if (!_isStopped)
+                throw new NotifierAlreadyRunningException("Notification handler already running");
+
+            if (!_listener.IsListening)
+            {
+                try
+                {
+                    _listener.Start();
+                }
+                catch (Exception e)
+                {
+                    string errorMsg =
+                        string.Format(
+                            "Unable to start the HTTP webhook listener on: {0}. Check firewall configuration and make sure the app is running under admin privleges",
+                            _localListeningEndpoint);
+                    LogWrapper.GetInstance().Fatal(errorMsg, e);
+                    throw new NotifierServerFailedToStartException(errorMsg, e);
+                }
+            }
+            
+            _isStopped = false;
+
             while (!_isStopped)
             {
                 try
@@ -94,52 +98,59 @@ namespace Riskified.NetSDK.Control
 
                     var stream = request.InputStream;
 
-                    StreamReader reader = new StreamReader(stream);
+                    var reader = new StreamReader(stream);
                     string notificationString = reader.ReadToEnd();
                     // verify that the notification is valid and authentic - even if not we still try to parse it
                     string calculatedHmac = HttpDefinitions.CalcHmac(notificationString, _authToken);
                     bool isValidatedNotification =
                         calculatedHmac.Equals(request.Headers.Get(HttpDefinitions.HmacHeaderName));
-                    
+
                     // parsing the notification body to extract id and status of order
-                    Regex regex = new Regex(@"^id=(?<id>\d+?)&status=(?<status>approved|declined)$",
+                    var regex = new Regex(@"^id=(?<id>\d+?)&status=(?<status>approved|declined)$",
                         RegexOptions.IgnoreCase);
                     Match m = regex.Match(notificationString);
+                    string responseString;
                     try
                     {
                         int id = int.Parse(m.Groups["id"].Value);
-                        OrderStatus status =
+                        var status =
                             (OrderStatus) Enum.Parse(typeof (OrderStatus), m.Groups["status"].Value, true);
                         var n = new Notification(id, status, isValidatedNotification);
                         // running callback to call merchant code on the notification
                         _notificationReceivedCallback(n);
-                        //TODO is it neccessary to write back a response to the server - if so headers should be added and modified
-                        // Obtain a response object to write back a ack response to the riskified server
-                        HttpListenerResponse response = context.Response;
-                        // Construct a simple response. 
-                        string responseString =
+                        responseString =
                             string.Format(
-                                "<HTML><BODY> Client Received Notification For Order {0} With status {1} </BODY></HTML>",
+                                "<HTML><BODY> Merchant Received Notification For Order {0} With status {1} </BODY></HTML>",
                                 n.OrderId, n.Status);
-                        byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                        // Get a response stream and write the response to it.
-                        response.ContentLength64 = buffer.Length;
-                        Stream output = response.OutputStream;
-                        output.Write(buffer, 0, buffer.Length);
-                        output.Close();
                     }
                     catch (Exception e)
                     {
-                        LogWrapper.GetInstance().Error("Unable to parse the notification. Was not in the correct format. Data was: "+ notificationString);
-                        // TODO use the exception in the log message
-                        //TODO send erronous reponse back
+                        LogWrapper.GetInstance()
+                            .Error(
+                                "Unable to parse the notification. Was not in the correct format. Data was: " +
+                                notificationString, e);
+                        responseString = "<HTML><BODY> Merchant couldn't parse notification message</BODY></HTML>";
                     }
-                    
-                    
+
+                    // Obtain a response object to write back a ack response to the riskified server
+                    HttpListenerResponse response = context.Response;
+                    // Construct a simple response. 
+                    string hashCode = HttpDefinitions.CalcHmac(responseString, _authToken);
+                    response.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
+                    response.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
+                    // TODO add support for gzip compression for non-sandbox env
+                    response.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+                    response.ContentType = "HTML";
+                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.ContentLength64 = buffer.Length;
+                    Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+                    output.Close();
                 }
                 catch (Exception e)
                 {
-                    LogWrapper.GetInstance().Error("An error occured will receiving notification. Specific request was skipped",e);
+                    LogWrapper.GetInstance()
+                        .Error("An error occured will receiving notification. Specific request was skipped", e);
                     // trying to restart listening - maybe connection was cut shortly
                     if (!_listener.IsListening)
                     {
@@ -172,7 +183,7 @@ namespace Riskified.NetSDK.Control
             string errorMsg = "Failed to restart HttpListener after " + retriesMade +
                               " attempts. Notifications will not be received. Please check the connection and configuration of the server";
             LogWrapper.GetInstance().Fatal(errorMsg);
-            throw new RiskifiedException(errorMsg);
+            throw new NotifierServerFailedToStartException(errorMsg);
         }
     }
 }

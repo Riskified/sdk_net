@@ -13,7 +13,7 @@ namespace Riskified.Tests.Control.Tests
         public void CreateOrUpdateOrder_ValidOrderValidLink_SendsDataCorrectly()
         {
             #region setup
-            RiskifiedGateway gateway = new RiskifiedGateway(new Uri("127.0.0.1"),"","");
+            var gateway = new RiskifiedGateway(new Uri("127.0.0.1"),"","");
             #endregion
 
             #region act

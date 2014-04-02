@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Riskified.NetSDK.Control;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
@@ -6,50 +7,85 @@ using Riskified.NetSDK.Model;
 
 namespace Riskified.SDK.Sample
 {
-    class Program
+    static class Program
     {
-        private const string client_webhook = "http://192.168.1.236:4000/notifications/";// "http://requestb.in/16y9j7s1";
-        private const string DOMAIN = "test.pass.com";
-        private const string AUTH_TOKEN = "1388add8a99252fc1a4974de471e73cd";
-        private const string riskified_url = "http://192.168.1.32:3000/webhooks/merchant_order_created";
+        private const string ClientWebhook = "http://192.168.1.236:4000/notifications/";// "http://requestb.in/16y9j7s1";
+        private const string Domain = "test.pass.com";
+        private const string AuthToken = "1388add8a99252fc1a4974de471e73cd";
+        private const string RiskifiedUrl = "http://192.168.1.32:3000/webhooks/merchant_order_created";
             //"http://sandbox.riskified.com/webhooks/merchant_order_created";
         //"http://192.168.1.32:3000/webhooks/merchant_order_created";
 
         static void Main(string[] args)
         {
-            MyLogger logger = new MyLogger();
-
-            NotificationHandler notifier = new NotificationHandler(client_webhook,NotificationReceived,AUTH_TOKEN,logger);
-            notifier.Start();
-            Random rand = new Random();
-            int orderNum = rand.Next(100000,200000);
+            #region logger setup [Optional]
             
+            // setting up a logger facade to the system logger using the ILog interface
+            // if a logger facade is created it will enable a peek into the logs created by the SDK and will help understand issues easier
+            var logger = new SimpleExampleLogger();
+
+            #endregion
+
+            #region Notification Server setup and activation
+            
+            // setup of a notification server listening to incoming notification from riskified
+            // the webhook is the url on the local server which the httpServer will be listening at
+            // make sure the url is correct (internet reachable ip/address and port, firewall rules etc.)
+            var notifier = new NotificationHandler(ClientWebhook,NotificationReceived,AuthToken,Domain,logger);
+            // the call to notifier.ReceiveNotifications() is blocking and will not return until we call StopReceiveNotifications 
+            // so we run it on a different task in this example
+            var t = new Task(notifier.ReceiveNotifications);
+            t.Start();
+            
+            #endregion
+
+            #region order creation and submittion
+            // Generating a random starting order number
+            // we need to send the order with a new order number in order to create it on riskified
+            // if order number already exists in riskified server - the order will be updated
+            var rand = new Random();
+            int orderNum = rand.Next(1000,200000);
+            
+            // sample for order creating and submitting to servers via console
+            
+            // read action from console
             Console.WriteLine("press 's' for submit, 'c' for create or 'q' to end");
             string quitStr = Console.ReadLine();
-            while (!quitStr.Equals("q") && (quitStr.Equals("s") || quitStr.Equals("c")))
+            
+            // loop on console actions 
+            while (quitStr != null && (!quitStr.Equals("q") && (quitStr.Equals("s") || quitStr.Equals("c"))))
             {
                 try
                 {
+
+                    // generate a new order - the sample generates a fixed order with same details but different order number each time
+                    // see GenerateOrder for more info on how to create the Order objects
                     var order = GenerateOrder(orderNum);
-                    Console.WriteLine("Order Generated with ID "+orderNum);
+                    Console.WriteLine("Order Generated with merchant order number: "+orderNum);
                     orderNum++;
 
-                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(riskified_url), AUTH_TOKEN, DOMAIN);
+                    // the RiskifieGateway is responsible for sending orders to Riskified servers
+                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(RiskifiedUrl), AuthToken, Domain);
 
                     int orderIdAtRiskified;
+
                     if (quitStr.Equals("c"))
                     {
+                        // sending order for creation (if new orderNum) or update (if existing orderNum)
                         orderIdAtRiskified = gateway.CreateOrUpdateOrder(order);
                         Console.WriteLine("Order created. RiskifiedID received: " + orderIdAtRiskified);
                     }
                     else
                     {
+                        // sending order for submitting and analysis 
+                        // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
                         orderIdAtRiskified = gateway.SubmitOrder(order);
                         Console.WriteLine("Order submitted. RiskifiedID received: " + orderIdAtRiskified);
                     }
                 }
                 catch (OrderFieldBadFormatException e)
                 {
+                    // catching 
                     Console.WriteLine("Exception thrown on order field validation: " + e.Message);
                 }
                 catch (OrderTransactionException e)
@@ -57,69 +93,56 @@ namespace Riskified.SDK.Sample
                     Console.WriteLine("Exception thrown on transaction: " + e.Message);
                 }
 
+                // ask for next action to perform
                 Console.WriteLine("press 's' for submit, 'c' for create or 'q' to end");
                 quitStr = Console.ReadLine();
             }
-            notifier.Stop();
+
+            #endregion
+
+            // make sure you shut down the notification server on system shut dowwn
+            notifier.StopReceiveNotifications();
         }
 
+        /// <summary>
+        /// A sample notifications callback from the NotificationHandler
+        /// Will be called each time a new notification is received at the local webhook
+        /// </summary>
+        /// <param name="notification">The notification object that was received</param>
         private static void NotificationReceived(Notification notification)
         {
             Console.WriteLine("New "+ notification.Status + " Notification Received for order with ID:" + notification.OrderId + ". Notification verified? " + notification.IsValidatedNotification);
         }
 
+        /// <summary>
+        /// Generates a new order object
+        /// Mind that some of the fields of the order (and it's sub-objects) are optional
+        /// </summary>
+        /// <param name="orderNum">The order number to put in the order object</param>
+        /// <returns></returns>
         private static Order GenerateOrder(int orderNum)
         {
-            var customer = new Customer
-            {
-                CreatedAt = new DateTime(2003, 12, 12, 13, 12, 59),
-                Email = "my@email.com",
-                FirstName = "John",
-                Id = 405050606,
-                LastName = "Doe",
-                Note = "",
-                OrdersCount = 4,
-                VerifiedEmail = true
-            };
+            // IMPORTANT: all objects created here may throw OrderFieldBadFormatException 
+            // if one or more of the parameters values doesn't match the required format
+            // In the sample - this exception is handled in the rapping method
 
-            var billing = new AddressInformation
-            {
-                Address1 = "Rotshild 12",
-                //Address2 = "",
-                City = "Tel Aviv",
-                //Company = "",
-                Country = "Israel",
-                CountryCode = "IL",
-                FirstName = "Ben",
-                LastName = "approved",
-                //FullName = "",
-                Phone = "00000000",
-                //Province = "Gush Dan",
-                //ProvinceCode = "gd",
-                ZipCode = "12345"
-            };
+            // putting sample customer details
+            var customer = new Customer(405050606, "John", "Doe", 4, "test@example.com", true,
+                new DateTime(2013, 12, 8, 14, 12, 12), "No additional info");
 
-            var shipping = new AddressInformation
-            {
-                Address1 = "Taa22",
-                Address2 = "",
-                City = "Tel Aviv",
-                Company = "",
-                Country = "USA",
-                CountryCode = "US",
-                FirstName = "Ben",
-                LastName = "Gurion",
-                //FullName = "",
-                Phone = "00000000",
-                ZipCode = "12345"
-            };
+            // putting sample billing details
+            var billing = new AddressInformation("Ben", "Rolling", "27 5th avenue", "Manhattan", "United States", "US",
+                "5554321234", "Appartment 5", "54545", "New York", "NY", "IBM", "Ben Philip Rolling");
 
-            var payments = new PaymentDetails("Y", "n", "", "", "");
+            var shipping = new AddressInformation("Luke", "Rolling", "4 Bermingham street", "Cherry Hill",
+                "United States", "US", "55546665", provinceCode: "NJ", province: "New Jersey");
+            
+            var payments = new PaymentDetails("Y", "n", "4580", "Visa", "XXXX-XXXX-XXXX-4242");
 
             var lines = new[]
             {
-                new ShippingLine {Code = "", Price = 22.22, Title = "Mail"},
-                new ShippingLine {Code = "", Price = 2, Title = "Ship"}
+                new ShippingLine(22.22,"Mail"),
+                new ShippingLine(2,"Ship","A22F")
             };
 
             var items = new[]
@@ -128,35 +151,16 @@ namespace Riskified.SDK.Sample
                 new LineItem("Monster",22.3,3)
             };
 
-            Order order = new Order
-            {
-                BillingAddress = billing,
-                CancelReason = "",
-                CartToken = orderNum+"asfansdf$dsDGFGS",
-                Currency = "USD",
-                Customer = customer,
-                CustomerIp = "127.0.0.1",
-                DiscountCodes = new[] {new DiscountCode {Code = "1", MoneyDiscountSum = 500}},
-                Email = "Ab@gm.com",
-                Gateway = "authorize_net",
-                LineItems = items,
-                OrderCancellationTime = null,
-                ClosedAt = DateTime.MinValue,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.MinValue,
-                Id = orderNum,
-                PaymentDetails = payments,
-                ShippingAddress = shipping,
-                ShippingLines = lines,
-                TotalDiscounts = 2.5,
-                TotalPrice = 96.44,
-                TotalPriceUsd = 33
-            };
+            var discountCodes = new[] { new DiscountCode(7, "1") };
+
+            var order = new Order(orderNum, "tester@exampler.com", customer, payments, billing, shipping, items, lines,
+                "authorize_net", "127.0.0.1", "USD", 100.60, DateTime.Now, DateTime.Now, discountCodes);
+            
             return order;
         }
     }
 
-    internal class MyLogger : ILogger
+    internal class SimpleExampleLogger : ILogger
     {
 
         private static void Log(string message,string level)

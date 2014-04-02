@@ -5,7 +5,7 @@ namespace Riskified.NetSDK.Model
     public class LineItem
     {
         /// <summary>
-        /// Creates a new line item
+        /// Creates a new LineItem
         /// </summary>
         /// <param name="title">A title describing the product </param>
         /// <param name="price">The product price in the currency matching the one used in the whole order and set in the "Currency" field</param>
@@ -36,7 +36,7 @@ namespace Riskified.NetSDK.Model
         /// <summary>
         /// The Product ID number
         /// </summary>
-        [JsonProperty(PropertyName = "product_id", Required = Required.Default)]
+        [JsonProperty(PropertyName = "product_id", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public int? ProductId { get; set; }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Riskified.NetSDK.Model
         /// <summary>
         /// The sku of the product
         /// </summary>
-        [JsonProperty(PropertyName = "sku", Required = Required.Default)]
+        [JsonProperty(PropertyName = "sku", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string Sku { get; set; }
     }
 

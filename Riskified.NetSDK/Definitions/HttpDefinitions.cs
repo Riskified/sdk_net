@@ -10,16 +10,17 @@ namespace Riskified.NetSDK.Definitions
     {
         public const string ShopDomainHeaderName = "X_RISKIFIED_SHOP_DOMAIN";
         public const string SubmitHeaderName = "X_RISKIFIED_SUBMIT_NOW";
-        public const string HmacHeaderName = "X_RISKIFIED_HMAC_SHA256";
+        public const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
 
         public static string CalcHmac(string data, string authToken)
         {
             byte[] key = Encoding.ASCII.GetBytes(authToken);
-            HMACSHA256 myhmacsha256 = new HMACSHA256(key);
+            var myhmacsha256 = new HMACSHA256(key);
             byte[] byteArray = Encoding.UTF8.GetBytes(data);
-            MemoryStream stream = new MemoryStream(byteArray);
+            var stream = new MemoryStream(byteArray);
             string result = myhmacsha256.ComputeHash(stream).Aggregate("", (s, e) => s + String.Format("{0:x2}", e), s => s);
             return result;
         }
+
     }
 }

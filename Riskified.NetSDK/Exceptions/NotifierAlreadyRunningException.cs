@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Riskified.NetSDK.Exceptions
 {
-    public class RiskifiedException  : Exception
+    public class NotifierAlreadyRunningException : RiskifiedException
     {
-        protected RiskifiedException(string message) : base(message)
+        public NotifierAlreadyRunningException(string message) : base(message)
         {
         }
 
-        protected RiskifiedException(string message, Exception innerException)
+        public NotifierAlreadyRunningException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

@@ -45,7 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\NotificationHandler.cs" />
+    <Compile Include="Exceptions\NotifierServerFailedToStartException.cs" />
     <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />
+    <Compile Include="Exceptions\NotifierAlreadyRunningException.cs" />
     <Compile Include="Exceptions\RiskifiedException.cs" />
     <Compile Include="Exceptions\RiskifiedGatewayException.cs" />
     <Compile Include="Definitions\HttpDefinitions.cs" />

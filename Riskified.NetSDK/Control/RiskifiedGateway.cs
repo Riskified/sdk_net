@@ -19,10 +19,10 @@ namespace Riskified.NetSDK.Control
     {
         private static readonly string ProductVersion;
         private readonly Uri _riskifiedOrdersTransferAddr;
-        private readonly string _signature;
+        private readonly string _authToken;
         private readonly string _shopDomain;
         // TODO add test class
-        //TODO add Logging messages
+        
         static RiskifiedGateway()
         {
             // Extracting the product version for later use
@@ -35,7 +35,7 @@ namespace Riskified.NetSDK.Control
         {
             _riskifiedOrdersTransferAddr = riskifiedOrdersTransferAddrAddress;
             // TODO make sure signature and domain are of valid structure
-            _signature = authToken;
+            _authToken = authToken;
             _shopDomain = shopDomain;
             LogWrapper.InitializeLogger(logger);
         }
@@ -88,25 +88,23 @@ namespace Riskified.NetSDK.Control
                 throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
             }
             
-            byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);
-
             HttpWebRequest request = WebRequest.CreateHttp(_riskifiedOrdersTransferAddr);
             // Set custom Riskified headers
-            string hashCode = HttpDefinitions.CalcHmac(jsonOrder,_signature);
-            request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
-            // TODO add support for gzip compression for non-sandbox env
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            
-            request.UserAgent = "Riskified.NetSDK/" + ProductVersion;
-            request.Accept = "*/*";
-            request.ContentLength = bodyBytes.Length;
+            string hashCode = HttpDefinitions.CalcHmac(jsonOrder, _authToken);
             request.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
-            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
             if (isSubmit)
                 request.Headers.Add(HttpDefinitions.SubmitHeaderName, "true");
-            // TODO set other http request fields if required
-
+            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
+            // TODO add support for gzip compression for non-sandbox env
+            request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.UserAgent = "Riskified.NetSDK/" + ProductVersion;
+            request.Accept = "*/*";
+            
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);
+            request.ContentLength = bodyBytes.Length;
+            
             Stream body = request.GetRequestStream();
             body.Write(bodyBytes,0,bodyBytes.Length);
             body.Close();
@@ -117,20 +115,41 @@ namespace Riskified.NetSDK.Control
             }
             catch (Exception e)
             {
-                throw new OrderTransactionException("There was an error sending order to server. More Info: "+ e.Message,e);
+                const string errorMsg = "There was an error sending order to server";
+                LogWrapper.GetInstance().Error(errorMsg,e);
+                throw new OrderTransactionException("There was an error sending order to server",e);
             }
-            // todo validate the response data
+            
             body = response.GetResponseStream();
             if (body != null)
             {
                 // Open the stream using a StreamReader for easy access.
-                StreamReader reader = new StreamReader(body);
+                var reader = new StreamReader(body);
 
                 // Read the content.
                 string responseFromServer = reader.ReadToEnd();
+                reader.Close();
+                body.Close();
+                response.Close();
 
-                var transactionResult = JsonConvert.DeserializeObject<OrderTransactionResult>(responseFromServer);
-
+                string calculatedHmac = HttpDefinitions.CalcHmac(responseFromServer, _authToken);
+                bool isValidatedResponse =
+                        calculatedHmac.Equals(response.Headers.Get(HttpDefinitions.HmacHeaderName));
+                OrderTransactionResult transactionResult;
+                try
+                {
+                    transactionResult = JsonConvert.DeserializeObject<OrderTransactionResult>(responseFromServer);
+                }
+                catch (Exception e)
+                {
+                    string errorMsg =
+                        "Unable to parse response body - order state in riskified servers unknown. Verification of data integrity result was: " +
+                        isValidatedResponse + ". Body was: " +
+                        responseFromServer;
+                    LogWrapper.GetInstance().Error(errorMsg,e);
+                    throw new OrderTransactionException(errorMsg,e);
+                }
+                
                 if (transactionResult.IsSuccessful)
                 {
                     if(transactionResult.SuccessfulResult == null ||
@@ -142,14 +161,12 @@ namespace Riskified.NetSDK.Control
                 else
                 {
                     //TODO handle case of unsuccessful tranaction of order
+                    throw new OrderTransactionException("Case of failed response not implemented yet");
                 }
-
-                reader.Close();
-                body.Close();
-                response.Close();
+                
                 if (transactionResult.SuccessfulResult.Id != null) return transactionResult.SuccessfulResult.Id.Value;
             }
-            throw new OrderTransactionException("Received empty response from riskified server - contact Riskified");
+            throw new OrderTransactionException("Received bad response from riskified server - contact Riskified");
 
         }
 

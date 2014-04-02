@@ -4,8 +4,6 @@
     {
         /// <summary>
         /// A unique order ID received from the Riskified server for later submittion or notification regarding that specific order
-        /// TODO handle case  of 0  value
-        /// TODO should it be int/string/long etc.?!
         /// </summary>
         public int OrderId { get; private set; }
 

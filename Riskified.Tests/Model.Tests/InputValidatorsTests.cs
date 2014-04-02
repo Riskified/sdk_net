@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Riskified.NetSDK.Model;
 
-namespace Riskified.Tests
+namespace Riskified.Tests.Model.Tests
 {
     [TestFixture]
     class InputValidatorsTests

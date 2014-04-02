@@ -11,7 +11,7 @@ namespace Riskified.NetSDK.Model
     {
         private static bool ValidateInputByRegex(string value, string regex)
         {
-            Regex r = new Regex(regex);
+            var r = new Regex(regex);
             
             return r.IsMatch(value);
         }

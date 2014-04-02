@@ -9,11 +9,19 @@ using Newtonsoft.Json.Linq;
 namespace Riskified.NetSDK.Model
 {
     public class DiscountCode
+
+
     {
-        [JsonProperty(PropertyName = "amount", Required = Required.Default)]
+        public DiscountCode(double? moneyDiscountSum = null, string code = null)
+        {
+            MoneyDiscountSum = moneyDiscountSum;
+            Code = code;
+        }
+
+        [JsonProperty(PropertyName = "amount", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public double? MoneyDiscountSum { get; set; }
 
-        [JsonProperty(PropertyName = "code", Required = Required.Default)]
+        [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string Code { get; set; }
     }
 
