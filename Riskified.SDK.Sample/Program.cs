@@ -10,9 +10,6 @@ namespace Riskified.SDK.Sample
 {
     static class Program
     {
-        
-            //"http://sandbox.riskified.com/webhooks/merchant_order_created";
-        //"http://192.168.1.32:3000/webhooks/merchant_order_created";
 
         static void Main(string[] args)
         {
@@ -178,7 +175,7 @@ namespace Riskified.SDK.Sample
 
         public void Debug(string message, Exception exception)
         {
-            Debug(string.Format("{0}. Exception was: message: {1}. StackTrace {2}",message,exception.Message,exception.StackTrace));
+            Debug(string.Format("{0}. Exception was: {1}. StackTrace {2}",message,exception.Message,exception.StackTrace));
         }
 
         public void Info(string message)
