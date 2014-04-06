@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Definitions;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Model;
 using Riskified.NetSDK.Exceptions;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Control
 {

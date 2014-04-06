@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Riskified.NetSDK.Exceptions;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
@@ -18,12 +19,13 @@ namespace Riskified.NetSDK.Model
         {
             InputValidators.ValidateAvsResultCode(avsResultCode);
             AvsResultCode = avsResultCode;
-            
             InputValidators.ValidateCvvResultCode(cvvResultCode);
             CvvResultCode = cvvResultCode;
-
+            InputValidators.ValidateValuedString(creditCardBin,"Credit Card Bin");
             CreditCardBin = creditCardBin;
+            InputValidators.ValidateValuedString(creditCardCompany, "Credit Card Company");
             CreditCardCompany = creditCardCompany;
+            InputValidators.ValidateCreditCard(creditCardNumber);
             CreditCardNumber = creditCardNumber;
         }
 

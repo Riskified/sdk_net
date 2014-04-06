@@ -12,7 +12,7 @@ namespace Riskified.NetSDK.Exceptions
         {
         }
 
-        protected RiskifiedException(string message, Exception innerException)
+        public RiskifiedException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

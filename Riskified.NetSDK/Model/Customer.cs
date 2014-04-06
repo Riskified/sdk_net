@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Riskified.NetSDK.Exceptions;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
@@ -22,7 +23,9 @@ namespace Riskified.NetSDK.Model
         public Customer(int id, string firstName, string lastName, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
         {
             Id = id;
+            InputValidators.ValidateValuedString(firstName,"First Name");
             FirstName = firstName;
+            InputValidators.ValidateValuedString(lastName, "Last Name");
             LastName = lastName;
             // optional fields
             if (!string.IsNullOrEmpty(email))

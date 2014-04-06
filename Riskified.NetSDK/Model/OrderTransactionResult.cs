@@ -1,5 +1,4 @@
-﻿using System.Net.Cache;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Riskified.NetSDK.Model
 {

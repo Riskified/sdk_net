@@ -45,17 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Control\NotificationHandler.cs" />
+    <Compile Include="Utils\InputValidators.cs" />
     <Compile Include="Exceptions\NotifierServerFailedToStartException.cs" />
     <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />
     <Compile Include="Exceptions\NotifierAlreadyRunningException.cs" />
     <Compile Include="Exceptions\RiskifiedException.cs" />
     <Compile Include="Exceptions\RiskifiedGatewayException.cs" />
-    <Compile Include="Definitions\HttpDefinitions.cs" />
+    <Compile Include="Utils\HttpDefinitions.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\LogWrapper.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\DiscountCode.cs" />
-    <Compile Include="Model\InputValidators.cs" />
     <Compile Include="Model\LineItem.cs" />
     <Compile Include="Model\Notification.cs" />
     <Compile Include="Model\OrderStatus.cs" />

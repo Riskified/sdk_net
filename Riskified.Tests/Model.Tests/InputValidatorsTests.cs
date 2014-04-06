@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using Riskified.NetSDK.Model;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.Tests.Model.Tests
 {

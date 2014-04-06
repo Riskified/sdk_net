@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Riskified.NetSDK.Definitions;
+using Newtonsoft.Json;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Model;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Control
 {
@@ -35,13 +37,90 @@ namespace Riskified.NetSDK.Control
         /// Will replace all previous endpoints registered by that specific merchant
         /// </summary>
         /// <param name="riskifiedRegistrationEndpoint"></param>
-        /// <param name="newLocalEndpoint"></param>
-        /// <param name="shopUrl"></param>
-        /// <param name="password"></param>
-        public void RegisterEndPointForNotifications(string riskifiedRegistrationEndpoint, string newLocalEndpoint, string shopUrl, string password)
+        /// <exception cref="RiskifiedException"></exception>
+        public void RegisterEndPointForNotifications(string riskifiedRegistrationEndpoint)
         {
-            //TODO implement this on server side as well as here
-            throw new Exception("Not Implemented Yet");
+            string tmpJsonStr = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + _localListeningEndpoint + "\"}";
+
+            HttpWebRequest request = WebRequest.CreateHttp(riskifiedRegistrationEndpoint);
+            // Set custom Riskified headers
+            string hashCode = HttpDefinitions.CalcHmac(tmpJsonStr,_authToken);
+            request.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
+            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
+            // TODO add support for gzip compression for non-sandbox env
+            request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.UserAgent = "Riskified.NetSDK/";
+            request.Accept = "*/*";
+
+            byte[] bodyBytes = Encoding.UTF8.GetBytes(tmpJsonStr);
+            request.ContentLength = bodyBytes.Length;
+
+            Stream body = request.GetRequestStream();
+            body.Write(bodyBytes, 0, bodyBytes.Length);
+            body.Close();
+            WebResponse response;
+            try
+            {
+                response = request.GetResponse();
+            }
+            catch (Exception e)
+            {
+                const string errorMsg = "There was an error sending order to server";
+                LogWrapper.GetInstance().Error(errorMsg, e);
+                throw new OrderTransactionException("There was an error sending order to server", e);
+            }
+
+            body = response.GetResponseStream();
+            if (body != null)
+            {
+                // Open the stream using a StreamReader for easy access.
+                var reader = new StreamReader(body);
+
+                // Read the content.
+                string responseFromServer = reader.ReadToEnd();
+                reader.Close();
+                body.Close();
+                response.Close();
+
+                string calculatedHmac = HttpDefinitions.CalcHmac(responseFromServer, _authToken);
+                bool isValidatedResponse =
+                        calculatedHmac.Equals(response.Headers.Get(HttpDefinitions.HmacHeaderName));
+                string resultStr;
+                try
+                {
+                    resultStr = responseFromServer;
+                    //transactionResult = JsonConvert.DeserializeObject<OrderTransactionResult>(responseFromServer);
+                }
+                catch (Exception e)
+                {
+                    string errorMsg =
+                        "Unable to parse response body - Notifications webhook in riskified servers not changed. Verification of data integrity result was: " +
+                        isValidatedResponse + ". Body was: " +
+                        responseFromServer;
+                    LogWrapper.GetInstance().Error(errorMsg, e);
+                    throw new RiskifiedException(errorMsg, e);
+                }
+                /*
+                if (transactionResult.IsSuccessful)
+                {
+                    if (transactionResult.SuccessfulResult == null ||
+                        (transactionResult.SuccessfulResult.Status != "submitted" &&
+                         transactionResult.SuccessfulResult.Status != "created" &&
+                         transactionResult.SuccessfulResult.Status != "updated"))
+                        throw new OrderTransactionException("Error receiving valid response from riskified server - contact Riskified");
+                }
+                else
+                {
+                    //TODO handle case of unsuccessful tranaction of order
+                    throw new OrderTransactionException("Case of failed response not implemented yet");
+                }
+
+                if (transactionResult.SuccessfulResult.Id != null) return transactionResult.SuccessfulResult.Id.Value;
+                 */
+            }
+            throw new OrderTransactionException("Received bad response from riskified server - contact Riskified");
         }
 
         public void StopReceiveNotifications()

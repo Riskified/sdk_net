@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
@@ -10,13 +11,17 @@ namespace Riskified.NetSDK.Model
         /// <param name="title">A title describing the product </param>
         /// <param name="price">The product price in the currency matching the one used in the whole order and set in the "Currency" field</param>
         /// <param name="quantityPurchased">Quantity purchased of the item</param>
-        /// <param name="productId">The Product ID number</param>
-        /// <param name="sku">The stock keeping unit of the product</param>
-        public LineItem(string title, double price, int quantityPurchased,int productId=0,string sku=null)
+        /// <param name="productId">The Product ID number (optional)</param>
+        /// <param name="sku">The stock keeping unit of the product (optional)</param>
+        public LineItem(string title, double price, int quantityPurchased,int? productId=null,string sku=null)
         {
+            InputValidators.ValidateValuedString(title,"Title");
             Title = title;
+            InputValidators.ValidateZeroOrPositiveValue(price,"Price");
             Price = price;
+            InputValidators.ValidatePositiveValue(quantityPurchased,"Quantity Purchased");
             QuantityPurchased = quantityPurchased;
+            // optional
             ProductId = productId == 0 ? (int?) null : productId;
             Sku = sku;
         }

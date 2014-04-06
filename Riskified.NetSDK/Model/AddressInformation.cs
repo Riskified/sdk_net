@@ -1,27 +1,52 @@
 ﻿using Newtonsoft.Json;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
     // TODO add test classes for all model classes
     public class AddressInformation
     {
+        /// <summary>
+        /// Creates an AddressInformation instance
+        /// </summary>
+        /// <param name="firstName">The first name of the addressee</param>
+        /// <param name="lastName">The last name of the addressee</param>
+        /// <param name="address1">The address (street, house number)</param>
+        /// <param name="city">The city part of the address</param>
+        /// <param name="country">The full name of the country</param>
+        /// <param name="countryCode">The 2 letter code of the country</param>
+        /// <param name="phone">The phone number of the addressee</param>
+        /// <param name="address2">Additional address information like entrance, apartment number, etc. (optional)</param>
+        /// <param name="zipCode">The zipcode of the address (optional)</param>
+        /// <param name="province">The full province name (optional)</param>
+        /// <param name="provinceCode">The 2 letter code of the province (optional)</param>
+        /// <param name="company">The company of the addressee (optional)</param>
+        /// <param name="fullName">The full name of the addressee (optional)</param>
         public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null)
         {
+            InputValidators.ValidateValuedString(firstName, "First Name");
+            FirstName = firstName;
+            InputValidators.ValidateValuedString(lastName, "Last Name");
+            LastName = lastName;
+            InputValidators.ValidateValuedString(address1, "Address 1");
+            Address1 = address1;
+            InputValidators.ValidateValuedString(city, "City");
+            City = city;
+            InputValidators.ValidateValuedString(country, "Country");
+            Country = country;
             InputValidators.ValidateCountryOrProvinceCode(countryCode);
             CountryCode = countryCode;
-            Address1 = address1;
+            InputValidators.ValidatePhoneNumber(phone);
             Phone = phone;
-            City = city;
-            Country = country;
-            FirstName = firstName;
-            LastName = lastName;
+            
             // optional fields:
-            Address2 = address2;
+            
             if (!string.IsNullOrEmpty(provinceCode))
             {
                 InputValidators.ValidateCountryOrProvinceCode(provinceCode);
                 ProvinceCode = provinceCode;
             }
+            Address2 = address2;
             Province = province;
             ZipCode = zipCode;
             Company = company;

@@ -1,13 +1,12 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
 
     public class Order
     {
-        //tODO consider adding empty strings validations and null validations on objects or invalid numbers (negative etc..)
-
         /// <summary>
         /// Creates a new order
         /// </summary>
@@ -46,20 +45,33 @@ namespace Riskified.NetSDK.Model
             double? totalPriceUsd = null,
             DateTime? closedAt = null, DateTime? cancelledAt = null, string cancelReason = null)
         {
+            InputValidators.ValidatePositiveValue(merchantOrderId,"Merchant Order ID");
             Id = merchantOrderId;
+            InputValidators.ValidateObjectNotNull(lineItems,"Line Items");
             LineItems = lineItems;
+            InputValidators.ValidateObjectNotNull(shippingLines, "Shipping Lines");
             ShippingLines = shippingLines;
+            InputValidators.ValidateObjectNotNull(paymentDetails, "Payment Details");
             PaymentDetails = paymentDetails;
+            InputValidators.ValidateObjectNotNull(billingAddress, "Billing Address");
             BillingAddress = billingAddress;
+            InputValidators.ValidateObjectNotNull(shippingAddress, "Shipping Address");
             ShippingAddress = shippingAddress;
+            InputValidators.ValidateObjectNotNull(customer, "Customer");
             Customer = customer;
             InputValidators.ValidateEmail(email);
             Email = email;
+            InputValidators.ValidateIp(customerBrowserIp);
             CustomerBrowserIp = customerBrowserIp;
+            InputValidators.ValidateCurrency(currency);
             Currency = currency;
+            InputValidators.ValidateZeroOrPositiveValue(totalPrice,"Total Price");
             TotalPrice = totalPrice;
+            InputValidators.ValidateValuedString(gateway,"Gateway");
             Gateway = gateway;
+            InputValidators.ValidateDateNotDefault(createdAt, "Created At");
             CreatedAt = createdAt;
+            InputValidators.ValidateDateNotDefault(updatedAt, "Updated At");
             UpdatedAt = updatedAt;
             
             // optional fields

@@ -13,10 +13,12 @@ namespace Riskified.SDK.Sample
 
         static void Main(string[] args)
         {
-            string ClientWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
+            string clientWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];  
-            string AuthToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string RiskifiedUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
+            string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
+            string riskifiedUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
+            string riskifiedMerchantNotificationsWebhookRegistrationUrl =
+                ConfigurationManager.AppSettings["RiskifiedMerchantNotificationsWebhookRegistrationUrl"];
 
 
             #region logger setup [Optional]
@@ -32,7 +34,8 @@ namespace Riskified.SDK.Sample
             // setup of a notification server listening to incoming notification from riskified
             // the webhook is the url on the local server which the httpServer will be listening at
             // make sure the url is correct (internet reachable ip/address and port, firewall rules etc.)
-            var notifier = new NotificationHandler(ClientWebhook,NotificationReceived,AuthToken,domain,logger);
+            var notifier = new NotificationHandler(clientWebhook,NotificationReceived,authToken,domain,logger);
+            //notifier.RegisterEndPointForNotifications(riskifiedMerchantNotificationsWebhookRegistrationUrl);
             // the call to notifier.ReceiveNotifications() is blocking and will not return until we call StopReceiveNotifications 
             // so we run it on a different task in this example
             var t = new Task(notifier.ReceiveNotifications);
@@ -66,7 +69,7 @@ namespace Riskified.SDK.Sample
                     orderNum++;
 
                     // the RiskifieGateway is responsible for sending orders to Riskified servers
-                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(RiskifiedUrl), AuthToken, domain,logger);
+                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(riskifiedUrl), authToken, domain,logger);
 
                     int orderIdAtRiskified;
 

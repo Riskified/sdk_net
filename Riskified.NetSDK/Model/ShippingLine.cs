@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Riskified.NetSDK.Utils;
 
 namespace Riskified.NetSDK.Model
 {
@@ -13,9 +14,12 @@ namespace Riskified.NetSDK.Model
         /// <param name="code">A code to the shipping method</param>
         public ShippingLine(double price, string title, string code = null)
         {
-            Code = code;
+            InputValidators.ValidateZeroOrPositiveValue(price,"Price");
             Price = price;
+            InputValidators.ValidateValuedString(title,"Title");
             Title = title;
+            // optional
+            Code = code;
         }
 
         [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
