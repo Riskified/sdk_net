@@ -16,14 +16,14 @@ namespace Riskified.NetSDK.Control
     /// </summary>
     public class RiskifiedGateway
     {
-        private readonly string _riskifiedOrdersTransferAddr;
+        private readonly Uri _riskifiedOrdersWebhookUrl;
         private readonly string _authToken;
         private readonly string _shopDomain;
         // TODO add test class
         
-        public RiskifiedGateway(string riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain)
+        public RiskifiedGateway(string riskifiedHostUrl, string authToken, string shopDomain)
         {
-            _riskifiedOrdersTransferAddr = riskifiedOrdersTransferAddrAddress;
+            _riskifiedOrdersWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl,"/webhooks/merchant_order_created");
             // TODO make sure signature and domain are of valid structure
             _authToken = authToken;
             _shopDomain = shopDomain;
@@ -77,7 +77,7 @@ namespace Riskified.NetSDK.Control
                 throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
             }
 
-            WebRequest request = HttpUtils.GeneratePostRequest(_riskifiedOrdersTransferAddr, jsonOrder, _authToken,
+            WebRequest request = HttpUtils.GeneratePostRequest(_riskifiedOrdersWebhookUrl, jsonOrder, _authToken,
                 _shopDomain,HttpBodyType.JSON, isSubmit);
             WebResponse response;
             try

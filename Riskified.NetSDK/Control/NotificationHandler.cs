@@ -33,17 +33,17 @@ namespace Riskified.NetSDK.Control
         /// Will replace all previous endpoints registered by that specific merchant
         /// This method doesn't test or verify that the webhook exists and responsive
         /// </summary>
-        /// <param name="riskifiedRegistrationEndpoint">Riskified registration webhook as received from Riskified</param>
+        /// <param name="riskifiedHostUrl">Riskified registration webhook as received from Riskified</param>
         /// <param name="merchantNotificationsWebhook">The merchant webhook that will receive notifications on orders status</param>
         /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
         /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
         /// <exception cref="WebhookRegistrationException">thrown if the registration couldn't be made due to bad request format or parameters</exception>
         /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
-        public static void RegisterMerchantNotificationsWebhook(string riskifiedRegistrationEndpoint,
+        public static void RegisterMerchantNotificationsWebhook(string riskifiedHostUrl,
             string merchantNotificationsWebhook, string authToken, string shopDomain)
         {
             string createJson = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + merchantNotificationsWebhook + "\"}";
-            SendMerchantRegistrationRequest(createJson,riskifiedRegistrationEndpoint,authToken,shopDomain);
+            SendMerchantRegistrationRequest(createJson,riskifiedHostUrl,authToken,shopDomain);
         }
 
         /// <summary>
@@ -184,9 +184,10 @@ namespace Riskified.NetSDK.Control
             throw new NotifierServerFailedToStartException(errorMsg);
         }
 
-        private static void SendMerchantRegistrationRequest(string jsonBody,string riskifiedRegistrationEndpoint, string authToken, string shopDomain)
+        private static void SendMerchantRegistrationRequest(string jsonBody,string riskifiedHostUrl, string authToken, string shopDomain)
         {
-            WebRequest request = HttpUtils.GeneratePostRequest(riskifiedRegistrationEndpoint, jsonBody, authToken,
+            Uri riskifiedRegistrationWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl, "/webhooks/merchant_register_notification_webhook");
+            WebRequest request = HttpUtils.GeneratePostRequest(riskifiedRegistrationWebhookUrl, jsonBody, authToken,
                 shopDomain, HttpBodyType.JSON);
 
             WebResponse response;

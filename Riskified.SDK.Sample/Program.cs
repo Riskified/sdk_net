@@ -16,9 +16,7 @@ namespace Riskified.SDK.Sample
             string merchantNotificationsWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];  
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedOrderWebhookUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
-            string riskifiedRegistrationWebhookUrl =
-                ConfigurationManager.AppSettings["RiskifiedRegistrationWebhookUrl"];
+            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
 
 
             #region logger setup [Optional]
@@ -32,7 +30,7 @@ namespace Riskified.SDK.Sample
 
             #region Merchant Notification Webhook Registration
             // registration:
-            NotificationHandler.RegisterMerchantNotificationsWebhook(riskifiedRegistrationWebhookUrl,merchantNotificationsWebhook,authToken,domain);
+            NotificationHandler.RegisterMerchantNotificationsWebhook(riskifiedHostUrl,merchantNotificationsWebhook,authToken,domain);
             // un-registration:
             //NotificationHandler.UnRegisterMerchantNotificationWebhooks(riskifiedRegistrationWebhookUrl, authToken, domain);
             #endregion
@@ -75,7 +73,7 @@ namespace Riskified.SDK.Sample
                     orderNum++;
 
                     // the RiskifieGateway is responsible for sending orders to Riskified servers
-                    RiskifiedGateway gateway = new RiskifiedGateway(riskifiedOrderWebhookUrl, authToken, domain);
+                    RiskifiedGateway gateway = new RiskifiedGateway(riskifiedHostUrl, authToken, domain);
 
                     int orderIdAtRiskified;
 

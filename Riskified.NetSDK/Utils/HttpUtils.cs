@@ -43,7 +43,7 @@ namespace Riskified.NetSDK.Utils
             return result;
         }
 
-        public static WebRequest GeneratePostRequest(string url, string body, string authToken,string shopDomain, HttpBodyType bodyType,bool shouldIncludeSubmitHeader = false)
+        public static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType,bool shouldIncludeSubmitHeader = false)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             // Set custom Riskified headers
@@ -151,6 +151,12 @@ namespace Riskified.NetSDK.Utils
             Stream output = response.OutputStream;
             output.Write(buffer, 0, buffer.Length);
             output.Close();
+        }
+
+        public static Uri BuildUrl(string hostUrl, string relativePath)
+        {
+            Uri fullUrl = new Uri(new Uri(hostUrl),relativePath);
+            return fullUrl;
         }
     }
 }
