@@ -8,6 +8,6 @@
     <add key="MerchantDomain" value="[your shop domain as registered to riskified]"/>
     <add key="MerchantAuthenticationToken" value="[Your authentication token string]"/>
     <add key="RiskifiedOrderWebhookUrl" value="[Riskified url for sending orders to]"/>
-    <add key="RiskifiedMerchantNotificationsWebhookRegistrationUrl" value="[Riskified url for sending webhook-registration for notifications to]"/>
+    <add key="RiskifiedRegistrationWebhookUrl" value="[Riskified url for sending webhook-registration requests for notifications to]"/>
   </applicationSettings>
 </configuration>

@@ -12,16 +12,10 @@
         /// </summary>
         public OrderStatus Status { get; private set; }
 
-        /// <summary>
-        /// Flag that signs that the notification message was validated to match the specific merchant Auth Token
-        /// </summary>
-        public bool IsValidatedNotification { get; private set; }
-
-        public Notification(int orderId, OrderStatus status,bool isValidatedNotification) : this()
+        public Notification(int orderId, OrderStatus status) : this()
         {
             OrderId = orderId;
             Status = status;
-            IsValidatedNotification = isValidatedNotification;
         }
     }
 }

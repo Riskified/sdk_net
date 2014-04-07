@@ -1,25 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Riskified.NetSDK.Logging
 {
-    internal class LogWrapper : ILogger
+    public static class LoggingServices
     {
         private static ILogger _loggerProxy;
-        private static LogWrapper _sdkLogger;
-
-        public static LogWrapper GetInstance()
+        //private static LoggingServices _sdkLogger;
+        /*
+        public static LoggingServices GetInstance()
         {
-            return _sdkLogger ?? (_sdkLogger = new LogWrapper());
+            return _sdkLogger ?? (_sdkLogger = new LoggingServices());
         }
-
-        private LogWrapper()
-        {
-        }
+        */
 
         public static void InitializeLogger(ILogger logger)
         {
@@ -27,7 +19,7 @@ namespace Riskified.NetSDK.Logging
                 _loggerProxy = logger;
         }
 
-        public void Debug(string message)
+        public static void Debug(string message)
         {
             if (_loggerProxy != null)
             {
@@ -35,7 +27,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Debug(string message, Exception exception)
+        public static void Debug(string message, Exception exception)
         {
             if (_loggerProxy != null)
             {
@@ -43,7 +35,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Info(string message)
+        public static void Info(string message)
         {
             if (_loggerProxy != null)
             {
@@ -51,7 +43,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Info(string message, Exception exception)
+        public static void Info(string message, Exception exception)
         {
             if (_loggerProxy != null)
             {
@@ -59,7 +51,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Error(string message)
+        public static void Error(string message)
         {
             if (_loggerProxy != null)
             {
@@ -67,7 +59,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Error(string message, Exception exception)
+        public static void Error(string message, Exception exception)
         {
             if (_loggerProxy != null)
             {
@@ -75,7 +67,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Fatal(string message)
+        public static void Fatal(string message)
         {
             if (_loggerProxy != null)
             {
@@ -83,7 +75,7 @@ namespace Riskified.NetSDK.Logging
             }
         }
 
-        public void Fatal(string message, Exception exception)
+        public static void Fatal(string message, Exception exception)
         {
             if (_loggerProxy != null)
             {

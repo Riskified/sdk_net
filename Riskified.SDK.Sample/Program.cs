@@ -13,12 +13,12 @@ namespace Riskified.SDK.Sample
 
         static void Main(string[] args)
         {
-            string clientWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
+            string merchantNotificationsWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];  
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
-            string riskifiedMerchantNotificationsWebhookRegistrationUrl =
-                ConfigurationManager.AppSettings["RiskifiedMerchantNotificationsWebhookRegistrationUrl"];
+            string riskifiedOrderWebhookUrl = ConfigurationManager.AppSettings["RiskifiedOrderWebhookUrl"];
+            string riskifiedRegistrationWebhookUrl =
+                ConfigurationManager.AppSettings["RiskifiedRegistrationWebhookUrl"];
 
 
             #region logger setup [Optional]
@@ -26,16 +26,22 @@ namespace Riskified.SDK.Sample
             // setting up a logger facade to the system logger using the ILog interface
             // if a logger facade is created it will enable a peek into the logs created by the SDK and will help understand issues easier
             var logger = new SimpleExampleLogger();
+            LoggingServices.InitializeLogger(logger);
+            
+            #endregion
 
+            #region Merchant Notification Webhook Registration
+            // registration:
+            NotificationHandler.RegisterMerchantNotificationsWebhook(riskifiedRegistrationWebhookUrl,merchantNotificationsWebhook,authToken,domain);
+            // un-registration:
+            //NotificationHandler.UnRegisterMerchantNotificationWebhooks(riskifiedRegistrationWebhookUrl, authToken, domain);
             #endregion
 
             #region Notification Server setup and activation
-            
             // setup of a notification server listening to incoming notification from riskified
             // the webhook is the url on the local server which the httpServer will be listening at
             // make sure the url is correct (internet reachable ip/address and port, firewall rules etc.)
-            var notifier = new NotificationHandler(clientWebhook,NotificationReceived,authToken,domain,logger);
-            //notifier.RegisterEndPointForNotifications(riskifiedMerchantNotificationsWebhookRegistrationUrl);
+            var notifier = new NotificationHandler(merchantNotificationsWebhook,NotificationReceived,authToken,domain);
             // the call to notifier.ReceiveNotifications() is blocking and will not return until we call StopReceiveNotifications 
             // so we run it on a different task in this example
             var t = new Task(notifier.ReceiveNotifications);
@@ -69,7 +75,7 @@ namespace Riskified.SDK.Sample
                     orderNum++;
 
                     // the RiskifieGateway is responsible for sending orders to Riskified servers
-                    RiskifiedGateway gateway = new RiskifiedGateway(new Uri(riskifiedUrl), authToken, domain,logger);
+                    RiskifiedGateway gateway = new RiskifiedGateway(riskifiedOrderWebhookUrl, authToken, domain);
 
                     int orderIdAtRiskified;
 
@@ -92,7 +98,7 @@ namespace Riskified.SDK.Sample
                     // catching 
                     Console.WriteLine("Exception thrown on order field validation: " + e.Message);
                 }
-                catch (OrderTransactionException e)
+                catch (RiskifiedTransactionException e)
                 {
                     Console.WriteLine("Exception thrown on transaction: " + e.Message);
                 }
@@ -115,7 +121,7 @@ namespace Riskified.SDK.Sample
         /// <param name="notification">The notification object that was received</param>
         private static void NotificationReceived(Notification notification)
         {
-            Console.WriteLine("New "+ notification.Status + " Notification Received for order with ID:" + notification.OrderId + ". Notification verified? " + notification.IsValidatedNotification);
+            Console.WriteLine("New "+ notification.Status + " Notification Received for order with ID:" + notification.OrderId);
         }
 
         /// <summary>
@@ -169,7 +175,7 @@ namespace Riskified.SDK.Sample
 
         private static void Log(string message,string level)
         {
-            Console.WriteLine(string.Format("{0}  {1}  {2}",DateTime.Now,level,message));
+            Console.WriteLine("\nLOG:: {0}  {1}  {2}", DateTime.Now, level, message);
         }
         public void Debug(string message)
         {

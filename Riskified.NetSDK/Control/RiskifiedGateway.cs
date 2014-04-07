@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -15,25 +16,17 @@ namespace Riskified.NetSDK.Control
     /// </summary>
     public class RiskifiedGateway
     {
-        private static readonly string AssemblyVersion;
-        private readonly Uri _riskifiedOrdersTransferAddr;
+        private readonly string _riskifiedOrdersTransferAddr;
         private readonly string _authToken;
         private readonly string _shopDomain;
         // TODO add test class
         
-        static RiskifiedGateway()
-        {
-            // Extracting the product version for later use
-            AssemblyVersion = typeof(RiskifiedGateway).Assembly.GetName().Version.ToString();
-        }
-
-        public RiskifiedGateway(Uri riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain,ILogger logger=null)
+        public RiskifiedGateway(string riskifiedOrdersTransferAddrAddress, string authToken, string shopDomain)
         {
             _riskifiedOrdersTransferAddr = riskifiedOrdersTransferAddrAddress;
             // TODO make sure signature and domain are of valid structure
             _authToken = authToken;
             _shopDomain = shopDomain;
-            LogWrapper.InitializeLogger(logger);
         }
 
         /// <summary>
@@ -43,8 +36,8 @@ namespace Riskified.NetSDK.Control
         /// <param name="order">The Order to create or update</param>
         /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
-        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         public int CreateOrUpdateOrder(Order order)
         {
             return SendOrder(order, false);
@@ -57,7 +50,7 @@ namespace Riskified.NetSDK.Control
         /// <param name="order">The Order to submit</param>
         /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         public int SubmitOrder(Order order)
         {
             return SendOrder(order, true);
@@ -71,7 +64,7 @@ namespace Riskified.NetSDK.Control
         /// <param name="isSubmit">if the order should be submitted for inspection/analysis, flag should be true </param>
         /// <returns>The order ID in riskified servers (for followup only - not used latter)</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="OrderTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         private int SendOrder(Order order,bool isSubmit)
         {
             string jsonOrder;
@@ -83,27 +76,9 @@ namespace Riskified.NetSDK.Control
             {
                 throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
             }
-            
-            HttpWebRequest request = WebRequest.CreateHttp(_riskifiedOrdersTransferAddr);
-            // Set custom Riskified headers
-            string hashCode = HttpDefinitions.CalcHmac(jsonOrder, _authToken);
-            request.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
-            if (isSubmit)
-                request.Headers.Add(HttpDefinitions.SubmitHeaderName, "true");
-            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
-            // TODO add support for gzip compression for non-sandbox env
-            request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.UserAgent = "Riskified.NetSDK/" + AssemblyVersion;
-            request.Accept = "*/*";
-            
-            byte[] bodyBytes = Encoding.UTF8.GetBytes(jsonOrder);
-            request.ContentLength = bodyBytes.Length;
-            
-            Stream body = request.GetRequestStream();
-            body.Write(bodyBytes,0,bodyBytes.Length);
-            body.Close();
+
+            WebRequest request = HttpUtils.GeneratePostRequest(_riskifiedOrdersTransferAddr, jsonOrder, _authToken,
+                _shopDomain,HttpBodyType.JSON, isSubmit);
             WebResponse response;
             try
             {
@@ -112,57 +87,32 @@ namespace Riskified.NetSDK.Control
             catch (Exception e)
             {
                 const string errorMsg = "There was an error sending order to server";
-                LogWrapper.GetInstance().Error(errorMsg,e);
-                throw new OrderTransactionException("There was an error sending order to server",e);
+                LoggingServices.Error(errorMsg,e);
+                throw new RiskifiedTransactionException("There was an error sending order to server",e);
             }
-            
-            body = response.GetResponseStream();
-            if (body != null)
+
+            var transactionResult = HttpUtils.ParseObjectFromJsonResponse < OrderTransactionResult>(response);
+
+            if (transactionResult.IsSuccessful)
             {
-                // Open the stream using a StreamReader for easy access.
-                var reader = new StreamReader(body);
-
-                // Read the content.
-                string responseFromServer = reader.ReadToEnd();
-                reader.Close();
-                body.Close();
-                response.Close();
-
-                string calculatedHmac = HttpDefinitions.CalcHmac(responseFromServer, _authToken);
-                bool isValidatedResponse =
-                        calculatedHmac.Equals(response.Headers.Get(HttpDefinitions.HmacHeaderName));
-                OrderTransactionResult transactionResult;
-                try
-                {
-                    transactionResult = JsonConvert.DeserializeObject<OrderTransactionResult>(responseFromServer);
-                }
-                catch (Exception e)
-                {
-                    string errorMsg =
-                        "Unable to parse response body - order state in riskified servers unknown. Verification of data integrity result was: " +
-                        isValidatedResponse + ". Body was: " +
-                        responseFromServer;
-                    LogWrapper.GetInstance().Error(errorMsg,e);
-                    throw new OrderTransactionException(errorMsg,e);
-                }
-                
-                if (transactionResult.IsSuccessful)
-                {
-                    if(transactionResult.SuccessfulResult == null ||
-                        (transactionResult.SuccessfulResult.Status != "submitted" &&
-                         transactionResult.SuccessfulResult.Status != "created" &&
-                         transactionResult.SuccessfulResult.Status != "updated"))
-                        throw new OrderTransactionException("Error receiving valid response from riskified server - contact Riskified");
-                }
-                else
-                {
-                    //TODO handle case of unsuccessful tranaction of order
-                    throw new OrderTransactionException("Case of failed response not implemented yet");
-                }
-                
-                if (transactionResult.SuccessfulResult.Id != null) return transactionResult.SuccessfulResult.Id.Value;
+                if (transactionResult.SuccessfulResult == null ||
+                    (transactionResult.SuccessfulResult.Status != "submitted" &&
+                     transactionResult.SuccessfulResult.Status != "created" &&
+                     transactionResult.SuccessfulResult.Status != "updated"))
+                    throw new RiskifiedTransactionException(
+                        "Error receiving valid response from riskified server - contact Riskified");
             }
-            throw new OrderTransactionException("Received bad response from riskified server - contact Riskified");
+            else
+            {
+                //TODO handle case of unsuccessful tranaction of order
+                throw new RiskifiedTransactionException("Case of failed response not implemented yet");
+            }
+            if (transactionResult.SuccessfulResult.Id != null)
+                    return transactionResult.SuccessfulResult.Id.Value;
+
+            string err = "Unknown Error occured - No Id received for a successful order";
+            LoggingServices.Error(err);
+            throw new RiskifiedTransactionException(err);
 
         }
 

@@ -2,7 +2,7 @@
 
 namespace Riskified.NetSDK.Model
 {
-    public class OrderTransactionResult
+    internal class OrderTransactionResult
     {
         [JsonProperty(PropertyName = "order",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public SuccessfulOrderTransactionData SuccessfulResult { get; set; }
@@ -22,13 +22,13 @@ namespace Riskified.NetSDK.Model
         }
     }
 
-    public class FailedTransactionData
+    internal class FailedTransactionData
     {
         [JsonProperty(PropertyName = "message",Required = Required.Always)]
         public string ErrorMessage { get; set; }
     }
 
-    public class SuccessfulOrderTransactionData
+    internal class SuccessfulOrderTransactionData
     {
 
         [JsonProperty(PropertyName = "id",Required = Required.Always)]

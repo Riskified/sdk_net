@@ -1,10 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Newtonsoft.Json;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Model;
@@ -20,7 +17,7 @@ namespace Riskified.NetSDK.Control
         private readonly string _localListeningEndpoint;
         private readonly string _authToken,_shopDomain;
         // TODO add test class
-        public NotificationHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain, ILogger logger = null)
+        public NotificationHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add(localListeningEndpoint);
@@ -29,98 +26,40 @@ namespace Riskified.NetSDK.Control
             _localListeningEndpoint = localListeningEndpoint;
             _authToken = authToken;
             _shopDomain = shopDomain;
-            LogWrapper.InitializeLogger(logger);
         }
 
         /// <summary>
-        /// Registers a local (client) endpoint for notification messages 
+        /// Registers (maps) the merchant's webhook for notification messages  
         /// Will replace all previous endpoints registered by that specific merchant
+        /// This method doesn't test or verify that the webhook exists and responsive
         /// </summary>
-        /// <param name="riskifiedRegistrationEndpoint"></param>
-        /// <exception cref="RiskifiedException"></exception>
-        public void RegisterEndPointForNotifications(string riskifiedRegistrationEndpoint)
+        /// <param name="riskifiedRegistrationEndpoint">Riskified registration webhook as received from Riskified</param>
+        /// <param name="merchantNotificationsWebhook">The merchant webhook that will receive notifications on orders status</param>
+        /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
+        /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
+        /// <exception cref="WebhookRegistrationException">thrown if the registration couldn't be made due to bad request format or parameters</exception>
+        /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
+        public static void RegisterMerchantNotificationsWebhook(string riskifiedRegistrationEndpoint,
+            string merchantNotificationsWebhook, string authToken, string shopDomain)
         {
-            string tmpJsonStr = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + _localListeningEndpoint + "\"}";
+            string createJson = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + merchantNotificationsWebhook + "\"}";
+            SendMerchantRegistrationRequest(createJson,riskifiedRegistrationEndpoint,authToken,shopDomain);
+        }
 
-            HttpWebRequest request = WebRequest.CreateHttp(riskifiedRegistrationEndpoint);
-            // Set custom Riskified headers
-            string hashCode = HttpDefinitions.CalcHmac(tmpJsonStr,_authToken);
-            request.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
-            request.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
-            // TODO add support for gzip compression for non-sandbox env
-            request.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
-            request.Method = "POST";
-            request.ContentType = "application/json";
-            request.UserAgent = "Riskified.NetSDK/";
-            request.Accept = "*/*";
+        /// <summary>
+        /// Un-Registers (erases mapping) of any webhooks existed for notification messages for the merchant at Riskified
+        /// </summary>
+        /// <param name="riskifiedRegistrationEndpoint">Riskified registration webhook as received from Riskified</param>
+        /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
+        /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
+        /// <exception cref="WebhookRegistrationException">thrown if the registration couldn't be made due to bad request format or parameters</exception>
+        /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
+        public static void UnRegisterMerchantNotificationWebhooks(string riskifiedRegistrationEndpoint, string authToken,
+            string shopDomain)
+        {
+            string deleteJson = "{\"action_type\" : \"delete\"}";
 
-            byte[] bodyBytes = Encoding.UTF8.GetBytes(tmpJsonStr);
-            request.ContentLength = bodyBytes.Length;
-
-            Stream body = request.GetRequestStream();
-            body.Write(bodyBytes, 0, bodyBytes.Length);
-            body.Close();
-            WebResponse response;
-            try
-            {
-                response = request.GetResponse();
-            }
-            catch (Exception e)
-            {
-                const string errorMsg = "There was an error sending order to server";
-                LogWrapper.GetInstance().Error(errorMsg, e);
-                throw new OrderTransactionException("There was an error sending order to server", e);
-            }
-
-            body = response.GetResponseStream();
-            if (body != null)
-            {
-                // Open the stream using a StreamReader for easy access.
-                var reader = new StreamReader(body);
-
-                // Read the content.
-                string responseFromServer = reader.ReadToEnd();
-                reader.Close();
-                body.Close();
-                response.Close();
-
-                string calculatedHmac = HttpDefinitions.CalcHmac(responseFromServer, _authToken);
-                bool isValidatedResponse =
-                        calculatedHmac.Equals(response.Headers.Get(HttpDefinitions.HmacHeaderName));
-                string resultStr;
-                try
-                {
-                    resultStr = responseFromServer;
-                    //transactionResult = JsonConvert.DeserializeObject<OrderTransactionResult>(responseFromServer);
-                }
-                catch (Exception e)
-                {
-                    string errorMsg =
-                        "Unable to parse response body - Notifications webhook in riskified servers not changed. Verification of data integrity result was: " +
-                        isValidatedResponse + ". Body was: " +
-                        responseFromServer;
-                    LogWrapper.GetInstance().Error(errorMsg, e);
-                    throw new RiskifiedException(errorMsg, e);
-                }
-                /*
-                if (transactionResult.IsSuccessful)
-                {
-                    if (transactionResult.SuccessfulResult == null ||
-                        (transactionResult.SuccessfulResult.Status != "submitted" &&
-                         transactionResult.SuccessfulResult.Status != "created" &&
-                         transactionResult.SuccessfulResult.Status != "updated"))
-                        throw new OrderTransactionException("Error receiving valid response from riskified server - contact Riskified");
-                }
-                else
-                {
-                    //TODO handle case of unsuccessful tranaction of order
-                    throw new OrderTransactionException("Case of failed response not implemented yet");
-                }
-
-                if (transactionResult.SuccessfulResult.Id != null) return transactionResult.SuccessfulResult.Id.Value;
-                 */
-            }
-            throw new OrderTransactionException("Received bad response from riskified server - contact Riskified");
+            SendMerchantRegistrationRequest(deleteJson,riskifiedRegistrationEndpoint, authToken, shopDomain);
         }
 
         public void StopReceiveNotifications()
@@ -152,7 +91,7 @@ namespace Riskified.NetSDK.Control
                         string.Format(
                             "Unable to start the HTTP webhook listener on: {0}. Check firewall configuration and make sure the app is running under admin privleges",
                             _localListeningEndpoint);
-                    LogWrapper.GetInstance().Fatal(errorMsg, e);
+                    LoggingServices.Fatal(errorMsg, e);
                     throw new NotifierServerFailedToStartException(errorMsg, e);
                 }
             }
@@ -168,33 +107,25 @@ namespace Riskified.NetSDK.Control
                     // reaches here when a connection was made
                     var request = context.Request;
 
-
                     if (!request.HasEntityBody)
                     {
-                        LogWrapper.GetInstance().Error("Received HTTP notification with no body - shouldn't happen");
+                        LoggingServices.Error("Received HTTP notification with no body - shouldn't happen");
                         continue;
                     }
 
-                    var stream = request.InputStream;
-
-                    var reader = new StreamReader(stream);
-                    string notificationString = reader.ReadToEnd();
-                    // verify that the notification is valid and authentic - even if not we still try to parse it
-                    string calculatedHmac = HttpDefinitions.CalcHmac(notificationString, _authToken);
-                    bool isValidatedNotification =
-                        calculatedHmac.Equals(request.Headers.Get(HttpDefinitions.HmacHeaderName));
+                    string notificationBody = HttpUtils.ExtractAndVerifyRequestBody(request);
 
                     // parsing the notification body to extract id and status of order
                     var regex = new Regex(@"^id=(?<id>\d+?)&status=(?<status>approved|declined)$",
                         RegexOptions.IgnoreCase);
-                    Match m = regex.Match(notificationString);
+                    Match m = regex.Match(notificationBody);
                     string responseString;
                     try
                     {
                         int id = int.Parse(m.Groups["id"].Value);
                         var status =
                             (OrderStatus) Enum.Parse(typeof (OrderStatus), m.Groups["status"].Value, true);
-                        var n = new Notification(id, status, isValidatedNotification);
+                        var n = new Notification(id, status);
                         // running callback to call merchant code on the notification
                         _notificationReceivedCallback(n);
                         responseString =
@@ -204,32 +135,20 @@ namespace Riskified.NetSDK.Control
                     }
                     catch (Exception e)
                     {
-                        LogWrapper.GetInstance()
-                            .Error(
+                        LoggingServices.Error(
                                 "Unable to parse the notification. Was not in the correct format. Data was: " +
-                                notificationString, e);
+                                notificationBody, e);
                         responseString = "<HTML><BODY> Merchant couldn't parse notification message</BODY></HTML>";
                     }
 
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;
                     // Construct a simple response. 
-                    string hashCode = HttpDefinitions.CalcHmac(responseString, _authToken);
-                    response.Headers.Add(HttpDefinitions.HmacHeaderName, hashCode);
-                    response.Headers.Add(HttpDefinitions.ShopDomainHeaderName, _shopDomain);
-                    // TODO add support for gzip compression for non-sandbox env
-                    response.Headers.Add("Accept-Encoding", "gzip,deflate,sdch");
-                    response.ContentType = "HTML";
-                    byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                    response.ContentLength64 = buffer.Length;
-                    Stream output = response.OutputStream;
-                    output.Write(buffer, 0, buffer.Length);
-                    output.Close();
+                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString);
                 }
                 catch (Exception e)
                 {
-                    LogWrapper.GetInstance()
-                        .Error("An error occured will receiving notification. Specific request was skipped", e);
+                    LoggingServices.Error("An error occured will receiving notification. Specific request was skipped", e);
                     // trying to restart listening - maybe connection was cut shortly
                     if (!_listener.IsListening)
                     {
@@ -243,26 +162,57 @@ namespace Riskified.NetSDK.Control
         {
             int retriesMade = 0;
 
-            LogWrapper.GetInstance().Info("HttpListener is crushed. Waiting 30 seconds before restarting");
+            LoggingServices.Info("HttpListener is crushed. Waiting 30 seconds before restarting");
             while (retriesMade < 3)
             {
                 Thread.Sleep(30000);
                 retriesMade++;
-                LogWrapper.GetInstance().Info("Trying to restart HttpListener for the " + retriesMade + "time");
+                LoggingServices.Info("Trying to restart HttpListener for the " + retriesMade + "time");
                 try
                 {
                     _listener.Start();
                 }
                 catch (Exception e)
                 {
-                    LogWrapper.GetInstance().Error("Restart # "+ retriesMade +" failed",e);
+                    LoggingServices.Error("Restart # "+ retriesMade +" failed",e);
                 }
             
             }
             string errorMsg = "Failed to restart HttpListener after " + retriesMade +
                               " attempts. Notifications will not be received. Please check the connection and configuration of the server";
-            LogWrapper.GetInstance().Fatal(errorMsg);
+            LoggingServices.Fatal(errorMsg);
             throw new NotifierServerFailedToStartException(errorMsg);
         }
+
+        private static void SendMerchantRegistrationRequest(string jsonBody,string riskifiedRegistrationEndpoint, string authToken, string shopDomain)
+        {
+            WebRequest request = HttpUtils.GeneratePostRequest(riskifiedRegistrationEndpoint, jsonBody, authToken,
+                shopDomain, HttpBodyType.JSON);
+
+            WebResponse response;
+            try
+            {
+                response = request.GetResponse();
+            }
+            catch (Exception e)
+            {
+                const string errorMsg = "There was an error in the registration process";
+                LoggingServices.Error(errorMsg, e);
+                throw new RiskifiedTransactionException(errorMsg, e);
+            }
+
+            NotificationRegistrationResult registerResult =
+                HttpUtils.ParseObjectFromJsonResponse<NotificationRegistrationResult>(response);
+
+            if (!registerResult.IsActionSucceeded)
+            {
+                string errorMsg = registerResult.Message ?? "Unknown Error occured - Registration status unknown";
+                LoggingServices.Error(errorMsg);
+                throw new WebhookRegistrationException(errorMsg);
+            }
+            LoggingServices.Info("Registration Successful: " + registerResult.Message);
+        }
     }
+
+
 }
