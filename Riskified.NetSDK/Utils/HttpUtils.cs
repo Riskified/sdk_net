@@ -142,10 +142,16 @@ namespace Riskified.NetSDK.Utils
             return calculatedHmac.Equals(hmacValueToVerify);
         }
 
-        public static void BuildAndSendResponse(HttpListenerResponse response, string authToken,string shopDomain, string body)
+        public static void BuildAndSendResponse(HttpListenerResponse response, string authToken,string shopDomain, string body,bool isActionSucceeded)
         {
             AddDefaultHeaders(response.Headers,authToken,shopDomain,body);
-            response.ContentType = "HTML";
+            response.ContentType = "text/html";
+            response.ContentEncoding = Encoding.UTF8;
+            if (isActionSucceeded)
+                response.StatusCode = (int) HttpStatusCode.OK;
+            else
+                response.StatusCode = (int) HttpStatusCode.BadRequest;
+
             byte[] buffer = Encoding.UTF8.GetBytes(body);
             response.ContentLength64 = buffer.Length;
             Stream output = response.OutputStream;

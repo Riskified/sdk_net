@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -120,6 +121,7 @@ namespace Riskified.NetSDK.Control
                         RegexOptions.IgnoreCase);
                     Match m = regex.Match(notificationBody);
                     string responseString;
+                    bool isActionSucceeded = true;
                     try
                     {
                         int id = int.Parse(m.Groups["id"].Value);
@@ -130,7 +132,7 @@ namespace Riskified.NetSDK.Control
                         _notificationReceivedCallback(n);
                         responseString =
                             string.Format(
-                                "<HTML><BODY> Merchant Received Notification For Order {0} With status {1} </BODY></HTML>",
+                                "<HTML><BODY>Merchant Received Notification For Order {0} With status {1} </BODY></HTML>",
                                 n.OrderId, n.Status);
                     }
                     catch (Exception e)
@@ -138,13 +140,14 @@ namespace Riskified.NetSDK.Control
                         LoggingServices.Error(
                                 "Unable to parse the notification. Was not in the correct format. Data was: " +
                                 notificationBody, e);
-                        responseString = "<HTML><BODY> Merchant couldn't parse notification message</BODY></HTML>";
+                        responseString = "<HTML><BODY>Merchant couldn't parse notification message</BODY></HTML>";
+                        isActionSucceeded = false;
                     }
 
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;
                     // Construct a simple response. 
-                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString);
+                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString,isActionSucceeded);
                 }
                 catch (Exception e)
                 {
@@ -190,28 +193,48 @@ namespace Riskified.NetSDK.Control
             WebRequest request = HttpUtils.GeneratePostRequest(riskifiedRegistrationWebhookUrl, jsonBody, authToken,
                 shopDomain, HttpBodyType.JSON);
 
-            WebResponse response;
+            HttpWebResponse response;
             try
             {
-                response = request.GetResponse();
+                response = (HttpWebResponse) request.GetResponse();
+            }
+            catch (WebException wex)
+            {
+                string error = "There was an unknown error in the registration process";
+                if (wex.Response != null)
+                {
+                    HttpWebResponse errorResponse = (HttpWebResponse) wex.Response;
+                    
+                    NotificationRegistrationResult result = HttpUtils.ParseObjectFromJsonResponse<NotificationRegistrationResult>(errorResponse);
+                    if (errorResponse.StatusCode == HttpStatusCode.InternalServerError)
+                        error = "Server side error: ";
+                    else if (errorResponse.StatusCode == HttpStatusCode.BadRequest)
+                        error = "Client side error: ";
+                    else
+                        error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
+                    error += result.Message;
+                }
+                LoggingServices.Error(error, wex);
+                throw new RiskifiedTransactionException(error,wex);
             }
             catch (Exception e)
             {
-                const string errorMsg = "There was an error in the registration process";
+                const string errorMsg = "There was an unknown error in the registration process";
                 LoggingServices.Error(errorMsg, e);
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
 
             NotificationRegistrationResult registerResult =
                 HttpUtils.ParseObjectFromJsonResponse<NotificationRegistrationResult>(response);
-
+            /*
             if (!registerResult.IsActionSucceeded)
             {
                 string errorMsg = registerResult.Message ?? "Unknown Error occured - Registration status unknown";
                 LoggingServices.Error(errorMsg);
                 throw new WebhookRegistrationException(errorMsg);
             }
-            LoggingServices.Info("Registration Successful: " + registerResult.Message);
+             */
+            LoggingServices.Info("Registration Successful: " + registerResult.SuccessfulResult.Message);
         }
     }
 

@@ -32,7 +32,7 @@ namespace Riskified.SDK.Sample
             // registration:
             NotificationHandler.RegisterMerchantNotificationsWebhook(riskifiedHostUrl,merchantNotificationsWebhook,authToken,domain);
             // un-registration:
-            //NotificationHandler.UnRegisterMerchantNotificationWebhooks(riskifiedRegistrationWebhookUrl, authToken, domain);
+            //NotificationHandler.UnRegisterMerchantNotificationWebhooks(riskifiedHostUrl, authToken, domain);
             #endregion
 
             #region Notification Server setup and activation
