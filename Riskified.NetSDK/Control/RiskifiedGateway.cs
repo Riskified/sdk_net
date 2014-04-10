@@ -95,12 +95,13 @@ namespace Riskified.NetSDK.Control
 
             if (transactionResult.IsSuccessful)
             {
-                if (transactionResult.SuccessfulResult == null ||
+                if (transactionResult.SuccessfulResult == null/* ||
                     (transactionResult.SuccessfulResult.Status != "submitted" &&
                      transactionResult.SuccessfulResult.Status != "created" &&
-                     transactionResult.SuccessfulResult.Status != "updated"))
+                     transactionResult.SuccessfulResult.Status != "updated" &&
+                     transactionResult.SuccessfulResult.Status != "captured")*/)
                     throw new RiskifiedTransactionException(
-                        "Error receiving valid response from riskified server - contact Riskified");
+                        "Error receiving valid response from riskified server - response wasn't in a known format");
             }
             else
             {
