@@ -2,11 +2,10 @@ using System;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Model;
 
 namespace Riskified.NetSDK.Utils
 {
-    public static class InputValidators
+    internal static class InputValidators
     {
         private static bool IsInputFullMatchingRegex(string value, string regex)
         {

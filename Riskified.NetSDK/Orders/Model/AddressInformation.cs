@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Riskified.NetSDK.Utils;
 
-namespace Riskified.NetSDK.Model
+namespace Riskified.NetSDK.Orders
 {
     // TODO add test classes for all model classes
     public class AddressInformation

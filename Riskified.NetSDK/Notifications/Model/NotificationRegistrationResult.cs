@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Riskified.NetSDK.Model
+namespace Riskified.NetSDK.Notifications
 {
-    internal class NotificationRegistrationResult
+    public class NotificationRegistrationResult
     {
         [JsonProperty(PropertyName = "registration_result", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public NotificationResultMessage SuccessfulResult { get; set; }
@@ -18,11 +18,9 @@ namespace Riskified.NetSDK.Model
         [JsonIgnore]
         public bool IsSuccessful { get { return SuccessfulResult != null; } }
 
-        [JsonIgnore]
-        public string Message { get { return IsSuccessful ? SuccessfulResult.Message : FailedResult.Message; } }
     }
 
-    internal class NotificationResultMessage
+    public class NotificationResultMessage
     {
         [JsonProperty(PropertyName = "message", Required = Required.Always, NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; set; }

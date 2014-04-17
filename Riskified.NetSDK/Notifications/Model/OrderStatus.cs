@@ -1,4 +1,4 @@
-﻿namespace Riskified.NetSDK.Model
+﻿namespace Riskified.NetSDK.Notifications
 {
     public enum OrderStatus
     {

@@ -5,12 +5,11 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
-using Riskified.NetSDK.Model;
 using Riskified.NetSDK.Utils;
 
-namespace Riskified.NetSDK.Control
+namespace Riskified.NetSDK.Notifications
 {
-    public class NotificationHandler
+    public class NotificationsHandler
     {
         private readonly HttpListener _listener;
         private readonly Action<Notification> _notificationReceivedCallback;
@@ -18,7 +17,7 @@ namespace Riskified.NetSDK.Control
         private readonly string _localListeningEndpoint;
         private readonly string _authToken,_shopDomain;
         // TODO add test class
-        public NotificationHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain)
+        public NotificationsHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add(localListeningEndpoint);
@@ -38,13 +37,22 @@ namespace Riskified.NetSDK.Control
         /// <param name="merchantNotificationsWebhook">The merchant webhook that will receive notifications on orders status</param>
         /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
         /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
-        /// <exception cref="WebhookRegistrationException">thrown if the registration couldn't be made due to bad request format or parameters</exception>
         /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
-        public static void RegisterMerchantNotificationsWebhook(string riskifiedHostUrl,
+        /// <returns>Registration result - can be successful or failed</returns>
+        public static NotificationRegistrationResult RegisterMerchantNotificationsWebhook(string riskifiedHostUrl,
             string merchantNotificationsWebhook, string authToken, string shopDomain)
         {
             string createJson = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + merchantNotificationsWebhook + "\"}";
-            SendMerchantRegistrationRequest(createJson,riskifiedHostUrl,authToken,shopDomain);
+            var regRes =  SendMerchantRegistrationRequest(createJson,riskifiedHostUrl,authToken,shopDomain);
+            if (regRes.IsSuccessful)
+            {
+                LoggingServices.Info("Registration Successful: " + regRes.SuccessfulResult.Message);
+            }
+            else
+            {
+                LoggingServices.Error("Registration Unsuccessful: " + regRes.FailedResult.Message);
+            }
+            return regRes;
         }
 
         /// <summary>
@@ -53,14 +61,23 @@ namespace Riskified.NetSDK.Control
         /// <param name="riskifiedRegistrationEndpoint">Riskified registration webhook as received from Riskified</param>
         /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
         /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
-        /// <exception cref="WebhookRegistrationException">thrown if the registration couldn't be made due to bad request format or parameters</exception>
         /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
-        public static void UnRegisterMerchantNotificationWebhooks(string riskifiedRegistrationEndpoint, string authToken,
+        /// <returns>Registration result - can be successful or failed</returns>
+        public static NotificationRegistrationResult UnRegisterMerchantNotificationWebhooks(string riskifiedRegistrationEndpoint, string authToken,
             string shopDomain)
         {
             string deleteJson = "{\"action_type\" : \"delete\"}";
 
-            SendMerchantRegistrationRequest(deleteJson,riskifiedRegistrationEndpoint, authToken, shopDomain);
+            var unregisterRes =  SendMerchantRegistrationRequest(deleteJson,riskifiedRegistrationEndpoint, authToken, shopDomain);
+            if (unregisterRes.IsSuccessful)
+            {
+                LoggingServices.Info("Unregistration Successful: " + unregisterRes.SuccessfulResult.Message);
+            }
+            else
+            {
+                LoggingServices.Error("Unregistration Unsuccessful: " + unregisterRes.FailedResult.Message);
+            }
+            return unregisterRes;
         }
 
         public void StopReceiveNotifications()
@@ -187,55 +204,13 @@ namespace Riskified.NetSDK.Control
             throw new NotifierServerFailedToStartException(errorMsg);
         }
 
-        private static void SendMerchantRegistrationRequest(string jsonBody,string riskifiedHostUrl, string authToken, string shopDomain)
+        private static NotificationRegistrationResult SendMerchantRegistrationRequest(string jsonBody, string riskifiedHostUrl, string authToken, string shopDomain)
         {
             Uri riskifiedRegistrationWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl, "/webhooks/merchant_register_notification_webhook");
-            WebRequest request = HttpUtils.GeneratePostRequest(riskifiedRegistrationWebhookUrl, jsonBody, authToken,
-                shopDomain, HttpBodyType.JSON);
-
-            HttpWebResponse response;
-            try
-            {
-                response = (HttpWebResponse) request.GetResponse();
-            }
-            catch (WebException wex)
-            {
-                string error = "There was an unknown error in the registration process";
-                if (wex.Response != null)
-                {
-                    HttpWebResponse errorResponse = (HttpWebResponse) wex.Response;
-                    
-                    NotificationRegistrationResult result = HttpUtils.ParseObjectFromJsonResponse<NotificationRegistrationResult>(errorResponse);
-                    if (errorResponse.StatusCode == HttpStatusCode.InternalServerError)
-                        error = "Server side error: ";
-                    else if (errorResponse.StatusCode == HttpStatusCode.BadRequest)
-                        error = "Client side error: ";
-                    else
-                        error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
-                    error += result.Message;
-                }
-                LoggingServices.Error(error, wex);
-                throw new RiskifiedTransactionException(error,wex);
-            }
-            catch (Exception e)
-            {
-                const string errorMsg = "There was an unknown error in the registration process";
-                LoggingServices.Error(errorMsg, e);
-                throw new RiskifiedTransactionException(errorMsg, e);
-            }
-
-            NotificationRegistrationResult registerResult =
-                HttpUtils.ParseObjectFromJsonResponse<NotificationRegistrationResult>(response);
-            /*
-            if (!registerResult.IsActionSucceeded)
-            {
-                string errorMsg = registerResult.Message ?? "Unknown Error occured - Registration status unknown";
-                LoggingServices.Error(errorMsg);
-                throw new WebhookRegistrationException(errorMsg);
-            }
-             */
-            LoggingServices.Info("Registration Successful: " + registerResult.SuccessfulResult.Message);
+            NotificationRegistrationResult registerResult = HttpUtils.PostAndParseResponseToObject<NotificationRegistrationResult>(riskifiedRegistrationWebhookUrl,jsonBody, authToken, shopDomain);
+            return registerResult;
         }
+
     }
 
 

@@ -44,9 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Control\NotificationHandler.cs" />
-    <Compile Include="Exceptions\WebhookRegistrationException.cs" />
-    <Compile Include="Model\NotificationRegistrationResult.cs" />
+    <Compile Include="Notifications\Control\NotificationHandler.cs" />
+    <Compile Include="Notifications\Model\NotificationRegistrationResult.cs" />
     <Compile Include="Utils\InputValidators.cs" />
     <Compile Include="Exceptions\NotifierServerFailedToStartException.cs" />
     <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />
@@ -56,22 +55,23 @@
     <Compile Include="Utils\HttpUtils.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\LoggingServices.cs" />
-    <Compile Include="Model\Customer.cs" />
-    <Compile Include="Model\DiscountCode.cs" />
-    <Compile Include="Model\LineItem.cs" />
-    <Compile Include="Model\Notification.cs" />
-    <Compile Include="Model\OrderStatus.cs" />
-    <Compile Include="Model\OrderTransactionResult.cs" />
-    <Compile Include="Model\AddressInformation.cs" />
-    <Compile Include="Model\Order.cs" />
-    <Compile Include="Model\PaymentDetails.cs" />
-    <Compile Include="Model\ShippingLine.cs" />
+    <Compile Include="Orders\Model\Customer.cs" />
+    <Compile Include="Orders\Model\DiscountCode.cs" />
+    <Compile Include="Orders\Model\LineItem.cs" />
+    <Compile Include="Notifications\Model\Notification.cs" />
+    <Compile Include="Notifications\Model\OrderStatus.cs" />
+    <Compile Include="Orders\Model\OrderTransactionResult.cs" />
+    <Compile Include="Orders\Model\AddressInformation.cs" />
+    <Compile Include="Orders\Model\Order.cs" />
+    <Compile Include="Orders\Model\PaymentDetails.cs" />
+    <Compile Include="Orders\Model\ShippingLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Control\RiskifiedGateway.cs" />
+    <Compile Include="Orders\Control\OrdersGateway.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

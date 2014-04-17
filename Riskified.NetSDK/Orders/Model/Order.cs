@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Riskified.NetSDK.Utils;
 
-namespace Riskified.NetSDK.Model
+namespace Riskified.NetSDK.Orders
 {
 
     public class Order

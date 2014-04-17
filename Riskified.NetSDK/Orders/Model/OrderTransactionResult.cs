@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace Riskified.NetSDK.Model
+namespace Riskified.NetSDK.Orders
 {
-    internal class OrderTransactionResult
+    public class OrderTransactionResult
     {
         [JsonProperty(PropertyName = "order",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public SuccessfulOrderTransactionData SuccessfulResult { get; set; }
@@ -22,19 +22,19 @@ namespace Riskified.NetSDK.Model
         }
     }
 
-    internal class FailedTransactionData
+    public class FailedTransactionData
     {
         [JsonProperty(PropertyName = "message",Required = Required.Always)]
         public string ErrorMessage { get; set; }
     }
 
-    internal class SuccessfulOrderTransactionData
+    public class SuccessfulOrderTransactionData
     {
 
         [JsonProperty(PropertyName = "id",Required = Required.Always)]
         public int? Id { get; set; }
 
         [JsonProperty(PropertyName = "status", Required = Required.Always)]
-        public string Status { get; set; }
+        public string StatusMessage { get; set; }
     }
 }

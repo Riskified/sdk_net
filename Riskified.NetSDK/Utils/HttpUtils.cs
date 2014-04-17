@@ -6,7 +6,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Control;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
 
@@ -30,8 +29,68 @@ namespace Riskified.NetSDK.Utils
         static HttpUtils()
         {
             // Extracting the product version for later use
-            AssemblyVersion = typeof (RiskifiedGateway).Assembly.GetName().Version.ToString();
+            AssemblyVersion = typeof (HttpUtils).Assembly.GetName().Version.ToString();
         }
+
+        /// <summary>
+        /// Sends an HTTP Post request to the received url (Riskified server), blocks and waits for response from server
+        /// When response is received, Tries to parse its body from JSON to an object of type 'T' which it returns
+        /// </summary>
+        /// <typeparam name="T">The type of class expected to be received in the response body as JSON</typeparam>
+        /// <param name="riskifiedRegistrationWebhookUrl">The full url with internal path of the relevant riskified webhook</param>
+        /// <param name="body">The (json) body of the HTTP request</param>
+        /// <param name="authToken">The merchant authentication Token</param>
+        /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
+        /// <returns>'T' typed response object</returns>
+        public static T PostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain) where T : class
+        {
+            WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,
+                shopDomain, HttpBodyType.JSON);
+
+            HttpWebResponse response;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException wex)
+            {
+                string error = "There was an unknown error sending data to server";
+                if (wex.Response != null)
+                {
+                    HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
+                    try
+                    {
+                        T errRes = HttpUtils.ParseObjectFromJsonResponse<T>(errorResponse);
+                        return errRes;
+                    }
+                    catch (Exception parseEx)
+                    {
+                        if (errorResponse.StatusCode == HttpStatusCode.InternalServerError)
+                            error = "Server side error (500): ";
+                        else if (errorResponse.StatusCode == HttpStatusCode.BadRequest)
+                            error = "Client side error (400): ";
+                        else
+                            error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
+                        error += parseEx.Message;
+                    }
+                }
+                LoggingServices.Error(error, wex);
+                throw new RiskifiedTransactionException(error, wex);
+            }
+            catch (Exception e)
+            {
+                const string errorMsg = "There was an unknown error connecting to Riskified server";
+                LoggingServices.Error(errorMsg, e);
+                throw new RiskifiedTransactionException(errorMsg, e);
+            }
+
+            T resObj =
+                HttpUtils.ParseObjectFromJsonResponse<T>(response);
+            return resObj;
+        }
+
+
+
 
         private static string CalcHmac(string data, string authToken)
         {
@@ -43,7 +102,7 @@ namespace Riskified.NetSDK.Utils
             return result;
         }
 
-        public static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType,bool shouldIncludeSubmitHeader = false)
+        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType,bool shouldIncludeSubmitHeader = false)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             // Set custom Riskified headers
@@ -77,7 +136,7 @@ namespace Riskified.NetSDK.Utils
             headers.Add("Accept-Encoding", "gzip,deflate,sdch");
         }
 
-        public static T ParseObjectFromJsonResponse<T>(WebResponse response) where T : class
+        private static T ParseObjectFromJsonResponse<T>(WebResponse response) where T : class
         {
             var bodyStream = response.GetResponseStream();
             string responseBody;
