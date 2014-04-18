@@ -36,7 +36,7 @@ namespace Riskified.NetSDK.Utils
 
         public static void ValidateAvsResultCode(string resultCode)
         {
-            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z]$"))
+            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Z,a-z]+$"))
                 throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should be exactly 1 letter. Value was \"{0}\"", resultCode));   
         }
 
