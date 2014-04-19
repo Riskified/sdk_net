@@ -116,7 +116,7 @@ namespace Riskified.NetSDK.Utils
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
             request.UserAgent = "Riskified.NetSDK/" + AssemblyVersion;
             request.Accept = "*/*";
-
+            request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
             request.ContentLength = bodyBytes.Length;
 
