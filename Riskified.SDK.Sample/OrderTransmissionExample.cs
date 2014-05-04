@@ -59,7 +59,7 @@ namespace Riskified.SDK.Sample
                     }
 
                     if(res.IsSuccessful)
-                        Console.WriteLine("Order sent successfully: "+ res.SuccessfulResult.StatusMessage +". Riskified order ID received: " + res.SuccessfulResult.Id);
+                        Console.WriteLine("Order sent successfully: "+ res.SuccessfulResult.Status +". Riskified order ID received: " + res.SuccessfulResult.Id + " Description: " + res.SuccessfulResult.Description);
                     else
                         Console.WriteLine("Error sending order. Error received: "+ res.FailedResult.ErrorMessage);
                 }
