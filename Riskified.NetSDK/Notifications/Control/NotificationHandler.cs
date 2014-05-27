@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -6,6 +7,7 @@ using System.Threading;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Utils;
+using System.Threading.Tasks;
 
 namespace Riskified.NetSDK.Notifications
 {
@@ -131,40 +133,52 @@ namespace Riskified.NetSDK.Notifications
                         continue;
                     }
 
-                    string notificationBody = HttpUtils.ExtractAndVerifyRequestBody(request);
+                    Dictionary<string,string> postParams = HttpUtils.ParsePostRequestParams(request);
 
-                    // parsing the notification body to extract id and status of order
-                    var regex = new Regex(@"^id=(?<id>\d+?)&status=(?<status>approved|declined)$",
-                        RegexOptions.IgnoreCase);
-                    Match m = regex.Match(notificationBody);
-                    string responseString;
-                    bool isActionSucceeded = true;
-                    try
+                    
+                    Notification n = null;
+                    if(postParams != null && postParams.ContainsKey("id") && !string.IsNullOrEmpty(postParams["id"]) && postParams.ContainsKey("status") && !string.IsNullOrEmpty(postParams["status"]))
                     {
-                        int id = int.Parse(m.Groups["id"].Value);
-                        var status =
-                            (OrderStatus) Enum.Parse(typeof (OrderStatus), m.Groups["status"].Value, true);
-                        var n = new Notification(id, status);
-                        // running callback to call merchant code on the notification
-                        _notificationReceivedCallback(n);
-                        responseString =
-                            string.Format(
-                                "<HTML><BODY>Merchant Received Notification For Order {0} With status {1} </BODY></HTML>",
-                                n.OrderId, n.Status);
+                        try
+                        {
+                            int id = int.Parse(postParams["id"]);
+                            var status =
+                                (OrderStatus)Enum.Parse(typeof(OrderStatus), postParams["status"], true);
+                            var description = "";
+                            if(postParams.ContainsKey("description"))
+                            {
+                                description = postParams["description"];
+                            }
+                            n = new Notification(id, status,description);
+                            
+                        }
+                        catch(Exception e)
+                        {
+                            LoggingServices.Error("Unable to parse the notification. Was not in the correct format.", e);
+                        }
                     }
-                    catch (Exception e)
+                    string responseString = null;
+                    if(n == null)
                     {
-                        LoggingServices.Error(
-                                "Unable to parse the notification. Was not in the correct format. Data was: " +
-                                notificationBody, e);
+                        LoggingServices.Error("Unable to parse notification message. Some or all of the post params are missing or invalid");
                         responseString = "<HTML><BODY>Merchant couldn't parse notification message</BODY></HTML>";
-                        isActionSucceeded = false;
                     }
-
+                    else
+                    {
+                        responseString =
+                                string.Format(
+                                    "<HTML><BODY>Merchant Received Notification For Order {0} with status {1} and description {2}</BODY></HTML>",
+                                    n.OrderId, n.Status, n.Description);
+                    }
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;
                     // Construct a simple response. 
-                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString,isActionSucceeded);
+                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString,(n!=null));
+                    if(n != null)
+                    {
+                        // running callback to call merchant code on the notification
+                        Task.Factory.StartNew(() => _notificationReceivedCallback(n));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -207,7 +221,7 @@ namespace Riskified.NetSDK.Notifications
         private static NotificationRegistrationResult SendMerchantRegistrationRequest(string jsonBody, string riskifiedHostUrl, string authToken, string shopDomain)
         {
             Uri riskifiedRegistrationWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl, "/webhooks/merchant_register_notification_webhook");
-            NotificationRegistrationResult registerResult = HttpUtils.PostAndParseResponseToObject<NotificationRegistrationResult>(riskifiedRegistrationWebhookUrl,jsonBody, authToken, shopDomain);
+            NotificationRegistrationResult registerResult = HttpUtils.JsonPostAndParseResponseToObject<NotificationRegistrationResult>(riskifiedRegistrationWebhookUrl,jsonBody, authToken, shopDomain);
             return registerResult;
         }
 

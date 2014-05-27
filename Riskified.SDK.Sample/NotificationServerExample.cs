@@ -16,16 +16,6 @@ namespace Riskified.SDK.Sample
         {
             string merchantNotificationsWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
             
-            #region logger setup [Optional]
-
-            // setting up a logger facade to the system logger using the ILog interface
-            // if a logger facade is created it will enable a peek into the logs created by the SDK and will help understand issues easier
-            var logger = new SimpleExampleLogger();
-            LoggingServices.InitializeLogger(logger);
-
-            #endregion
-
-
             Console.WriteLine("Local Notifications server url set in the config file: " + merchantNotificationsWebhook);
             Console.WriteLine("Press 'r' to register notification webhook, 'u' to UNregister notification webhook, 's' to start the notifications server, 'rs' to register and start the server, else to skip all");
             string key = Console.ReadLine();

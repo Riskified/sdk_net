@@ -35,7 +35,11 @@ namespace Riskified.NetSDK.Orders
             }
             OrdersCount = ordersCount;
             VerifiedEmail = verifiedEmail;
-            CreatedAt = createdAt;
+            if (createdAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(createdAt.Value, "Created At");
+                CreatedAt = createdAt;
+            }
             Note = notes;
         }
 

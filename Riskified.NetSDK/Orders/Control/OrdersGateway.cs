@@ -75,7 +75,7 @@ namespace Riskified.NetSDK.Orders
                 throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
             }
 
-            var transactionResult = HttpUtils.PostAndParseResponseToObject<OrderTransactionResult>(_riskifiedOrdersWebhookUrl, jsonOrder, _authToken, _shopDomain);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderTransactionResult>(_riskifiedOrdersWebhookUrl, jsonOrder, _authToken, _shopDomain,isSubmit);
             return transactionResult;
             /*if (transactionResult.IsSuccessful)
             {

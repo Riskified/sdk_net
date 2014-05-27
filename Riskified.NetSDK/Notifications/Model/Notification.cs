@@ -1,6 +1,6 @@
 ﻿namespace Riskified.NetSDK.Notifications
 {
-    public struct Notification
+    public class Notification
     {
         /// <summary>
         /// A unique order ID received from the Riskified server for later submittion or notification regarding that specific order
@@ -12,10 +12,16 @@
         /// </summary>
         public OrderStatus Status { get; private set; }
 
-        public Notification(int orderId, OrderStatus status) : this()
+        /// <summary>
+        /// A human readable description of the status received
+        /// </summary>
+        public string Description { get; private set; }
+
+        public Notification(int orderId, OrderStatus status, string description)
         {
             OrderId = orderId;
             Status = status;
+            Description = description;
         }
     }
 }

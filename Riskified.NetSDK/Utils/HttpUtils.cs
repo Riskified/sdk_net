@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using Newtonsoft.Json;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Logging;
@@ -42,14 +44,12 @@ namespace Riskified.NetSDK.Utils
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
         /// <returns>'T' typed response object</returns>
-        public static T PostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain) where T : class
+        public static T JsonPostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain,bool isManualSubmit = false) where T : class
         {
-            WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,
-                shopDomain, HttpBodyType.JSON);
-
             HttpWebResponse response;
             try
             {
+                WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,shopDomain, HttpBodyType.JSON,isManualSubmit);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -89,9 +89,6 @@ namespace Riskified.NetSDK.Utils
             return resObj;
         }
 
-
-
-
         private static string CalcHmac(string data, string authToken)
         {
             byte[] key = Encoding.ASCII.GetBytes(authToken);
@@ -119,7 +116,6 @@ namespace Riskified.NetSDK.Utils
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
             request.ContentLength = bodyBytes.Length;
-
             Stream bodyStream = request.GetRequestStream();
             bodyStream.Write(bodyBytes, 0, bodyBytes.Length);
             bodyStream.Close();
@@ -164,10 +160,29 @@ namespace Riskified.NetSDK.Utils
             return transactionResult;
         }
 
-        public static string ExtractAndVerifyRequestBody(HttpListenerRequest request)
+        public static Dictionary<string, string> ParsePostRequestParams(HttpListenerRequest request)
         {
-            Stream s = request.InputStream;
-            return ExtractStreamData(s);
+            if (request.HasEntityBody)
+            {
+                Stream s = request.InputStream;
+                string postData = ExtractStreamData(s);
+                return ExtractPostParams(postData);
+            }
+            return null;
+        }
+
+        private static Dictionary<string, string> ExtractPostParams(string postBody)
+        {
+            Dictionary<string, string> postParams = new Dictionary<string, string>();
+            string[] rawParams = postBody.Split('&');
+            foreach (string param in rawParams)
+            {
+                string[] kvPair = param.Split('=');
+                string key = kvPair[0];
+                string value = HttpUtility.UrlDecode(kvPair[1]);
+                postParams.Add(key, value);
+            }
+            return postParams;
         }
 
         private static string ExtractStreamData(Stream stream)

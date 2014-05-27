@@ -79,8 +79,16 @@ namespace Riskified.NetSDK.Orders
             TotalPriceUsd = totalPriceUsd;
             TotalDiscounts = totalDiscounts;
             CartToken = cartToken;
-            ClosedAt = closedAt;
-            CancelledAt = cancelledAt;
+            if (closedAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(closedAt.Value, "Closed At");
+                ClosedAt = closedAt;
+            }
+            if(cancelledAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(cancelledAt.Value, "Cancelled At");
+                CancelledAt = cancelledAt;
+            }
             CancelReason = cancelReason;
 
         }
