@@ -121,7 +121,7 @@ namespace Riskified.SDK.Sample
         /// <param name="notification">The notification object that was received</param>
         private static void NotificationReceived(Notification notification)
         {
-            Console.WriteLine("New " + notification.Status + " Notification Received for order with ID:" + notification.OrderId);
+            Console.WriteLine("New " + notification.Status + " Notification Received for order with ID:" + notification.OrderId + " With description: " + notification.Description);
         }
     }
 }
