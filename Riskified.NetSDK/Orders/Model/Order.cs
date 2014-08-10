@@ -2,9 +2,8 @@
 using Newtonsoft.Json;
 using Riskified.NetSDK.Utils;
 
-namespace Riskified.NetSDK.Orders
+namespace Riskified.NetSDK.Orders.Model
 {
-
     public class Order
     {
         /// <summary>
@@ -29,13 +28,6 @@ namespace Riskified.NetSDK.Orders
         /// <param name="cartToken">Unique identifier for a particular cart or session that is attached to a particular order. The same ID should be passed in the Beacon JS (optional)</param>
         /// <param name="totalPriceUsd">The price in USD (optional)</param>
         /// <param name="closedAt">The date and time when the order was closed. If the order was closed (optional)</param>
-        /// <param name="cancelledAt">The date and time when the order was cancelled (optional)</param>
-        /// <param name="cancelReason">If the order was cancelled, the value will be one of the following:
-        /// "customer": The customer changed or cancelled the order.
-        /// "fraud": The order was fraudulent.
-        /// "inventory": Items in the order were not in inventory.
-        /// "other": The order was cancelled for a reason not in the list above.
-        /// (optional)</param>
         public Order(int merchantOrderId, string email, Customer customer, PaymentDetails paymentDetails,
             AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
             ShippingLine[] shippingLines,
@@ -43,7 +35,7 @@ namespace Riskified.NetSDK.Orders
             DateTime updatedAt,
             DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null,
             double? totalPriceUsd = null,
-            DateTime? closedAt = null, DateTime? cancelledAt = null, string cancelReason = null)
+            DateTime? closedAt = null)
         {
             InputValidators.ValidatePositiveValue(merchantOrderId,"Merchant Order ID");
             Id = merchantOrderId;
@@ -84,20 +76,9 @@ namespace Riskified.NetSDK.Orders
                 InputValidators.ValidateDateNotDefault(closedAt.Value, "Closed At");
                 ClosedAt = closedAt;
             }
-            if(cancelledAt.HasValue)
-            {
-                InputValidators.ValidateDateNotDefault(cancelledAt.Value, "Cancelled At");
-                CancelledAt = cancelledAt;
-            }
-            CancelReason = cancelReason;
+            
 
         }
-
-        [JsonProperty(PropertyName = "cancel_reason", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
-        public string CancelReason { get; set; }
-
-        [JsonProperty(PropertyName = "cancelled_at", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
-        public DateTime? CancelledAt { get; set; }
 
         [JsonProperty(PropertyName = "cart_token", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string CartToken { get; set; }

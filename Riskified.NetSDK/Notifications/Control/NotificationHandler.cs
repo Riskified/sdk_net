@@ -133,30 +133,16 @@ namespace Riskified.NetSDK.Notifications
                         continue;
                     }
 
-                    Dictionary<string,string> postParams = HttpUtils.ParsePostRequestParams(request);
-
-                    
-                    Notification n = null;
-                    if(postParams != null && postParams.ContainsKey("id") && !string.IsNullOrEmpty(postParams["id"]) && postParams.ContainsKey("status") && !string.IsNullOrEmpty(postParams["status"]))
+                    Notification n;
+                    try
                     {
-                        try
-                        {
-                            int id = int.Parse(postParams["id"]);
-                            var status =
-                                (OrderStatus)Enum.Parse(typeof(OrderStatus), postParams["status"], true);
-                            var description = "";
-                            if(postParams.ContainsKey("description"))
-                            {
-                                description = postParams["description"];
-                            }
-                            n = new Notification(id, status,description);
-                            
-                        }
-                        catch(Exception e)
-                        {
-                            LoggingServices.Error("Unable to parse the notification. Was not in the correct format.", e);
-                        }
+                         n = HttpUtils.ParsePostRequestToObject<Notification>(request);
                     }
+                    catch(Exception e)
+                    {
+                        n = null;
+                    }
+                    
                     string responseString = null;
                     if(n == null)
                     {

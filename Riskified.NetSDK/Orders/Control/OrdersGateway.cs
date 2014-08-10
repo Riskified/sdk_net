@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Exceptions;
 using Riskified.NetSDK.Utils;
+using Riskified.NetSDK.Orders.Model;
 
 namespace Riskified.NetSDK.Orders
 {

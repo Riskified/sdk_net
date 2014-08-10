@@ -7,6 +7,7 @@ using System.Configuration;
 using Riskified.NetSDK.Orders;
 using Riskified.NetSDK.Logging;
 using Riskified.NetSDK.Exceptions;
+using Riskified.NetSDK.Orders.Model;
 
 namespace Riskified.SDK.Sample
 {

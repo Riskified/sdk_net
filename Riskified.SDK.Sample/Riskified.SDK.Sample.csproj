@@ -61,9 +61,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Riskified.NetSDK\Riskified.NetSDK.csproj">
+    <ProjectReference Include="..\Riskified.NetSDK\Riskified.SDK.csproj">
       <Project>{1bd71c22-04ad-4520-a331-c6b3e3bb7793}</Project>
-      <Name>Riskified.NetSDK</Name>
+      <Name>Riskified.SDK</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

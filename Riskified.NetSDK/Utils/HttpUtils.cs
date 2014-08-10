@@ -144,7 +144,12 @@ namespace Riskified.NetSDK.Utils
             {
                 response.Close();
             }
-            
+
+            return JsonStringToObject<T>(responseBody);
+        }
+
+        private static T JsonStringToObject<T>(string responseBody) where T : class
+        {
             T transactionResult;
             try
             {
@@ -160,29 +165,16 @@ namespace Riskified.NetSDK.Utils
             return transactionResult;
         }
 
-        public static Dictionary<string, string> ParsePostRequestParams(HttpListenerRequest request)
+        public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
         {
             if (request.HasEntityBody)
             {
                 Stream s = request.InputStream;
                 string postData = ExtractStreamData(s);
-                return ExtractPostParams(postData);
+                T obj = JsonStringToObject<T>(postData);
+                return obj;
             }
             return null;
-        }
-
-        private static Dictionary<string, string> ExtractPostParams(string postBody)
-        {
-            Dictionary<string, string> postParams = new Dictionary<string, string>();
-            string[] rawParams = postBody.Split('&');
-            foreach (string param in rawParams)
-            {
-                string[] kvPair = param.Split('=');
-                string key = kvPair[0];
-                string value = HttpUtility.UrlDecode(kvPair[1]);
-                postParams.Add(key, value);
-            }
-            return postParams;
         }
 
         private static string ExtractStreamData(Stream stream)
