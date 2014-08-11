@@ -1,8 +1,4 @@
-﻿using System;
-using System.Configuration;
-using System.Threading.Tasks;
-using Riskified.SDK.Exceptions;
-using Riskified.SDK.Logging;
+﻿using Riskified.SDK.Logging;
 
 namespace Riskified.SDK.Sample
 {

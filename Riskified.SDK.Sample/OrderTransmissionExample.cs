@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Configuration;
-using Riskified.SDK.Utils;
-using Riskified.SDK.Orders;
-using Riskified.SDK.Logging;
-using Riskified.SDK.Exceptions;
+using Riskified.SDK.Orders.Control;
 using Riskified.SDK.Orders.Model;
+using Riskified.SDK.Orders.Model.OrderElements;
+using Riskified.SDK.Orders.Model.RefundElements;
+using Riskified.SDK.Utils;
+using Riskified.SDK.Exceptions;
 
 namespace Riskified.SDK.Sample
 {
@@ -31,11 +28,18 @@ namespace Riskified.SDK.Sample
             // sample for order creating and submitting to servers via console
 
             // read action from console
-            Console.WriteLine("press 's' for submit, 'c' for create or 'q' to end");
-            string quitStr = Console.ReadLine();
+            const string menu = "Commands:\n" +
+                                "'c' for create\n" +
+                                "'u' for update\n" +
+                                "'s' for submit\n" +
+                                "'d' for cancel\n" +
+                                "'r' for partial refund\n" +
+                                "'q' to quit";
+            Console.WriteLine(menu);
+            string commandStr = Console.ReadLine();
 
             // loop on console actions 
-            while (quitStr != null && (!quitStr.Equals("q") && (quitStr.Equals("s") || quitStr.Equals("c"))))
+            while (commandStr != null && (!commandStr.Equals("q")))
             {
                 // generate a new order - the sample generates a fixed order with same details but different order number each time
                 // see GenerateOrder for more info on how to create the Order objects
@@ -44,26 +48,51 @@ namespace Riskified.SDK.Sample
                 orderNum++;
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
-                OrdersGateway gateway = new OrdersGateway(RiskifiedEnvironment.Sandbox, authToken, domain);
+                OrdersGateway gateway = new OrdersGateway(RiskifiedEnvironment.Debug, authToken, domain);
                 try
                 {
-                    OrderTransactionResult res;
-                    if (quitStr.Equals("c"))
+                    OrderTransactionResult res=null;
+                    switch (commandStr)
                     {
-                        // sending order for creation (if new orderNum) or update (if existing orderNum)
-                        res = gateway.Create(order);
-                    }
-                    else
-                    {
-                        // sending order for submitting and analysis 
-                        // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
-                        res = gateway.Submit(order);
+                        case "c":
+                            // sending order for creation (if new orderNum) or update (if existing orderNum)
+                            res = gateway.Create(order);
+                            break;
+                        case "s":
+                            // sending order for submitting and analysis 
+                            // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
+                            res = gateway.Submit(order);
+                            break;
+                        case "u":
+                            Console.Write("Updated order id: ");
+                            string upOrderId = Console.ReadLine();
+                            order.Id = int.Parse(upOrderId);
+                            res = gateway.Update(order);
+                            break;
+                        case "d":
+                            Console.Write("Cancelled order id: ");
+                            string canOrderId = Console.ReadLine();
+                            res = gateway.Cancel(new OrderCancellation(int.Parse(canOrderId), DateTime.Now,
+                                "Customer cancelled before shipping"));
+                            break;
+                        case "r":
+                            Console.Write("Refunded order id: ");
+                            string refOrderId = Console.ReadLine();
+                            res = gateway.Refund(new OrderRefund(int.Parse(refOrderId), new [] {new RefundDetails(DateTime.Now,5.3,"USD","Customer partly refunded on shipping fees")}));
+                            break;
                     }
 
-                    if(res.IsSuccessful)
-                        Console.WriteLine("Order sent successfully: "+ res.SuccessfulResult.Status +". Riskified order ID received: " + res.SuccessfulResult.Id + " Description: " + res.SuccessfulResult.Description);
-                    else
-                        Console.WriteLine("Error sending order. Error received: "+ res.FailedResult.ErrorMessage);
+
+                    if (res != null)
+                    {
+                        if (res.IsSuccessful)
+                            Console.WriteLine("Order sent successfully: " + res.SuccessfulResult.Status +
+                                              ". Riskified order ID received: " + res.SuccessfulResult.Id +
+                                              " Description: " + res.SuccessfulResult.Description);
+                        else
+                            Console.WriteLine("Error sending order. Error received: " + res.FailedResult.ErrorMessage);
+                                // TODO fix - what happens if all is  null
+                    }
                 }
                 catch (OrderFieldBadFormatException e)
                 {
@@ -76,8 +105,9 @@ namespace Riskified.SDK.Sample
                 }
 
                 // ask for next action to perform
-                Console.WriteLine("press 's' for submit, 'c' for create or 'q' to end");
-                quitStr = Console.ReadLine();
+                Console.WriteLine();
+                Console.WriteLine(menu);
+                commandStr = Console.ReadLine();
             }
 
             #endregion

@@ -61,8 +61,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Riskified.NetSDK\Riskified.SDK.csproj">
-      <Project>{1bd71c22-04ad-4520-a331-c6b3e3bb7793}</Project>
+    <ProjectReference Include="..\Riskified.SDK\Riskified.SDK.csproj">
+      <Project>{1BD71C22-04AD-4520-A331-C6B3E3BB7793}</Project>
       <Name>Riskified.SDK</Name>
     </ProjectReference>
   </ItemGroup>

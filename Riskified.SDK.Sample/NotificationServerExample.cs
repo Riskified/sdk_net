@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using Riskified.SDK.Logging;
-using Riskified.SDK.Exceptions;
-using Riskified.SDK.Notifications;
 using System.Threading.Tasks;
+using Riskified.SDK.Notifications.Control;
+using Riskified.SDK.Notifications.Model;
 
 namespace Riskified.SDK.Sample
 {
     public class NotificationServerExample
     {
-        private static NotificationsHandler notificationServer;
+        private static NotificationsHandler _notificationServer;
 
         public static void ReceiveNotificationsExample()
         {
@@ -47,8 +45,8 @@ namespace Riskified.SDK.Sample
         public static void StopNotificationServer()
         {
             // make sure you shut down the notification server on system shut down
-            if (notificationServer != null)
-                notificationServer.StopReceiveNotifications();
+            if (_notificationServer != null)
+                _notificationServer.StopReceiveNotifications();
         }
 
         private static void RegisterWebhook(string merchantNotificationsWebhook)
@@ -106,10 +104,10 @@ namespace Riskified.SDK.Sample
             // setup of a notification server listening to incoming notification from riskified
             // the webhook is the url on the local server which the httpServer will be listening at
             // make sure the url is correct (internet reachable ip/address and port, firewall rules etc.)
-            notificationServer = new NotificationsHandler(merchantNotificationsWebhook, NotificationReceived, authToken, domain);
+            _notificationServer = new NotificationsHandler(merchantNotificationsWebhook, NotificationReceived, authToken, domain);
             // the call to notifier.ReceiveNotifications() is blocking and will not return until we call StopReceiveNotifications 
             // so we run it on a different task in this example
-            var t = new Task(notificationServer.ReceiveNotifications);
+            var t = new Task(_notificationServer.ReceiveNotifications);
             t.Start();
             Console.WriteLine("Notification server up and running and listening to notifications on webhook: " + merchantNotificationsWebhook);
         }
