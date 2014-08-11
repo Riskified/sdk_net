@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Riskified.NetSDK.Exceptions
+namespace Riskified.SDK.Exceptions
 {
     public class RiskifiedException  : Exception
     {
-        protected RiskifiedException(string message) : base(message)
+        public RiskifiedException(string message) : base(message)
         {
         }
 

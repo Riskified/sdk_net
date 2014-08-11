@@ -1,9 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
 using System.Xml;
-using Riskified.NetSDK.Exceptions;
+using Riskified.SDK.Exceptions;
 
-namespace Riskified.NetSDK.Utils
+namespace Riskified.SDK.Utils
 {
     internal static class InputValidators
     {

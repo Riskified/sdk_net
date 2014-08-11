@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading.Tasks;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Logging;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Logging;
 
 namespace Riskified.SDK.Sample
 {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Riskified.NetSDK.Notifications
+namespace Riskified.SDK.Notifications
 {
     public class Notification
     {

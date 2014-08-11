@@ -8,10 +8,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Logging;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Logging;
 
-namespace Riskified.NetSDK.Utils
+namespace Riskified.SDK.Utils
 {
     internal enum HttpBodyType
     {
@@ -23,7 +23,6 @@ namespace Riskified.NetSDK.Utils
     internal static class HttpUtils
     {
         private const string ShopDomainHeaderName = "X_RISKIFIED_SHOP_DOMAIN";
-        private const string SubmitHeaderName = "X_RISKIFIED_SUBMIT_NOW";
         private const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
 
         private static readonly string AssemblyVersion;
@@ -44,12 +43,12 @@ namespace Riskified.NetSDK.Utils
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
         /// <returns>'T' typed response object</returns>
-        public static T JsonPostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain,bool isManualSubmit = false) where T : class
+        public static T JsonPostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain) where T : class
         {
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,shopDomain, HttpBodyType.JSON,isManualSubmit);
+                WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,shopDomain, HttpBodyType.JSON);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -99,19 +98,15 @@ namespace Riskified.NetSDK.Utils
             return result;
         }
 
-        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType,bool shouldIncludeSubmitHeader = false)
+        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             // Set custom Riskified headers
             AddDefaultHeaders(request.Headers,authToken,shopDomain,body);
-            if (shouldIncludeSubmitHeader)
-            {
-                request.Headers.Add(SubmitHeaderName,"true");
-            }
             
             request.Method = "POST";
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
-            request.UserAgent = "Riskified.NetSDK/" + AssemblyVersion;
+            request.UserAgent = "Riskified.SDK_NET/" + AssemblyVersion;
             request.Accept = "*/*";
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             byte[] bodyBytes = Encoding.UTF8.GetBytes(body);

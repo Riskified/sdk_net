@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
-using Riskified.NetSDK.Orders;
-using Riskified.NetSDK.Logging;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Orders.Model;
+using Riskified.SDK.Utils;
+using Riskified.SDK.Orders;
+using Riskified.SDK.Logging;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Orders.Model;
 
 namespace Riskified.SDK.Sample
 {
@@ -17,7 +18,7 @@ namespace Riskified.SDK.Sample
         {
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
+            //string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
 
             
             #region order creation and submittion
@@ -43,20 +44,20 @@ namespace Riskified.SDK.Sample
                 orderNum++;
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
-                OrdersGateway gateway = new OrdersGateway(riskifiedHostUrl, authToken, domain);
+                OrdersGateway gateway = new OrdersGateway(RiskifiedEnvironment.Sandbox, authToken, domain);
                 try
                 {
                     OrderTransactionResult res;
                     if (quitStr.Equals("c"))
                     {
                         // sending order for creation (if new orderNum) or update (if existing orderNum)
-                        res = gateway.CreateOrUpdateOrder(order);
+                        res = gateway.Create(order);
                     }
                     else
                     {
                         // sending order for submitting and analysis 
                         // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
-                        res = gateway.SubmitOrder(order);
+                        res = gateway.Submit(order);
                     }
 
                     if(res.IsSuccessful)

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Riskified.NetSDK.Exceptions
+namespace Riskified.SDK.Exceptions
 {
     public class RiskifiedTransactionException : RiskifiedException
     {

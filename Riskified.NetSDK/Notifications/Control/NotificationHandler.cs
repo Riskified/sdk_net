@@ -4,12 +4,12 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Logging;
-using Riskified.NetSDK.Utils;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Logging;
+using Riskified.SDK.Utils;
 using System.Threading.Tasks;
 
-namespace Riskified.NetSDK.Notifications
+namespace Riskified.SDK.Notifications
 {
     public class NotificationsHandler
     {

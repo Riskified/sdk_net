@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Riskified.NetSDK.Logging
+namespace Riskified.SDK.Logging
 {
     public interface ILogger
     {

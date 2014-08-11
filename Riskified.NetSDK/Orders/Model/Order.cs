@@ -1,8 +1,8 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Utils;
+using Riskified.SDK.Utils;
 
-namespace Riskified.NetSDK.Orders.Model
+namespace Riskified.SDK.Orders.Model
 {
     public class Order
     {

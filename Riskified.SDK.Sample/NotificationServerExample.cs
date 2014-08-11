@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using Riskified.NetSDK.Logging;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Notifications;
+using Riskified.SDK.Logging;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Notifications;
 using System.Threading.Tasks;
 
 namespace Riskified.SDK.Sample
@@ -55,7 +55,7 @@ namespace Riskified.SDK.Sample
         {
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
+            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedEnvironment"];
 
            
             Console.WriteLine("Trying to register local notifications webhook: " + merchantNotificationsWebhook);
@@ -79,7 +79,7 @@ namespace Riskified.SDK.Sample
         {
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
+            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedEnvironment"];
 
             Console.WriteLine("Trying to unregister any existing notification webhooks");
             try

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Riskified.NetSDK.Logging
+namespace Riskified.SDK.Logging
 {
     public static class LoggingServices
     {

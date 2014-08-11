@@ -1,9 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Utils;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Utils;
 
-namespace Riskified.NetSDK.Orders
+namespace Riskified.SDK.Orders
 {
     [JsonObject("customer")]
     public class Customer

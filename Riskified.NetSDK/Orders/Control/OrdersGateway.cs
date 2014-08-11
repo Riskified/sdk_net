@@ -4,26 +4,25 @@ using System.IO;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
-using Riskified.NetSDK.Logging;
-using Riskified.NetSDK.Exceptions;
-using Riskified.NetSDK.Utils;
-using Riskified.NetSDK.Orders.Model;
+using Riskified.SDK.Logging;
+using Riskified.SDK.Exceptions;
+using Riskified.SDK.Utils;
+using Riskified.SDK.Orders.Model;
 
-namespace Riskified.NetSDK.Orders
+namespace Riskified.SDK.Orders
 {
     /// <summary>
     /// Main class to handle order creation and submittion to Riskified Servers
     /// </summary>
     public class OrdersGateway
     {
-        private readonly Uri _riskifiedOrdersWebhookUrl;
+        private readonly string _riskifiedBaseWebhookUrl;
         private readonly string _authToken;
         private readonly string _shopDomain;
-        // TODO add test class
         
-        public OrdersGateway(string riskifiedHostUrl, string authToken, string shopDomain)
+        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain)
         {
-            _riskifiedOrdersWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl,"/webhooks/merchant_order_created");
+            _riskifiedBaseWebhookUrl = Utils.EnvironmentsUrls.GetEnvUrl(env); 
             // TODO make sure signature and domain are of valid structure
             _authToken = authToken;
             _shopDomain = shopDomain;
@@ -31,15 +30,28 @@ namespace Riskified.NetSDK.Orders
 
         /// <summary>
         /// Validates the Order object fields
-        /// Sends an order created/updated to Riskified Servers (without Submit for analysis)
+        /// Sends a new order to Riskified Servers (without Submit for analysis)
         /// </summary>
-        /// <param name="order">The Order to create or update</param>
+        /// <param name="order">The Order to create</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
-        public OrderTransactionResult CreateOrUpdateOrder(Order order)
+        public OrderTransactionResult Create(Order order)
+        {            
+            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/webhooks/create"));
+        }
+
+        /// <summary>
+        /// Validates the Order object fields
+        /// Sends an updated order (already created) to Riskified Servers
+        /// </summary>
+        /// <param name="order">The Order to update</param>
+        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        public OrderTransactionResult Update(Order order)
         {
-            return SendOrder(order, false);
+            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/webhooks/update"));
         }
 
         /// <summary>
@@ -50,9 +62,9 @@ namespace Riskified.NetSDK.Orders
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
-        public OrderTransactionResult SubmitOrder(Order order)
+        public OrderTransactionResult Submit(Order order)
         {
-            return SendOrder(order, true);
+            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/webhooks/submit"));
         }
 
         /// <summary>
@@ -60,11 +72,11 @@ namespace Riskified.NetSDK.Orders
         /// Sends the order to riskified server endpoint as configured in the ctor
         /// </summary>
         /// <param name="order">The order object to send</param>
-        /// <param name="isSubmit">if the order should be submitted for inspection/analysis, flag should be true </param>
+        /// <param name="riskifiedEndpointUrl">the endpoint to which the order should be sent</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
-        private OrderTransactionResult SendOrder(Order order, bool isSubmit)
+        private OrderTransactionResult SendOrder(Order order, Uri riskifiedEndpointUrl)
         {
             string jsonOrder;
             try
@@ -76,30 +88,9 @@ namespace Riskified.NetSDK.Orders
                 throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
             }
 
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderTransactionResult>(_riskifiedOrdersWebhookUrl, jsonOrder, _authToken, _shopDomain,isSubmit);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderTransactionResult>(riskifiedEndpointUrl, jsonOrder, _authToken, _shopDomain);
             return transactionResult;
-            /*if (transactionResult.IsSuccessful)
-            {
-                if (transactionResult.SuccessfulResult == null ||
-                    (transactionResult.SuccessfulResult.Status != "submitted" &&
-                     transactionResult.SuccessfulResult.Status != "created" &&
-                     transactionResult.SuccessfulResult.Status != "updated" &&
-                     transactionResult.SuccessfulResult.Status != "captured"))
-                    throw new RiskifiedTransactionException(
-                        "Error receiving valid response from riskified server - response wasn't in a known format");
-            }
-            else
-            {
-                //TODO handle case of unsuccessful tranaction of order
-                throw new RiskifiedTransactionException("Case of failed response not implemented yet");
-            }
-            if (transactionResult.SuccessfulResult.Id != null)
-                    return transactionResult.SuccessfulResult.Id.Value;
-
-            string err = "Unknown Error occured - No Id received for a successful order";
-            LoggingServices.Error(err);
-            throw new RiskifiedTransactionException(err);
-            */
+            
         }
 
         
