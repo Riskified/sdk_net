@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model.OrderElements
+namespace Riskified.SDK.Model.Orders.OrderElements
 {
 
     public class ShippingLine

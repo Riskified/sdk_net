@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Configuration;
-using Riskified.SDK.Orders.Control;
-using Riskified.SDK.Orders.Model;
-using Riskified.SDK.Orders.Model.OrderElements;
-using Riskified.SDK.Orders.Model.RefundElements;
+using Riskified.SDK.Model;
+using Riskified.SDK.Model.Orders;
+using Riskified.SDK.Model.Orders.OrderElements;
+using Riskified.SDK.Model.Orders.RefundElements;
+using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
 
 namespace Riskified.SDK.Sample
 {
-    public class OrderTransmissionExample
+    public static class OrderTransmissionExample
     {
         public static void SendOrdersToRiskifiedExample()
         {
@@ -51,7 +52,7 @@ namespace Riskified.SDK.Sample
                 OrdersGateway gateway = new OrdersGateway(RiskifiedEnvironment.Debug, authToken, domain);
                 try
                 {
-                    OrderTransactionResult res=null;
+                    OrderNotification res=null;
                     switch (commandStr)
                     {
                         case "c":
@@ -85,16 +86,13 @@ namespace Riskified.SDK.Sample
 
                     if (res != null)
                     {
-                        if (res.IsSuccessful)
-                            Console.WriteLine("Order sent successfully: " + res.SuccessfulResult.Status +
-                                              ". Riskified order ID received: " + res.SuccessfulResult.Id +
-                                              " Description: " + res.SuccessfulResult.Description);
-                        else
-                            Console.WriteLine("Error sending order. Error received: " + res.FailedResult.ErrorMessage);
+                        Console.WriteLine("Order sent successfully: " + res.Status +
+                                              ". Riskified order ID received: " + res.Id +
+                                              " Description: " + res.Description);
                     }
                     else
                     {
-                        Console.WriteLine("?????");
+                        Console.WriteLine("Unknown error sending order.");
                     }
                 }
                 catch (OrderFieldBadFormatException e)

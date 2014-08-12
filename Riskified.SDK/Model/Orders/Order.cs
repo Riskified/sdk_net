@@ -1,9 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Riskified.SDK.Orders.Model.OrderElements;
+using Riskified.SDK.Model.Orders.OrderElements;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model
+namespace Riskified.SDK.Model.Orders
 {
     
     public class Order : AbstractOrder

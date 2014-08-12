@@ -4,20 +4,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
-using Riskified.SDK.Notifications.Model;
+using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Notifications.Control
+namespace Riskified.SDK.Notifications
 {
     public class NotificationsHandler
     {
         private readonly HttpListener _listener;
-        private readonly Action<Notification> _notificationReceivedCallback;
+        private readonly Action<OrderNotification> _notificationReceivedCallback;
         private bool _isStopped;
         private readonly string _localListeningEndpoint;
         private readonly string _authToken,_shopDomain;
         // TODO add test class
-        public NotificationsHandler(string localListeningEndpoint, Action<Notification> notificationReceived,string authToken, string shopDomain)
+        public NotificationsHandler(string localListeningEndpoint, Action<OrderNotification> notificationReceived, string authToken, string shopDomain)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add(localListeningEndpoint);
@@ -46,7 +46,7 @@ namespace Riskified.SDK.Notifications.Control
             var regRes =  SendMerchantRegistrationRequest(createJson,riskifiedHostUrl,authToken,shopDomain);
             if (regRes.IsSuccessful)
             {
-                LoggingServices.Info("Registration Successful: " + regRes.SuccessfulResult.Message);
+                LoggingServices.Info("Registration Successful: " + regRes.Result.Message);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace Riskified.SDK.Notifications.Control
             var unregisterRes =  SendMerchantRegistrationRequest(deleteJson,riskifiedRegistrationEndpoint, authToken, shopDomain);
             if (unregisterRes.IsSuccessful)
             {
-                LoggingServices.Info("Unregistration Successful: " + unregisterRes.SuccessfulResult.Message);
+                LoggingServices.Info("Unregistration Successful: " + unregisterRes.Result.Message);
             }
             else
             {
@@ -131,10 +131,10 @@ namespace Riskified.SDK.Notifications.Control
                         continue;
                     }
 
-                    Notification n;
+                    OrderNotification n;
                     try
                     {
-                         n = HttpUtils.ParsePostRequestToObject<Notification>(request);
+                        n = HttpUtils.ParsePostRequestToObject<OrderNotification>(request);
                     }
                     catch(Exception)
                     {
@@ -152,7 +152,7 @@ namespace Riskified.SDK.Notifications.Control
                         responseString =
                                 string.Format(
                                     "<HTML><BODY>Merchant Received Notification For Order {0} with status {1} and description {2}</BODY></HTML>",
-                                    n.OrderId, n.Status, n.Description);
+                                    n.Id, n.Status, n.Description);
                     }
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;

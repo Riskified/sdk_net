@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Riskified.SDK.Orders.Model.RefundElements;
+using Riskified.SDK.Model.Orders.RefundElements;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model
+namespace Riskified.SDK.Model.Orders
 {
     public class OrderRefund : AbstractOrder
     {

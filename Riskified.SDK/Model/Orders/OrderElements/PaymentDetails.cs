@@ -2,7 +2,7 @@
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model.OrderElements
+namespace Riskified.SDK.Model.Orders.OrderElements
 {
     public class PaymentDetails
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model
+namespace Riskified.SDK.Model.Orders
 {
     public class OrderCancellation : AbstractOrder
     {

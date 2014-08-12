@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Configuration;
 using System.Threading.Tasks;
-using Riskified.SDK.Notifications.Control;
-using Riskified.SDK.Notifications.Model;
+using Riskified.SDK.Model;
+using Riskified.SDK.Notifications;
 
 namespace Riskified.SDK.Sample
 {
-    public class NotificationServerExample
+    public static class NotificationServerExample
     {
         private static NotificationsHandler _notificationServer;
 
@@ -66,7 +66,7 @@ namespace Riskified.SDK.Sample
             {
                 NotificationRegistrationResult result = NotificationsHandler.RegisterMerchantNotificationsWebhook(riskifiedHostUrl, merchantNotificationsWebhook, authToken, domain);
                 if (result.IsSuccessful)
-                    Console.WriteLine("Registration successful: " + result.SuccessfulResult.Message);
+                    Console.WriteLine("Registration successful: " + result.Result.Message);
                 else
                 {
                     Console.WriteLine("Registration unsuccessful: " + result.FailedResult.Message);
@@ -89,7 +89,7 @@ namespace Riskified.SDK.Sample
             {
                 NotificationRegistrationResult result = NotificationsHandler.UnRegisterMerchantNotificationWebhooks(riskifiedHostUrl, authToken, domain);
                 if (result.IsSuccessful)
-                    Console.WriteLine("Unregistration successful: " + result.SuccessfulResult.Message);
+                    Console.WriteLine("Unregistration successful: " + result.Result.Message);
                 else
                 {
                     Console.WriteLine("Unregistration unsuccessful: " + result.FailedResult.Message);
@@ -122,9 +122,9 @@ namespace Riskified.SDK.Sample
         /// Will be called each time a new notification is received at the local webhook
         /// </summary>
         /// <param name="notification">The notification object that was received</param>
-        private static void NotificationReceived(Notification notification)
+        private static void NotificationReceived(OrderNotification notification)
         {
-            Console.WriteLine("New " + notification.Status + " Notification Received for order with ID:" + notification.OrderId + " With description: " + notification.Description);
+            Console.WriteLine("New " + notification.Status + " Notification Received for order with ID:" + notification.Id + " With description: " + notification.Description);
         }
     }
 }

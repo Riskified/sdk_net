@@ -8,7 +8,7 @@ namespace Riskified.SDK.Exceptions
         {
         }
 
-        public RiskifiedException(string message, Exception innerException)
+        protected RiskifiedException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

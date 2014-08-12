@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Orders.Model.OrderElements
+namespace Riskified.SDK.Model.Orders.OrderElements
 {
     [JsonObject("customer")]
     public class Customer
