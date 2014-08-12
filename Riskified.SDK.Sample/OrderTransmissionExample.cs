@@ -91,7 +91,10 @@ namespace Riskified.SDK.Sample
                                               " Description: " + res.SuccessfulResult.Description);
                         else
                             Console.WriteLine("Error sending order. Error received: " + res.FailedResult.ErrorMessage);
-                                // TODO fix - what happens if all is  null
+                    }
+                    else
+                    {
+                        Console.WriteLine("?????");
                     }
                 }
                 catch (OrderFieldBadFormatException e)

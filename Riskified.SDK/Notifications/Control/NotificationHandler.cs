@@ -27,7 +27,7 @@ namespace Riskified.SDK.Notifications.Control
             _authToken = authToken;
             _shopDomain = shopDomain;
         }
-
+        /*
         /// <summary>
         /// Registers (maps) the merchant's webhook for notification messages  
         /// Will replace all previous endpoints registered by that specific merchant
@@ -79,7 +79,7 @@ namespace Riskified.SDK.Notifications.Control
             }
             return unregisterRes;
         }
-
+        */
         public void StopReceiveNotifications()
         {
             _isStopped = true;
@@ -201,14 +201,14 @@ namespace Riskified.SDK.Notifications.Control
             LoggingServices.Fatal(errorMsg);
             throw new NotifierServerFailedToStartException(errorMsg);
         }
-
+        /*
         private static NotificationRegistrationResult SendMerchantRegistrationRequest(string jsonBody, string riskifiedHostUrl, string authToken, string shopDomain)
         {
             Uri riskifiedRegistrationWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl, "/webhooks/merchant_register_notification_webhook");
             var registerResult = HttpUtils.JsonPostAndParseResponseToObject<NotificationRegistrationResult>(riskifiedRegistrationWebhookUrl,jsonBody, authToken, shopDomain);
             return registerResult;
         }
-
+        */
     }
 
 

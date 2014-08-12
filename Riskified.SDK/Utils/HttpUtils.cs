@@ -35,18 +35,31 @@ namespace Riskified.SDK.Utils
         /// Sends an HTTP Post request to the received url (Riskified server), blocks and waits for response from server
         /// When response is received, Tries to parse its body from JSON to an object of type 'T' which it returns
         /// </summary>
-        /// <typeparam name="T">The type of class expected to be received in the response body as JSON</typeparam>
-        /// <param name="riskifiedRegistrationWebhookUrl">The full url with internal path of the relevant riskified webhook</param>
-        /// <param name="body">The (json) body of the HTTP request</param>
+        /// <typeparam name="TRespObj">The type of class expected to be received in the response body as JSON</typeparam>
+        /// <typeparam name="TReqObj">The type of class to be received as parameter and serialized to JSON as request body</typeparam>
+        /// <param name="riskifiedWebhookUrl">The full url with internal path of the relevant riskified webhook</param>
+        /// <param name="jsonObj">The object to be json serialized as body of the HTTP request</param>
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
         /// <returns>'T' typed response object</returns>
-        public static T JsonPostAndParseResponseToObject<T>(Uri riskifiedRegistrationWebhookUrl, string body, string authToken, string shopDomain) where T : class
+        public static TRespObj JsonPostAndParseResponseToObject<TRespObj,TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain) 
+            where TRespObj : class
+            where TReqObj  : class 
         {
+            string jsonStr;
+            try
+            {
+                jsonStr = JsonConvert.SerializeObject(new GenericJson<TReqObj>(jsonObj));
+            }
+            catch (Exception e)
+            {
+                throw new OrderFieldBadFormatException("The order could not be serialized to JSON: " + e.Message, e);
+            }
+
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedRegistrationWebhookUrl, body, authToken,shopDomain, HttpBodyType.JSON);
+                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken,shopDomain, HttpBodyType.JSON);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -57,7 +70,7 @@ namespace Riskified.SDK.Utils
                     HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
                     try
                     {
-                        var errRes = ParseObjectFromJsonResponse<T>(errorResponse);
+                        var errRes = ParseObjectFromJsonResponse<TRespObj>(errorResponse);
                         return errRes;
                     }
                     catch (Exception parseEx)
@@ -81,7 +94,7 @@ namespace Riskified.SDK.Utils
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
 
-            var resObj = ParseObjectFromJsonResponse<T>(response);
+            var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
             return resObj;
         }
 
@@ -145,7 +158,7 @@ namespace Riskified.SDK.Utils
             T transactionResult;
             try
             {
-                transactionResult = JsonConvert.DeserializeObject<T>(responseBody);
+                transactionResult = JsonConvert.DeserializeObject<GenericJson<T>>(responseBody).InnerObj;
             }
             catch (Exception e)
             {
@@ -155,6 +168,17 @@ namespace Riskified.SDK.Utils
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
             return transactionResult;
+        }
+
+        internal class GenericJson<T>
+        {
+            [JsonProperty(PropertyName = "order", Required = Required.Always)]
+            public T InnerObj { get; set; }
+
+            public GenericJson(T innerObj)
+            {
+                InnerObj = innerObj;
+            }
         }
 
         public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
@@ -179,27 +203,20 @@ namespace Riskified.SDK.Utils
                 string streamData = reader.ReadToEnd();
                 reader.Close();
                 stream.Close();
-                /* no need to verify responses
-                if (!IsStringVerified(streamData, authToken, hmacValueToVerify))
-                {
-                    string err = "Data from Riskified server NOT VERIFIED - ignoring it. Body was: " + streamData;
-                    LoggingServices.Error(err);
-                    throw new RiskifiedTransactionException(err);
-                }
-                */
+
                 return streamData;
             }
             const string errMsg = "Unknown data from Riskified server - ignoring it. Body was null";
             LoggingServices.Error(errMsg);
             throw new RiskifiedTransactionException(errMsg);
         }
-
+        /*
         private static bool IsStringVerified(string data, string authToken, string hmacValueToVerify)
         {
             string calculatedHmac = CalcHmac(data, authToken);
             return calculatedHmac.Equals(hmacValueToVerify);
         }
-
+        */
         public static void BuildAndSendResponse(HttpListenerResponse response, string authToken,string shopDomain, string body,bool isActionSucceeded)
         {
             AddDefaultHeaders(response.Headers,authToken,shopDomain,body);

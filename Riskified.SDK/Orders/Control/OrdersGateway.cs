@@ -86,17 +86,7 @@ namespace Riskified.SDK.Orders.Control
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
         private OrderTransactionResult SendOrder(AbstractOrder order, Uri riskifiedEndpointUrl)
         {
-            string jsonOrder;
-            try
-            {
-                jsonOrder = JsonConvert.SerializeObject(new GenericOrder(order));
-            }
-            catch (Exception e)
-            {
-                throw new OrderFieldBadFormatException("The order could not be serialized to JSON: "+e.Message, e);
-            }
-
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderTransactionResult>(riskifiedEndpointUrl, jsonOrder, _authToken, _shopDomain);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderTransactionResult,AbstractOrder>(riskifiedEndpointUrl, order, _authToken, _shopDomain);
             return transactionResult;
             
         }

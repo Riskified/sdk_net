@@ -7,7 +7,6 @@ namespace Riskified.SDK.Orders.Model.OrderElements
         [JsonProperty(PropertyName = "order",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public SuccessfulOrderTransactionData SuccessfulResult { get; set; }
 
-        // TODO simulate the case of failure message received from riskified without order...
         [JsonProperty(PropertyName = "error", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public FailedTransactionData FailedResult { get; set; }
         
