@@ -22,9 +22,9 @@ namespace Riskified.SDK.Utils
             
             if(!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
                 EnvToUrl.Add(RiskifiedEnvironment.Debug, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
-            EnvToUrl.Add(RiskifiedEnvironment.Sandbox, "sandbox.riskified.com");
-            EnvToUrl.Add(RiskifiedEnvironment.Staging, "s.riskified.com");
-            EnvToUrl.Add(RiskifiedEnvironment.Production, "wh.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Sandbox, "https://sandbox.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Staging, "https://s.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Production, "https://wh.riskified.com");
         }
 
         public static string GetEnvUrl(RiskifiedEnvironment env)

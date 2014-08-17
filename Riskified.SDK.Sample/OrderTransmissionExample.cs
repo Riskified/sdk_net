@@ -16,8 +16,7 @@ namespace Riskified.SDK.Sample
         {
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            //string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedHostUrl"];
-
+            RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment) Enum.Parse(typeof (RiskifiedEnvironment),ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
             
             #region order creation and submittion
             // Generating a random starting order number
@@ -49,7 +48,7 @@ namespace Riskified.SDK.Sample
                 orderNum++;
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
-                OrdersGateway gateway = new OrdersGateway(RiskifiedEnvironment.Debug, authToken, domain);
+                OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
                 try
                 {
                     OrderNotification res=null;

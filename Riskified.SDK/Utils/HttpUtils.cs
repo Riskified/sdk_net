@@ -68,7 +68,8 @@ namespace Riskified.SDK.Utils
                 if (wex.Response != null)
                 {
                     HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
-                    try
+                    error = "Error occurred. Http status code: " + errorResponse.StatusCode;
+                    /*try
                     {
                         var errRes = ParseObjectFromJsonResponse<TRespObj>(errorResponse);
                         return errRes;
@@ -83,6 +84,7 @@ namespace Riskified.SDK.Utils
                             error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
                         error += parseEx.Message;
                     }
+                     */
                 }
                 LoggingServices.Error(error, wex);
                 throw new RiskifiedTransactionException(error, wex);
