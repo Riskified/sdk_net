@@ -16,7 +16,7 @@ namespace Riskified.SDK.Notifications
         private bool _isStopped;
         private readonly string _localListeningEndpoint;
         private readonly string _authToken,_shopDomain;
-        // TODO add test class
+        
         public NotificationsHandler(string localListeningEndpoint, Action<OrderNotification> notificationReceived, string authToken, string shopDomain)
         {
             _listener = new HttpListener();
