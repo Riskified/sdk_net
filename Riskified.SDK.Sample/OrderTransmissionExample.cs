@@ -72,13 +72,26 @@ namespace Riskified.SDK.Sample
                         case "d":
                             Console.Write("Cancelled order id: ");
                             string canOrderId = Console.ReadLine();
-                            res = gateway.Cancel(new OrderCancellation(int.Parse(canOrderId), DateTime.Now,
-                                "Customer cancelled before shipping"));
+                            res = gateway.Cancel(
+                                new OrderCancellation(
+                                    merchantOrderId: int.Parse(canOrderId),
+                                    cancelledAt: DateTime.Now,
+                                    cancelReason: "Customer cancelled before shipping"));
                             break;
                         case "r":
                             Console.Write("Refunded order id: ");
                             string refOrderId = Console.ReadLine();
-                            res = gateway.Refund(new OrderRefund(int.Parse(refOrderId), new [] {new RefundDetails(DateTime.Now,5.3,"USD","Customer partly refunded on shipping fees")}));
+                            res = gateway.Refund(
+                                new OrderRefund(
+                                    merchantOrderId: int.Parse(refOrderId),
+                                    partialRefunds: new[]
+                                    {
+                                        new RefundDetails(
+                                            refundedAt: DateTime.Now,
+                                            amount: 5.3,
+                                            currency: "USD",
+                                            reason: "Customer partly refunded on shipping fees")
+                                    }));
                             break;
                     }
 
@@ -129,34 +142,80 @@ namespace Riskified.SDK.Sample
             // In the sample - this exception is handled in the rapping method
 
             // putting sample customer details
-            var customer = new Customer("John", "Doe", 405050606, 4, "test@example.com", true,
-                new DateTime(2013, 12, 8, 14, 12, 12), "No additional info");
+            var customer = new Customer(
+                firstName: "John",
+                lastName: "Doe",
+                id: 405050606,
+                ordersCount: 4,
+                email: "test@example.com",
+                verifiedEmail: true,
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                notes: "No additional info");
 
             // putting sample billing details
-            var billing = new AddressInformation("Ben", "Rolling", "27 5th avenue", "Manhattan", "United States", "US",
-                "5554321234", "Appartment 5", "54545", "New York", "NY", "IBM", "Ben Philip Rolling");
+            var billing = new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan", 
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234", 
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling");
 
-            var shipping = new AddressInformation("Luke", "Rolling", "4 Bermingham street", "Cherry Hill",
-                "United States", "US", "55546665", provinceCode: "NJ", province: "New Jersey");
+            var shipping = new AddressInformation(
+                firstName: "Luke",
+                lastName: "Rolling",
+                address1: "4 Bermingham street", 
+                city: "Cherry Hill",
+                country: "United States",
+                countryCode: "US", 
+                phone: "55546665", 
+                provinceCode: "NJ", 
+                province: "New Jersey");
 
-            var payments = new PaymentDetails("Y", "n", "4580", "Visa", "XXXX-XXXX-XXXX-4242");
+            var payments = new PaymentDetails(
+                avsResultCode: "Y",
+                cvvResultCode: "n",
+                creditCardBin: "124580", 
+                creditCardCompany: "Visa",
+                creditCardNumber: "XXXX-XXXX-XXXX-4242");
 
             var lines = new[]
             {
-                new ShippingLine(22.22,"Mail"),
-                new ShippingLine(2,"Ship","A22F")
+                new ShippingLine(price: 22.22,title: "Mail"),
+                new ShippingLine(price: 2,title: "Ship",code: "A22F")
             };
 
             var items = new[]
             {
-                new LineItem("Bag",55.44,1,48484,"1272727"),
-                new LineItem("Monster",22.3,3)
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
-            var discountCodes = new[] { new DiscountCode(7, "1") };
+            var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
-            var order = new Order(orderNum, "tester@exampler.com", customer, payments, billing, shipping, items, lines,
-                "authorize_net", "127.0.0.1", "USD", 100.60, DateTime.Now, DateTime.Now, discountCodes);
+            var order = new Order(
+                merchantOrderId: orderNum, 
+                email: "tester@exampler.com", 
+                customer: customer, 
+                paymentDetails: payments,
+                billingAddress: billing,
+                shippingAddress: shipping,
+                lineItems: items,
+                shippingLines: lines,
+                gateway: "authorize_net",
+                customerBrowserIp: "165.12.1.1",
+                currency: "USD", 
+                totalPrice: 100.60,
+                createdAt: DateTime.Now,
+                updatedAt: DateTime.Now,
+                discountCodes: discountCodes);
 
             return order;
         }

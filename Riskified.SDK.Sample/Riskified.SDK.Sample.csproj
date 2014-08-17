@@ -55,6 +55,7 @@
   <ItemGroup>
     <None Include="App.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Riskified.SDK.Sample.config.example">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
