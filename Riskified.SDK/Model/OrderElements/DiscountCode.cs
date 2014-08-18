@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Riskified.SDK.Model.Orders.OrderElements
+namespace Riskified.SDK.Model.OrderElements
 {
     public class DiscountCode
     {

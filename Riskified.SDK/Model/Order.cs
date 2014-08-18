@@ -1,9 +1,9 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Riskified.SDK.Model.Orders.OrderElements;
+using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Model.Orders
+namespace Riskified.SDK.Model
 {
     
     public class Order : AbstractOrder
@@ -30,14 +30,15 @@ namespace Riskified.SDK.Model.Orders
         /// <param name="cartToken">Unique identifier for a particular cart or session that is attached to a particular order. The same ID should be passed in the Beacon JS (optional)</param>
         /// <param name="totalPriceUsd">The price in USD (optional)</param>
         /// <param name="closedAt">The date and time when the order was closed. If the order was closed (optional)</param>
+        /// <param name="financialStatus">The financial status of the order (could be paid/voided/refunded/partly_paid/etc.)</param>
+        /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
         public Order(int merchantOrderId, string email, Customer customer, PaymentDetails paymentDetails,
             AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
             ShippingLine[] shippingLines,
             string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
             DateTime updatedAt,
             DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null,
-            double? totalPriceUsd = null,
-            DateTime? closedAt = null) : base(merchantOrderId)
+            double? totalPriceUsd = null, DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null) : base(merchantOrderId)
         {
             InputValidators.ValidateObjectNotNull(lineItems,"Line Items");
             LineItems = lineItems;
@@ -76,7 +77,9 @@ namespace Riskified.SDK.Model.Orders
                 InputValidators.ValidateDateNotDefault(closedAt.Value, "Closed At");
                 ClosedAt = closedAt;
             }
-            
+            FinancialStatus = financialStatus;
+            FulfillmentStatus = fulfillmentStatus;
+
 
         }
 
@@ -133,6 +136,12 @@ namespace Riskified.SDK.Model.Orders
 
         [JsonProperty(PropertyName = "customer", Required = Required.Always)]
         public Customer Customer { get; set; }
+
+        [JsonProperty(PropertyName = "financial_status", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        public string FinancialStatus { get; set; }
+
+        [JsonProperty(PropertyName = "fulfillment_status", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        public string FulfillmentStatus { get; set; }
     }
 
 }

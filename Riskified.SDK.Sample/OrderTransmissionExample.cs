@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using Riskified.SDK.Model;
-using Riskified.SDK.Model.Orders;
-using Riskified.SDK.Model.Orders.OrderElements;
-using Riskified.SDK.Model.Orders.RefundElements;
+using Riskified.SDK.Model.OrderElements;
+using Riskified.SDK.Model.RefundElements;
 using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
@@ -14,18 +13,28 @@ namespace Riskified.SDK.Sample
     {
         public static void SendOrdersToRiskifiedExample()
         {
+            #region preprocessing and loading config
+            
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
             RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment) Enum.Parse(typeof (RiskifiedEnvironment),ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
-            
-            #region order creation and submittion
+
             // Generating a random starting order number
             // we need to send the order with a new order number in order to create it on riskified
-            // if order number already exists in riskified server - the order will be updated
             var rand = new Random();
             int orderNum = rand.Next(1000, 200000);
 
-            // sample for order creating and submitting to servers via console
+            #endregion
+
+            #region order object creation
+
+            // generate a new order - the sample generates a fixed order with same details but different order number each time
+            // see GenerateOrder for more info on how to create the Order objects
+            var order = GenerateOrder(orderNum);
+
+            #endregion
+
+            #region sending data to riskified
 
             // read action from console
             const string menu = "Commands:\n" +
@@ -38,14 +47,14 @@ namespace Riskified.SDK.Sample
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
 
+            
             // loop on console actions 
             while (commandStr != null && (!commandStr.Equals("q")))
             {
-                // generate a new order - the sample generates a fixed order with same details but different order number each time
-                // see GenerateOrder for more info on how to create the Order objects
-                var order = GenerateOrder(orderNum);
+                
                 Console.WriteLine("Order Generated with merchant order number: " + orderNum);
                 orderNum++;
+                order.Id = orderNum;
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
                 OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
@@ -81,8 +90,8 @@ namespace Riskified.SDK.Sample
                         case "r":
                             Console.Write("Refunded order id: ");
                             string refOrderId = Console.ReadLine();
-                            res = gateway.Refund(
-                                new OrderRefund(
+                            res = gateway.PartlyRefund(
+                                new OrderPartialRefund(
                                     merchantOrderId: int.Parse(refOrderId),
                                     partialRefunds: new[]
                                     {

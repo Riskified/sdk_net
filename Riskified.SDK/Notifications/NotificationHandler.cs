@@ -17,6 +17,13 @@ namespace Riskified.SDK.Notifications
         private readonly string _localListeningEndpoint;
         private readonly string _authToken,_shopDomain;
         
+        /// <summary>
+        /// Creates a notification handler on the specified endpoint
+        /// </summary>
+        /// <param name="localListeningEndpoint">The endpoint for the notification server listener</param>
+        /// <param name="notificationReceived">Callback to be called on each notification arrival</param>
+        /// <param name="authToken">The authentication token key of the merchant</param>
+        /// <param name="shopDomain">The shop domain string as used for registration to Riskified</param>
         public NotificationsHandler(string localListeningEndpoint, Action<OrderNotification> notificationReceived, string authToken, string shopDomain)
         {
             _listener = new HttpListener();
@@ -80,6 +87,9 @@ namespace Riskified.SDK.Notifications
             return unregisterRes;
         }
         */
+        /// <summary>
+        /// Stops the notifications server listener
+        /// </summary>
         public void StopReceiveNotifications()
         {
             _isStopped = true;

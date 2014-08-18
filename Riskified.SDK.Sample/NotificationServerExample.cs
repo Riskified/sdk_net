@@ -15,28 +15,13 @@ namespace Riskified.SDK.Sample
             string merchantNotificationsWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
             
             Console.WriteLine("Local Notifications server url set in the config file: " + merchantNotificationsWebhook);
-            //Console.WriteLine("Press 'r' to register notification webhook, 'u' to UNregister notification webhook, 's' to start the notifications server, 'rs' to register and start the server, else to skip all");
             Console.WriteLine("'s' to start the notifications server, else to skip all");
             string key = Console.ReadLine();
             switch(key)
             {
-                    /*
-                case "r":
-                    RegisterWebhook(merchantNotificationsWebhook);
-                    break;
-                case "u":
-                    UnregisterWebhook();
-                    break;
-                     */
                 case "s":
                     StartServer(merchantNotificationsWebhook);
                     break;
-                    /*
-                case "rs":
-                    RegisterWebhook(merchantNotificationsWebhook);
-                    StartServer(merchantNotificationsWebhook);
-                    break;
-                     */
                 default:
                     Console.WriteLine("Unknown key - skipping notifications webhook");
                     break;
@@ -53,54 +38,7 @@ namespace Riskified.SDK.Sample
             if (_notificationServer != null)
                 _notificationServer.StopReceiveNotifications();
         }
-        /*
-        private static void RegisterWebhook(string merchantNotificationsWebhook)
-        {
-            string domain = ConfigurationManager.AppSettings["MerchantDomain"];
-            string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedEnvironment"];
-
-           
-            Console.WriteLine("Trying to register local notifications webhook: " + merchantNotificationsWebhook);
-            try
-            {
-                NotificationRegistrationResult result = NotificationsHandler.RegisterMerchantNotificationsWebhook(riskifiedHostUrl, merchantNotificationsWebhook, authToken, domain);
-                if (result.IsSuccessful)
-                    Console.WriteLine("Registration successful: " + result.Result.Message);
-                else
-                {
-                    Console.WriteLine("Registration unsuccessful: " + result.FailedResult.Message);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to register notification webhook on riskified server: " + e.Message);
-            }
-        }
         
-        private static void UnregisterWebhook()
-        {
-            string domain = ConfigurationManager.AppSettings["MerchantDomain"];
-            string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            string riskifiedHostUrl = ConfigurationManager.AppSettings["RiskifiedEnvironment"];
-
-            Console.WriteLine("Trying to unregister any existing notification webhooks");
-            try
-            {
-                NotificationRegistrationResult result = NotificationsHandler.UnRegisterMerchantNotificationWebhooks(riskifiedHostUrl, authToken, domain);
-                if (result.IsSuccessful)
-                    Console.WriteLine("Unregistration successful: " + result.Result.Message);
-                else
-                {
-                    Console.WriteLine("Unregistration unsuccessful: " + result.FailedResult.Message);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Unable to unregister notification webhook on riskified server: " + e.Message);
-            }
-        }
-        */
         private static void StartServer(string merchantNotificationsWebhook)
         {
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];

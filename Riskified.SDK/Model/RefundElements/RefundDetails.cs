@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Model.Orders.RefundElements
+namespace Riskified.SDK.Model.RefundElements
 {
     public class RefundDetails
     {

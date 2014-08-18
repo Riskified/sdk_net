@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Model.Orders.OrderElements
+namespace Riskified.SDK.Model.OrderElements
 {
     [JsonObject("customer")]
     public class Customer
@@ -52,7 +52,6 @@ namespace Riskified.SDK.Model.Orders.OrderElements
         [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
         public string FirstName { get; set; }
 
-        //todo validate customer ID
         [JsonProperty(PropertyName = "id", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public int? Id { get; set; }
 

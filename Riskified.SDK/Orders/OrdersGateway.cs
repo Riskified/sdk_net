@@ -1,7 +1,6 @@
 ﻿using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
-using Riskified.SDK.Model.Orders;
 using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Orders
@@ -15,10 +14,15 @@ namespace Riskified.SDK.Orders
         private readonly string _authToken;
         private readonly string _shopDomain;
         
+        /// <summary>
+        /// Creates the mediator class used to send order data to Riskified
+        /// </summary>
+        /// <param name="env">The Riskified environment to send to</param>
+        /// <param name="authToken">The merchant's auth token</param>
+        /// <param name="shopDomain">The merchant's shop domain</param>
         public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain)
         {
             _riskifiedBaseWebhookUrl = EnvironmentsUrls.GetEnvUrl(env); 
-            // TODO make sure signature and domain are of valid structure
             _authToken = authToken;
             _shopDomain = shopDomain;
         }
@@ -62,16 +66,26 @@ namespace Riskified.SDK.Orders
             return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/submit"));
         }
 
-        //TODO add doc
+        /// <summary>
+        /// Validates the cancellation data
+        /// Sends a cancellation message for a specific order (id should already exist) to Riskified server for status and charge fees update
+        /// </summary>
+        /// <param name="orderCancellation"></param>
+        /// <returns></returns>
         public OrderNotification Cancel(OrderCancellation orderCancellation)
         {
             return SendOrder(orderCancellation, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/cancel"));
         }
 
-        //TODO add doc
-        public OrderNotification Refund(OrderRefund orderRefund)
+        /// <summary>
+        /// Validates the partial refunds data for an order
+        /// Sends the partial refund data for an order to Riskified server for status and charge fees update
+        /// </summary>
+        /// <param name="orderPartialRefund"></param>
+        /// <returns></returns>
+        public OrderNotification PartlyRefund(OrderPartialRefund orderPartialRefund)
         {
-            return SendOrder(orderRefund, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/refund"));
+            return SendOrder(orderPartialRefund, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/refund"));
         }
 
         /// <summary>

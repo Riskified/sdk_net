@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 using Riskified.SDK.Utils;
 
-namespace Riskified.SDK.Model.Orders.OrderElements
+namespace Riskified.SDK.Model.OrderElements
 {
-    // TODO add test classes for all model classes
+    
     public class AddressInformation
     {
         /// <summary>
@@ -80,7 +80,6 @@ namespace Riskified.SDK.Model.Orders.OrderElements
         [JsonProperty(PropertyName = "name", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string FullName { get; set; }
 
-        // TODO add validation for phone number
         [JsonProperty(PropertyName = "phone", Required = Required.Always)]
         public string Phone { get; set; }
 
@@ -90,7 +89,6 @@ namespace Riskified.SDK.Model.Orders.OrderElements
         [JsonProperty(PropertyName = "province_code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string ProvinceCode { get; set; }
 
-        // TODO add validation for ZipCode
         [JsonProperty(PropertyName = "zip", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string ZipCode { get; set; }
     }

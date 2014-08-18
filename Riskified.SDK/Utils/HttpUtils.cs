@@ -135,7 +135,6 @@ namespace Riskified.SDK.Utils
             string hashCode = CalcHmac(body, authToken);
             headers.Add(HmacHeaderName, hashCode);
             headers.Add(ShopDomainHeaderName, shopDomain);
-            // TODO add support for gzip compression for non-sandbox env
             headers.Add("Accept-Encoding", "gzip,deflate,sdch");
         }
 
