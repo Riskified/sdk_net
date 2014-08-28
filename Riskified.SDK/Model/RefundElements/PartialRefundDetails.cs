@@ -5,19 +5,21 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.RefundElements
 {
-    public class RefundDetails
+    public class PartialRefundDetails
     {
-        
         /// <summary>
-        /// 
+        /// The details for a single partial refund element
         /// </summary>
-        /// <param name="refundedAt"></param>
-        /// <param name="amount"></param>
-        /// <param name="currency"></param>
-        /// <param name="reason"></param>
+        /// <param name="refundId">A unique identifier for the refund record at the merchant's system</param>
+        /// <param name="refundedAt">Date and time when the refund occured</param>
+        /// <param name="amount">The amount refunded (at the specified currency)</param>
+        /// <param name="currency">The currency of the refund amount</param>
+        /// <param name="reason">The reason for the partial refund</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public RefundDetails(DateTime refundedAt, double amount, string currency, string reason)
+        public PartialRefundDetails(string refundId,DateTime refundedAt, double amount, string currency, string reason)
         {
+            InputValidators.ValidateValuedString(refundId,"Refund ID");
+            RefundId = refundId;
             InputValidators.ValidateDateNotDefault(refundedAt, "Refunded At");
             RefundedAt = refundedAt;
             InputValidators.ValidateZeroOrPositiveValue(amount, "Refund Amount");
@@ -27,6 +29,9 @@ namespace Riskified.SDK.Model.RefundElements
             InputValidators.ValidateValuedString(reason,"Refund Reason");
             Reason = reason;
         }
+
+        [JsonProperty(PropertyName = "refund_id", Required = Required.Always)]
+        public string RefundId { get; set; }
 
         [JsonProperty(PropertyName = "refunded_at", Required = Required.Always)]
         public DateTime RefundedAt { get; set; }

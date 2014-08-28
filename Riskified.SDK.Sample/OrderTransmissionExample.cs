@@ -95,7 +95,8 @@ namespace Riskified.SDK.Sample
                                     merchantOrderId: int.Parse(refOrderId),
                                     partialRefunds: new[]
                                     {
-                                        new RefundDetails(
+                                        new PartialRefundDetails(
+                                            refundId: "1234",
                                             refundedAt: DateTime.Now,
                                             amount: 5.3,
                                             currency: "USD",

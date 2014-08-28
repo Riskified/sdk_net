@@ -50,7 +50,7 @@
     <Compile Include="Model\AbstractOrder.cs" />
     <Compile Include="Model\OrderCancellation.cs" />
     <Compile Include="Model\OrderPartialRefund.cs" />
-    <Compile Include="Model\RefundElements\RefundDetails.cs" />
+    <Compile Include="Model\RefundElements\PartialRefundDetails.cs" />
     <Compile Include="Utils\InputValidators.cs" />
     <Compile Include="Exceptions\NotifierServerFailedToStartException.cs" />
     <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />
