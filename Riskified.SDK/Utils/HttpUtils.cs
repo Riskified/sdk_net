@@ -49,7 +49,7 @@ namespace Riskified.SDK.Utils
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(new GenericJson<TReqObj>(jsonObj));
+                jsonStr = JsonConvert.SerializeObject(new GenericOrder<TReqObj>(jsonObj));
             }
             catch (Exception e)
             {
@@ -68,11 +68,10 @@ namespace Riskified.SDK.Utils
                 if (wex.Response != null)
                 {
                     HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
-                    error = "Error occurred. Http status code: " + errorResponse.StatusCode;
-                    /*try
+                    try
                     {
-                        var errRes = ParseObjectFromJsonResponse<TRespObj>(errorResponse);
-                        return errRes;
+                        var errorObj = ParseObjectFromJsonResponse<ErrorResponse>(errorResponse);
+                        error = errorObj.Error.Message + " (Http Status code: " + errorResponse.StatusCode + ")";
                     }
                     catch (Exception parseEx)
                     {
@@ -84,7 +83,7 @@ namespace Riskified.SDK.Utils
                             error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
                         error += parseEx.Message;
                     }
-                     */
+                     
                 }
                 LoggingServices.Error(error, wex);
                 throw new RiskifiedTransactionException(error, wex);
@@ -96,7 +95,7 @@ namespace Riskified.SDK.Utils
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
 
-            var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
+            var resObj = ParseObjectFromJsonResponse<GenericOrder<TRespObj>>(response).Order;
             return resObj;
         }
 
@@ -159,7 +158,7 @@ namespace Riskified.SDK.Utils
             T transactionResult;
             try
             {
-                transactionResult = JsonConvert.DeserializeObject<GenericJson<T>>(responseBody).InnerObj;
+                transactionResult = JsonConvert.DeserializeObject<T>(responseBody);
             }
             catch (Exception e)
             {
@@ -171,15 +170,30 @@ namespace Riskified.SDK.Utils
             return transactionResult;
         }
 
-        internal class GenericJson<T>
+        internal class GenericOrder<TOrder>
         {
             [JsonProperty(PropertyName = "order", Required = Required.Always)]
-            public T InnerObj { get; set; }
+            public TOrder Order { get; set; }
 
-            public GenericJson(T innerObj)
+            [JsonProperty(PropertyName = "warnings", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+            public string[] Warnings { get; set; }
+
+            public GenericOrder(TOrder order)
             {
-                InnerObj = innerObj;
+                Order = order;
             }
+        }
+
+        internal class ErrorResponse
+        {
+            [JsonProperty(PropertyName = "error", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+            public ErrorMessage Error { get; set; }
+        }
+
+        internal class ErrorMessage
+        {
+            [JsonProperty(PropertyName = "message", Required = Required.Always)]
+            public string Message { get; set; }
         }
 
         public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
@@ -188,7 +202,7 @@ namespace Riskified.SDK.Utils
             {
                 Stream s = request.InputStream;
                 string postData = ExtractStreamData(s);
-                T obj = JsonStringToObject<T>(postData);
+                T obj = JsonStringToObject<GenericOrder<T>>(postData).Order;
                 return obj;
             }
             return null;
