@@ -17,7 +17,7 @@ namespace Riskified.SDK.Sample
 
         public void Debug(string message, Exception exception)
         {
-            Debug(string.Format("{0}. Exception was: {1}. StackTrace {2}", message, exception.Message, exception.StackTrace));
+            Debug(string.Format("{0}. Exception was: {1}. StackTrace: {2}", message, exception.Message, exception.StackTrace));
         }
 
         public void Info(string message)
@@ -27,7 +27,7 @@ namespace Riskified.SDK.Sample
 
         public void Info(string message, Exception exception)
         {
-            Info(string.Format("{0}. Exception was: message: {1}. StackTrace {2}", message, exception.Message, exception.StackTrace));
+            Info(string.Format("{0}. Exception was: {1}. StackTrace: {2}", message, exception.Message, exception.StackTrace));
         }
 
         public void Error(string message)
@@ -37,7 +37,7 @@ namespace Riskified.SDK.Sample
 
         public void Error(string message, Exception exception)
         {
-            Error(string.Format("{0}. Exception was: message: {1}. StackTrace {2}", message, exception.Message, exception.StackTrace));
+            Error(string.Format("{0}. Exception was: {1}. StackTrace: {2}", message, exception.Message, exception.StackTrace));
         }
 
         public void Fatal(string message)

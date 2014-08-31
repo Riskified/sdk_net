@@ -52,9 +52,7 @@ namespace Riskified.SDK.Sample
             while (commandStr != null && (!commandStr.Equals("q")))
             {
                 
-                Console.WriteLine("Order Generated with merchant order number: " + orderNum);
-                orderNum++;
-                order.Id = orderNum;
+                
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
                 OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
@@ -64,10 +62,16 @@ namespace Riskified.SDK.Sample
                     switch (commandStr)
                     {
                         case "c":
+                            Console.WriteLine("Order Generated with merchant order number: " + orderNum);
+                            order.Id = orderNum.ToString();
+                            orderNum++;
                             // sending order for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.Create(order);
                             break;
                         case "s":
+                            Console.WriteLine("Order Generated with merchant order number: " + orderNum);
+                            order.Id = orderNum.ToString();
+                            orderNum++;
                             // sending order for submitting and analysis 
                             // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
                             res = gateway.Submit(order);
@@ -75,7 +79,7 @@ namespace Riskified.SDK.Sample
                         case "u":
                             Console.Write("Updated order id: ");
                             string upOrderId = Console.ReadLine();
-                            order.Id = int.Parse(upOrderId);
+                            order.Id = int.Parse(upOrderId).ToString();
                             res = gateway.Update(order);
                             break;
                         case "d":
@@ -96,7 +100,7 @@ namespace Riskified.SDK.Sample
                                     partialRefunds: new[]
                                     {
                                         new PartialRefundDetails(
-                                            refundId: "1234",
+                                            refundId: "12345",
                                             refundedAt: DateTime.Now,
                                             amount: 5.3,
                                             currency: "USD",
@@ -108,9 +112,10 @@ namespace Riskified.SDK.Sample
 
                     if (res != null)
                     {
-                        Console.WriteLine("Order sent successfully: " + res.Status +
-                                              ". Riskified order ID received: " + res.Id +
-                                              " Description: " + res.Description);
+                        Console.WriteLine("Order sent successfully: " + 
+                                              " Status at Riskified: " + res.Status +
+                                              ". Order ID received: " + res.Id +
+                                              ". Description: " + res.Description);
                     }
                     else
                     {
