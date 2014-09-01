@@ -1,7 +1,7 @@
 sdk_net
 =======
 
-An implementation of the Riskified API in C# for .NET
+An implementation of the Riskified API in C# for .NET  
 Refer to the [documentation](http://apiref.riskified.com) for more details.
 
 Running the sample code
@@ -21,11 +21,11 @@ If you wish to send your own data - Change the model object (Order) in the ```Or
 Migrating from older versions (prior to: API v2 - v2.0.0.0)
 -----------------------------------------------------------
 
-API Version 2 introduces new features (and breaks some old ones).
+API Version 2 introduces new features (and breaks some old ones).  
 
 ### Orders Gateway ###
 
-This version represents a shift from data-driven order handling to multiple API endpoints and introduces some new Model objects. 
+This version represents a shift from data-driven order handling to multiple API endpoints and introduces some new Model objects.  
 Each endpoint/method designed for a specific purpose:
 
 * `/Create` - served by `ordersGateway.Create(Order)`
