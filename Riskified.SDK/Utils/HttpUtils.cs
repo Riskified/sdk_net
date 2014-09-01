@@ -19,7 +19,7 @@ namespace Riskified.SDK.Utils
 
     internal static class HttpUtils
     {
-        private const string ShopDomainHeaderName = "X_RISKIFIED_SHOP_DOMAIN";
+        private const string ShopDomainHeaderName = "X-RISKIFIED-SHOP-DOMAIN";
         private const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
         private const int ServerApiVersion = 2;
 
