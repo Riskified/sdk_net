@@ -33,6 +33,7 @@ Each endpoint/method designed for a specific purpose:
 * `/Submit` - served by `ordersGateway.Submit(Order)`
 * `/Refund` - served by `ordersGateway.PartlyRefund(OrderPartialRefund)`
 * `/Cancel` - served by `ordersGateway.Cancel(OrderCancellation)`
+* `/historical` - served by `ordersGateway.SendHistoricalOrders(Orders)`
 
 When migrating from version 1, you'll need to separate the different calls to Riskified's API to support this new process.
 
