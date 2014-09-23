@@ -43,6 +43,7 @@ namespace Riskified.SDK.Sample
                                 "'s' for submit\n" +
                                 "'d' for cancel\n" +
                                 "'r' for partial refund\n" +
+                                "'h' for historical sending\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
@@ -107,6 +108,20 @@ namespace Riskified.SDK.Sample
                                             reason: "Customer partly refunded on shipping fees")
                                     }));
                             break;
+                        case "h":
+                            int startOrderNum = orderNum;
+                            Order o1 = GenerateOrder(orderNum++);
+                            o1.FinancialStatus = "paid";
+                            Order o2 = GenerateOrder(orderNum++);
+                            o2.FinancialStatus = "cancelled";
+                            Order o3 = GenerateOrder(orderNum++);
+                            o3.FinancialStatus = "chargeback";
+                            var orders = new[] {o1,o2,o3};
+                            Console.WriteLine("Orders Generated with merchant order numbers: {0} to {1}",startOrderNum,orderNum-1);
+                            // sending 3 historical orders with different processing state
+                            gateway.SendHistoricalOrders(orders);
+                            break;
+
                     }
 
 
@@ -116,10 +131,6 @@ namespace Riskified.SDK.Sample
                                               " Status at Riskified: " + res.Status +
                                               ". Order ID received: " + res.Id +
                                               ". Description: " + res.Description);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Unknown error sending order.");
                     }
                 }
                 catch (OrderFieldBadFormatException e)

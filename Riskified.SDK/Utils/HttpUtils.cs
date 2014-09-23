@@ -32,8 +32,33 @@ namespace Riskified.SDK.Utils
         }
 
         /// <summary>
-        /// Sends an HTTP Post request to the received url (Riskified server), blocks and waits for response from server
-        /// When response is received, Tries to parse its body from JSON to an object of type 'T' which it returns
+        /// Sends an HTTP Post request with the json-serialized data of jsonObj as body to the received url (Riskified server),
+        /// blocks and returns after successful response from server (200-OK)
+        /// Throws exceptions on network errors or serialization problems
+        /// </summary>        
+        /// <typeparam name="TReqObj">The type of class to be received as parameter and serialized to JSON as request body</typeparam>
+        /// <param name="riskifiedWebhookUrl">The full url with internal path of the relevant riskified webhook</param>
+        /// <param name="jsonObj">The object to be json serialized as body of the HTTP request</param>
+        /// <param name="authToken">The merchant authentication Token</param>
+        /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public static void JsonPostAndParseResponseToObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
+        {
+            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+
+            if(response != null)
+            {
+                response.Close();
+            }
+        }
+
+        /// <summary>
+        /// Sends an HTTP Post request with the json-serialized data of jsonObj as body to the received url (Riskified server),
+        /// blocks and returns after successful response from server (200-OK)
+        /// Throws exceptions on network errors or serialization problems
+        /// Returns the expected object representation (of type TRespObj) deserialized from the response json body
+        /// Throws exceptions on object serialization or network errors
         /// </summary>
         /// <typeparam name="TRespObj">The type of class expected to be received in the response body as JSON</typeparam>
         /// <typeparam name="TReqObj">The type of class to be received as parameter and serialized to JSON as request body</typeparam>
@@ -41,15 +66,27 @@ namespace Riskified.SDK.Utils
         /// <param name="jsonObj">The object to be json serialized as body of the HTTP request</param>
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
-        /// <returns>'T' typed response object</returns>
+        /// <returns>'TRespObj' typed response object</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public static TRespObj JsonPostAndParseResponseToObject<TRespObj,TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain) 
             where TRespObj : class
             where TReqObj  : class 
         {
+            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+
+            var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
+            return resObj;
+        }
+
+
+
+        private static HttpWebResponse PostObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
+        {
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(new GenericOrder<TReqObj>(jsonObj));
+                jsonStr = JsonConvert.SerializeObject(jsonObj);
             }
             catch (Exception e)
             {
@@ -59,7 +96,7 @@ namespace Riskified.SDK.Utils
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken,shopDomain, HttpBodyType.JSON);
+                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -83,7 +120,7 @@ namespace Riskified.SDK.Utils
                             error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
                         error += parseEx.Message;
                     }
-                     
+
                 }
                 LoggingServices.Error(error, wex);
                 throw new RiskifiedTransactionException(error, wex);
@@ -95,8 +132,7 @@ namespace Riskified.SDK.Utils
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
 
-            var resObj = ParseObjectFromJsonResponse<GenericOrder<TRespObj>>(response).Order;
-            return resObj;
+            return response;
         }
 
         private static string CalcHmac(string data, string authToken)
@@ -170,20 +206,6 @@ namespace Riskified.SDK.Utils
             return transactionResult;
         }
 
-        internal class GenericOrder<TOrder>
-        {
-            [JsonProperty(PropertyName = "order", Required = Required.Always)]
-            public TOrder Order { get; set; }
-
-            [JsonProperty(PropertyName = "warnings", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
-            public string[] Warnings { get; set; }
-
-            public GenericOrder(TOrder order)
-            {
-                Order = order;
-            }
-        }
-
         internal class ErrorResponse
         {
             [JsonProperty(PropertyName = "error", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
@@ -202,7 +224,7 @@ namespace Riskified.SDK.Utils
             {
                 Stream s = request.InputStream;
                 string postData = ExtractStreamData(s);
-                T obj = JsonStringToObject<GenericOrder<T>>(postData).Order;
+                T obj = JsonStringToObject<T>(postData);
                 return obj;
             }
             return null;

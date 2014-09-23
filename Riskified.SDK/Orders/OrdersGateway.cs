@@ -2,6 +2,8 @@
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
+using System.Collections.Generic;
+using Riskified.SDK.Model.Internal;
 
 namespace Riskified.SDK.Orders
 {
@@ -34,7 +36,7 @@ namespace Riskified.SDK.Orders
         /// <param name="order">The Order to create</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Create(Order order)
         {            
             return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/create"));
@@ -47,7 +49,7 @@ namespace Riskified.SDK.Orders
         /// <param name="order">The Order to update</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Update(Order order)
         {
             return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/update"));
@@ -60,7 +62,7 @@ namespace Riskified.SDK.Orders
         /// <param name="order">The Order to submit</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Submit(Order order)
         {
             return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/submit"));
@@ -72,6 +74,8 @@ namespace Riskified.SDK.Orders
         /// </summary>
         /// <param name="orderCancellation"></param>
         /// <returns></returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Cancel(OrderCancellation orderCancellation)
         {
             return SendOrder(orderCancellation, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/cancel"));
@@ -83,9 +87,26 @@ namespace Riskified.SDK.Orders
         /// </summary>
         /// <param name="orderPartialRefund"></param>
         /// <returns></returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification PartlyRefund(OrderPartialRefund orderPartialRefund)
         {
             return SendOrder(orderPartialRefund, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/refund"));
+        }
+
+        /// <summary>
+        /// Validates all Orders object fields
+        /// Sends the list of historical orders to Riskified Servers
+        /// The FinancialStatus field of each order should contain the latest order status (paid, cancelled, chargeback, etc.)
+        /// </summary>
+        /// <param name="order">The Orders to send</param>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public void SendHistoricalOrders(IEnumerable<Order> orders)
+        {
+            var riskifiedEndpointUrl = HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/historical");
+            OrdersWrapper wrappedOrders = new OrdersWrapper(orders);
+            HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
         }
 
         /// <summary>
@@ -96,13 +117,15 @@ namespace Riskified.SDK.Orders
         /// <param name="riskifiedEndpointUrl">the endpoint to which the order should be sent</param>
         /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
-        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (netwwork errors, bad response data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         private OrderNotification SendOrder(AbstractOrder order, Uri riskifiedEndpointUrl)
         {
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderNotification, AbstractOrder>(riskifiedEndpointUrl, order, _authToken, _shopDomain);
-            return transactionResult;
+            var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<OrderNotification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            return transactionResult.Order;
             
         }
+
     }
 
     

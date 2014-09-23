@@ -6,6 +6,7 @@ using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
+using Riskified.SDK.Model.Internal;
 
 namespace Riskified.SDK.Notifications
 {
@@ -144,7 +145,7 @@ namespace Riskified.SDK.Notifications
                     OrderNotification n;
                     try
                     {
-                        n = HttpUtils.ParsePostRequestToObject<OrderNotification>(request);
+                        n = HttpUtils.ParsePostRequestToObject<OrderWrapper<OrderNotification>>(request).Order;
                     }
                     catch(Exception)
                     {
