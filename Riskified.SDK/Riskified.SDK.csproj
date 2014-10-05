@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\IJsonSerializable.cs" />
     <Compile Include="Model\Internal\OrdersWrapper.cs" />
     <Compile Include="Model\Internal\OrderWrapper.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />

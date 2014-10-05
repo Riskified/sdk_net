@@ -2,7 +2,7 @@
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public class DiscountCode
+    public class DiscountCode : IJsonSerializable
     {
         /// <summary>
         /// A discount code for one of the products in the order
@@ -20,6 +20,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string Code { get; set; }
+
+        public void Validate(bool isWeak=false)
+        {
+            return;
+        }
     }
 
 }

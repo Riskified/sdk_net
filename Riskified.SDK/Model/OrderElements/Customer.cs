@@ -6,7 +6,7 @@ using Riskified.SDK.Utils;
 namespace Riskified.SDK.Model.OrderElements
 {
     [JsonObject("customer")]
-    public class Customer
+    public class Customer : IJsonSerializable
     {
         /// <summary>
         /// Creates a new Customer
@@ -22,25 +22,29 @@ namespace Riskified.SDK.Model.OrderElements
         /// <exception cref="OrderFieldBadFormatException">Thrown if one or more of the parameters is missing or of bad format</exception>
         public Customer(string firstName, string lastName,int? id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
         {
-            InputValidators.ValidateValuedString(firstName,"First Name");
             FirstName = firstName;
-            InputValidators.ValidateValuedString(lastName, "Last Name");
             LastName = lastName;
             // optional fields
             Id = id;
-            if (!string.IsNullOrEmpty(email))
-            {
-                InputValidators.ValidateEmail(email);
-                Email = email;
-            }
+            Email = email;
             OrdersCount = ordersCount;
             VerifiedEmail = verifiedEmail;
-            if (createdAt.HasValue)
-            {
-                InputValidators.ValidateDateNotDefault(createdAt.Value, "Created At");
-                CreatedAt = createdAt;
-            }
+            CreatedAt = createdAt;
             Note = notes;
+        }
+
+        public void Validate(bool isWeak=false)
+        {
+            InputValidators.ValidateValuedString(FirstName, "First Name");
+            InputValidators.ValidateValuedString(LastName, "Last Name");
+            if (!string.IsNullOrEmpty(Email))
+            {
+                InputValidators.ValidateEmail(Email);
+            }
+            if (CreatedAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+            }
         }
 
         [JsonProperty(PropertyName = "created_at", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
@@ -66,5 +70,7 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "verified_email",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public bool? VerifiedEmail { get; set; }
+
+        
     }
 }

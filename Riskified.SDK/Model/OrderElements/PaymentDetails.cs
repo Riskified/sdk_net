@@ -4,7 +4,7 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public class PaymentDetails
+    public class PaymentDetails : IJsonSerializable
     {
         /// <summary>
         /// The payment information for the order
@@ -17,16 +17,20 @@ namespace Riskified.SDK.Model.OrderElements
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public PaymentDetails(string avsResultCode, string cvvResultCode, string creditCardBin, string creditCardCompany, string creditCardNumber)
         {
-            InputValidators.ValidateAvsResultCode(avsResultCode);
             AvsResultCode = avsResultCode;
-            InputValidators.ValidateCvvResultCode(cvvResultCode);
             CvvResultCode = cvvResultCode;
-            InputValidators.ValidateValuedString(creditCardBin,"Credit Card Bin");
             CreditCardBin = creditCardBin;
-            InputValidators.ValidateValuedString(creditCardCompany, "Credit Card Company");
             CreditCardCompany = creditCardCompany;
-            InputValidators.ValidateCreditCard(creditCardNumber);
             CreditCardNumber = creditCardNumber;
+        }
+
+        public void Validate(bool isWeak = false)
+        {
+            InputValidators.ValidateAvsResultCode(AvsResultCode);
+            InputValidators.ValidateCvvResultCode(CvvResultCode);
+            InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
+            InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
+            InputValidators.ValidateCreditCard(CreditCardNumber);
         }
 
         [JsonProperty(PropertyName = "avs_result_code", Required = Required.Always)]

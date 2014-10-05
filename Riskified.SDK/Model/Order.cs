@@ -40,31 +40,18 @@ namespace Riskified.SDK.Model
             DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null,
             double? totalPriceUsd = null, DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null) : base(merchantOrderId)
         {
-            InputValidators.ValidateObjectNotNull(lineItems,"Line Items");
             LineItems = lineItems;
-            InputValidators.ValidateObjectNotNull(shippingLines, "Shipping Lines");
             ShippingLines = shippingLines;
-            InputValidators.ValidateObjectNotNull(paymentDetails, "Payment Details");
             PaymentDetails = paymentDetails;
-            InputValidators.ValidateObjectNotNull(billingAddress, "Billing Address");
             BillingAddress = billingAddress;
-            InputValidators.ValidateObjectNotNull(shippingAddress, "Shipping Address");
             ShippingAddress = shippingAddress;
-            InputValidators.ValidateObjectNotNull(customer, "Customer");
             Customer = customer;
-            InputValidators.ValidateEmail(email);
             Email = email;
-            InputValidators.ValidateIp(customerBrowserIp);
             CustomerBrowserIp = customerBrowserIp;
-            InputValidators.ValidateCurrency(currency);
             Currency = currency;
-            InputValidators.ValidateZeroOrPositiveValue(totalPrice,"Total Price");
             TotalPrice = totalPrice;
-            InputValidators.ValidateValuedString(gateway,"Gateway");
             Gateway = gateway;
-            InputValidators.ValidateDateNotDefault(createdAt, "Created At");
             CreatedAt = createdAt;
-            InputValidators.ValidateDateNotDefault(updatedAt, "Updated At");
             UpdatedAt = updatedAt;
             
             // optional fields
@@ -79,9 +66,39 @@ namespace Riskified.SDK.Model
             }
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;
-
-
         }
+
+        public override void Validate(bool isWeak = false)
+        {
+            base.Validate(isWeak);
+            InputValidators.ValidateObjectNotNull(LineItems, "Line Items");
+            InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
+            InputValidators.ValidateObjectNotNull(PaymentDetails, "Payment Details");
+            InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
+            InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
+            InputValidators.ValidateObjectNotNull(Customer, "Customer");
+            InputValidators.ValidateEmail(Email);
+            InputValidators.ValidateIp(CustomerBrowserIp);
+            InputValidators.ValidateCurrency(Currency);
+            if (TotalPrice.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
+            }
+            InputValidators.ValidateValuedString(Gateway, "Gateway");
+            if (CreatedAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+            }
+            if (UpdatedAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
+            }
+            if (ClosedAt.HasValue)
+            {
+                InputValidators.ValidateDateNotDefault(ClosedAt.Value, "Closed At");
+            }
+        }
+
 
         [JsonProperty(PropertyName = "cart_token", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string CartToken { get; set; }

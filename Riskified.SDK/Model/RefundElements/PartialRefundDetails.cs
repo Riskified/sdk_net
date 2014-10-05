@@ -5,7 +5,7 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.RefundElements
 {
-    public class PartialRefundDetails
+    public class PartialRefundDetails : IJsonSerializable
     {
         /// <summary>
         /// The details for a single partial refund element
@@ -18,16 +18,20 @@ namespace Riskified.SDK.Model.RefundElements
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public PartialRefundDetails(string refundId,DateTime refundedAt, double amount, string currency, string reason)
         {
-            InputValidators.ValidateValuedString(refundId,"Refund ID");
             RefundId = refundId;
-            InputValidators.ValidateDateNotDefault(refundedAt, "Refunded At");
             RefundedAt = refundedAt;
-            InputValidators.ValidateZeroOrPositiveValue(amount, "Refund Amount");
             Amount = amount;
-            InputValidators.ValidateCurrency(currency);
             Currency = currency;
-            InputValidators.ValidateValuedString(reason,"Refund Reason");
             Reason = reason;
+        }
+
+        public void Validate(bool isWeak = false)
+        {
+            InputValidators.ValidateValuedString(RefundId, "Refund ID");
+            InputValidators.ValidateDateNotDefault(RefundedAt, "Refunded At");
+            InputValidators.ValidateZeroOrPositiveValue(Amount, "Refund Amount");
+            InputValidators.ValidateCurrency(Currency);
+            InputValidators.ValidateValuedString(Reason, "Refund Reason");
         }
 
         [JsonProperty(PropertyName = "refund_id", Required = Required.Always)]

@@ -15,6 +15,7 @@ namespace Riskified.SDK.Orders
         private readonly string _riskifiedBaseWebhookUrl;
         private readonly string _authToken;
         private readonly string _shopDomain;
+        private readonly bool _isWeak;
         
         /// <summary>
         /// Creates the mediator class used to send order data to Riskified
@@ -22,11 +23,13 @@ namespace Riskified.SDK.Orders
         /// <param name="env">The Riskified environment to send to</param>
         /// <param name="authToken">The merchant's auth token</param>
         /// <param name="shopDomain">The merchant's shop domain</param>
-        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain)
+        /// <param name="isWeakValidation">Should weakly validate before sending</param>
+        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain, bool shouldUseWeakValidation=false)
         {
             _riskifiedBaseWebhookUrl = EnvironmentsUrls.GetEnvUrl(env); 
             _authToken = authToken;
             _shopDomain = shopDomain;
+            _isWeak = shouldUseWeakValidation;
         }
 
         /// <summary>
@@ -120,6 +123,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         private OrderNotification SendOrder(AbstractOrder order, Uri riskifiedEndpointUrl)
         {
+            order.Validate(_isWeak);
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<OrderNotification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return transactionResult.Order;

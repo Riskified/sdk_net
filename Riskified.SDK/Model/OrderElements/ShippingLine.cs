@@ -4,7 +4,7 @@ using Riskified.SDK.Utils;
 namespace Riskified.SDK.Model.OrderElements
 {
 
-    public class ShippingLine
+    public class ShippingLine : IJsonSerializable
     {
         /// <summary>
         /// The shipping line (shiiping method)
@@ -14,12 +14,19 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="code">A code to the shipping method</param>
         public ShippingLine(double price, string title, string code = null)
         {
-            InputValidators.ValidateZeroOrPositiveValue(price,"Price");
             Price = price;
-            InputValidators.ValidateValuedString(title,"Title");
             Title = title;
             // optional
             Code = code;
+        }
+
+        public void Validate(bool isWeak = false)
+        {
+            if (Price.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
+            }
+            InputValidators.ValidateValuedString(Title, "Title");
         }
 
         [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]

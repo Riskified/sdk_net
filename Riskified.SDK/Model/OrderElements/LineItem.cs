@@ -3,7 +3,7 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public class LineItem
+    public class LineItem : IJsonSerializable
     {
         /// <summary>
         /// Creates a new LineItem
@@ -15,15 +15,26 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
         public LineItem(string title, double price, int quantityPurchased,int? productId=null,string sku=null)
         {
-            InputValidators.ValidateValuedString(title,"Title");
+            
             Title = title;
-            InputValidators.ValidateZeroOrPositiveValue(price,"Price");
             Price = price;
-            InputValidators.ValidatePositiveValue(quantityPurchased,"Quantity Purchased");
             QuantityPurchased = quantityPurchased;
             // optional
             ProductId = productId == 0 ? null : productId;
             Sku = sku;
+        }
+
+        public void Validate(bool isWeak=false)
+        {
+            InputValidators.ValidateValuedString(Title, "Title");
+            if (Price.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
+            }
+            if (QuantityPurchased.HasValue)
+            {
+                InputValidators.ValidatePositiveValue(QuantityPurchased.Value, "Quantity Purchased");
+            }
         }
 
         /// <summary>

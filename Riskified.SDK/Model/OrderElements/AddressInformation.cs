@@ -4,7 +4,7 @@ using Riskified.SDK.Utils;
 namespace Riskified.SDK.Model.OrderElements
 {
     
-    public class AddressInformation
+    public class AddressInformation : IJsonSerializable
     {
         /// <summary>
         /// Creates an AddressInformation instance
@@ -24,33 +24,36 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="fullName">The full name of the addressee (optional)</param>
         public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null)
         {
-            InputValidators.ValidateValuedString(firstName, "First Name");
             FirstName = firstName;
-            InputValidators.ValidateValuedString(lastName, "Last Name");
             LastName = lastName;
-            InputValidators.ValidateValuedString(address1, "Address 1");
             Address1 = address1;
-            InputValidators.ValidateValuedString(city, "City");
             City = city;
-            InputValidators.ValidateValuedString(country, "Country");
             Country = country;
-            InputValidators.ValidateCountryOrProvinceCode(countryCode);
             CountryCode = countryCode;
-            InputValidators.ValidatePhoneNumber(phone);
             Phone = phone;
             
             // optional fields:
-            
-            if (!string.IsNullOrEmpty(provinceCode))
-            {
-                InputValidators.ValidateCountryOrProvinceCode(provinceCode);
-                ProvinceCode = provinceCode;
-            }
+            ProvinceCode = provinceCode;
             Address2 = address2;
             Province = province;
             ZipCode = zipCode;
             Company = company;
             FullName = fullName;
+        }
+
+        public void Validate(bool isWeak = false)
+        {
+            InputValidators.ValidateValuedString(FirstName, "First Name");
+            InputValidators.ValidateValuedString(LastName, "Last Name");
+            InputValidators.ValidateValuedString(Address1, "Address 1");
+            InputValidators.ValidateValuedString(City, "City");
+            InputValidators.ValidateValuedString(Country, "Country");
+            InputValidators.ValidateCountryOrProvinceCode(CountryCode);
+            InputValidators.ValidatePhoneNumber(Phone);
+            if (!string.IsNullOrEmpty(ProvinceCode))
+            {
+                InputValidators.ValidateCountryOrProvinceCode(ProvinceCode);
+            }
         }
 
         [JsonProperty(PropertyName = "address1", Required = Required.Always)]
