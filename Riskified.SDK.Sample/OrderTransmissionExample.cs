@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Configuration;
 using Riskified.SDK.Model;
 using Riskified.SDK.Model.OrderElements;
@@ -119,7 +121,17 @@ namespace Riskified.SDK.Sample
                             var orders = new[] {o1,o2,o3};
                             Console.WriteLine("Orders Generated with merchant order numbers: {0} to {1}",startOrderNum,orderNum-1);
                             // sending 3 historical orders with different processing state
-                            gateway.SendHistoricalOrders(orders);
+                            Dictionary<string,string> errors;
+                            bool success = gateway.SendHistoricalOrders(orders,out errors);
+                            if(success)
+                            {
+                                Console.WriteLine("All historical orders sent successfully");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Some historical orders failed to send:");
+                                Console.WriteLine(String.Join("\n", errors.Select(p => p.Key + ":" + p.Value).ToArray()));
+                            }
                             break;
 
                     }

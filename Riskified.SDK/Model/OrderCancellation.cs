@@ -18,10 +18,15 @@ namespace Riskified.SDK.Model
         /// "other": The order was cancelled for a reason not in the list above. </param>
         public OrderCancellation(int merchantOrderId, DateTime cancelledAt, string cancelReason) : base(merchantOrderId)
         {
-            InputValidators.ValidateDateNotDefault(cancelledAt, "Cancelled At");
             CancelledAt = cancelledAt;
-            InputValidators.ValidateValuedString(cancelReason,"Cancel Reason");
             CancelReason = cancelReason;
+        }
+
+        public override void Validate(bool isWeak = false)
+        {
+            base.Validate(isWeak);
+            InputValidators.ValidateDateNotDefault(CancelledAt.Value, "Cancelled At");
+            InputValidators.ValidateValuedString(CancelReason, "Cancel Reason");
         }
 
 

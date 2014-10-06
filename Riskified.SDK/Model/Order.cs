@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
@@ -59,11 +60,7 @@ namespace Riskified.SDK.Model
             TotalPriceUsd = totalPriceUsd;
             TotalDiscounts = totalDiscounts;
             CartToken = cartToken;
-            if (closedAt.HasValue)
-            {
-                InputValidators.ValidateDateNotDefault(closedAt.Value, "Closed At");
-                ClosedAt = closedAt;
-            }
+            ClosedAt = closedAt;
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;
         }
@@ -72,26 +69,37 @@ namespace Riskified.SDK.Model
         {
             base.Validate(isWeak);
             InputValidators.ValidateObjectNotNull(LineItems, "Line Items");
+            LineItems.ToList().ForEach(item => item.Validate(isWeak));
             InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
+            ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
             InputValidators.ValidateObjectNotNull(PaymentDetails, "Payment Details");
+            PaymentDetails.Validate(isWeak);
             InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
+            BillingAddress.Validate(isWeak);
             InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
+            ShippingAddress.Validate(isWeak);
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
+            Customer.Validate(isWeak);
             InputValidators.ValidateEmail(Email);
             InputValidators.ValidateIp(CustomerBrowserIp);
             InputValidators.ValidateCurrency(Currency);
-            if (TotalPrice.HasValue)
-            {
-                InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
-            }
+            InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
             InputValidators.ValidateValuedString(Gateway, "Gateway");
-            if (CreatedAt.HasValue)
+            InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+            InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
+            
+            // optional fields validations
+            if(DiscountCodes != null && DiscountCodes.Length > 0)
             {
-                InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+                DiscountCodes.ToList().ForEach(item => item.Validate(isWeak));
             }
-            if (UpdatedAt.HasValue)
+            if(TotalPriceUsd.HasValue)
             {
-                InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
+                InputValidators.ValidateZeroOrPositiveValue(TotalPriceUsd.Value, "Total Price USD");
+            }
+            if (TotalDiscounts.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(TotalDiscounts.Value, "Total Discounts");
             }
             if (ClosedAt.HasValue)
             {

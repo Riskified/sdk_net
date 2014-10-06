@@ -24,6 +24,7 @@ namespace Riskified.SDK.Model.OrderElements
         {
             FirstName = firstName;
             LastName = lastName;
+
             // optional fields
             Id = id;
             Email = email;
@@ -36,10 +37,19 @@ namespace Riskified.SDK.Model.OrderElements
         public void Validate(bool isWeak=false)
         {
             InputValidators.ValidateValuedString(FirstName, "First Name");
-            InputValidators.ValidateValuedString(LastName, "Last Name");
+            if (!isWeak)
+            {
+                InputValidators.ValidateValuedString(LastName, "Last Name");
+            }
+
+            // optional fields validations
             if (!string.IsNullOrEmpty(Email))
             {
                 InputValidators.ValidateEmail(Email);
+            }
+            if (OrdersCount.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(OrdersCount.Value, "Orders Count");
             }
             if (CreatedAt.HasValue)
             {
@@ -59,7 +69,7 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "id", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public int? Id { get; set; }
 
-        [JsonProperty(PropertyName = "last_name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "last_name", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "note", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]

@@ -22,10 +22,7 @@ namespace Riskified.SDK.Model.OrderElements
 
         public void Validate(bool isWeak = false)
         {
-            if (Price.HasValue)
-            {
-                InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
-            }
+            InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
             InputValidators.ValidateValuedString(Title, "Title");
         }
 

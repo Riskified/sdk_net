@@ -15,16 +15,18 @@ namespace Riskified.SDK.Model.OrderElements
             Code = code;
         }
 
+        public void Validate(bool isWeak = false)
+        {
+            return;
+        }
+
         [JsonProperty(PropertyName = "amount", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public double? MoneyDiscountSum { get; set; }
 
         [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string Code { get; set; }
 
-        public void Validate(bool isWeak=false)
-        {
-            return;
-        }
+        
     }
 
 }

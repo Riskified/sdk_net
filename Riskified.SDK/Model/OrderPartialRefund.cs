@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Linq;
 using Riskified.SDK.Model.RefundElements;
 using Riskified.SDK.Utils;
 
@@ -11,8 +12,14 @@ namespace Riskified.SDK.Model
 
         public OrderPartialRefund(int merchantOrderId,PartialRefundDetails[] partialRefunds) : base(merchantOrderId)
         {
-            InputValidators.ValidateObjectNotNull(partialRefunds,"Refunds");
             Refunds = partialRefunds;
+        }
+
+        public override void Validate(bool isWeak)
+        {
+            base.Validate(isWeak);
+            InputValidators.ValidateObjectNotNull(Refunds, "Refunds");
+            Refunds.ToList().ForEach(item => item.Validate(isWeak));
         }
     }
 }

@@ -44,12 +44,17 @@ namespace Riskified.SDK.Model.OrderElements
         public void Validate(bool isWeak = false)
         {
             InputValidators.ValidateValuedString(FirstName, "First Name");
-            InputValidators.ValidateValuedString(LastName, "Last Name");
+            if (!isWeak)
+            {
+                InputValidators.ValidateValuedString(LastName, "Last Name");
+                InputValidators.ValidatePhoneNumber(Phone);
+            }
             InputValidators.ValidateValuedString(Address1, "Address 1");
             InputValidators.ValidateValuedString(City, "City");
             InputValidators.ValidateValuedString(Country, "Country");
             InputValidators.ValidateCountryOrProvinceCode(CountryCode);
-            InputValidators.ValidatePhoneNumber(Phone);
+
+            // optional fields validations
             if (!string.IsNullOrEmpty(ProvinceCode))
             {
                 InputValidators.ValidateCountryOrProvinceCode(ProvinceCode);
@@ -77,13 +82,13 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
         public string FirstName { get; set; }
 
-        [JsonProperty(PropertyName = "last_name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "last_name", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public string LastName { get; set; }
 
         [JsonProperty(PropertyName = "name", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
         public string FullName { get; set; }
 
-        [JsonProperty(PropertyName = "phone", Required = Required.Always)]
+        [JsonProperty(PropertyName = "phone", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
         public string Phone { get; set; }
 
         [JsonProperty(PropertyName = "province",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]

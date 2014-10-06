@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
@@ -37,7 +38,7 @@ namespace Riskified.SDK.Orders
         /// Sends a new order to Riskified Servers (without Submit for analysis)
         /// </summary>
         /// <param name="order">The Order to create</param>
-        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Create(Order order)
@@ -50,7 +51,7 @@ namespace Riskified.SDK.Orders
         /// Sends an updated order (already created) to Riskified Servers
         /// </summary>
         /// <param name="order">The Order to update</param>
-        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Update(Order order)
@@ -63,7 +64,7 @@ namespace Riskified.SDK.Orders
         /// Sends an order to Riskified Servers and submits it for analysis
         /// </summary>
         /// <param name="order">The Order to submit</param>
-        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Submit(Order order)
@@ -76,7 +77,7 @@ namespace Riskified.SDK.Orders
         /// Sends a cancellation message for a specific order (id should already exist) to Riskified server for status and charge fees update
         /// </summary>
         /// <param name="orderCancellation"></param>
-        /// <returns></returns>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Cancel(OrderCancellation orderCancellation)
@@ -89,7 +90,7 @@ namespace Riskified.SDK.Orders
         /// Sends the partial refund data for an order to Riskified server for status and charge fees update
         /// </summary>
         /// <param name="orderPartialRefund"></param>
-        /// <returns></returns>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification PartlyRefund(OrderPartialRefund orderPartialRefund)
@@ -98,18 +99,69 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
-        /// Validates all Orders object fields
-        /// Sends the list of historical orders to Riskified Servers
+        /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status (paid, cancelled, chargeback, etc.)
+        /// 
         /// </summary>
         /// <param name="order">The Orders to send</param>
+        /// <param name="failedOrders">When the method returns false, contains a mapping from order_id (key) to error message (value), otherwise will be null</param>
+        /// <returns>True if all orders were sent successfully, false if one or more failed due to bad format or tranfer error</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
-        public void SendHistoricalOrders(IEnumerable<Order> orders)
+        public bool SendHistoricalOrders(IEnumerable<Order> orders,out Dictionary<string,string> failedOrders)
         {
+            const byte batchSize = 10;
+
+            if(orders == null)
+            {
+                failedOrders=null;
+                return true;
+            }
+
+            Dictionary<string, string> errors = new Dictionary<string, string>();
             var riskifiedEndpointUrl = HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/historical");
-            OrdersWrapper wrappedOrders = new OrdersWrapper(orders);
-            HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
+
+            List<Order> batch = new List<Order>(batchSize);
+            var enumerator = orders.GetEnumerator();
+            do
+            {
+                batch.Clear();
+                while (enumerator.MoveNext() && batch.Count < batchSize)
+                {
+                    // validate orders and assign to next batch until full
+                    Order order = enumerator.Current;
+                    try
+                    {
+                        order.Validate();
+                        batch.Add(order);
+                    }
+                    catch (OrderFieldBadFormatException e)
+                    {
+                        errors.Add(order.Id, e.Message);
+                    }
+                }
+                if (batch.Count > 0)
+                {
+                    // send batch
+                    OrdersWrapper wrappedOrders = new OrdersWrapper(batch);
+                    try
+                    {
+                        HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
+                    }
+                    catch (RiskifiedTransactionException e)
+                    {
+                        batch.ForEach(o => errors.Add(o.Id, e.Message));
+                    }
+                }
+            } while (batch.Count == batchSize);
+
+            if(errors.Count == 0)
+            {
+                failedOrders = null;
+                return true;
+            }
+            failedOrders = errors;
+            return false;
         }
 
         /// <summary>

@@ -19,21 +19,22 @@ namespace Riskified.SDK.Model.OrderElements
             Title = title;
             Price = price;
             QuantityPurchased = quantityPurchased;
+
             // optional
-            ProductId = productId == 0 ? null : productId;
+            ProductId = productId;
             Sku = sku;
         }
 
         public void Validate(bool isWeak=false)
         {
             InputValidators.ValidateValuedString(Title, "Title");
-            if (Price.HasValue)
+            InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
+            InputValidators.ValidatePositiveValue(QuantityPurchased.Value, "Quantity Purchased");
+
+            // optional fields validations
+            if(ProductId.HasValue)
             {
-                InputValidators.ValidateZeroOrPositiveValue(Price.Value, "Price");
-            }
-            if (QuantityPurchased.HasValue)
-            {
-                InputValidators.ValidatePositiveValue(QuantityPurchased.Value, "Quantity Purchased");
+                InputValidators.ValidateZeroOrPositiveValue(ProductId.Value, "Product Id");
             }
         }
 

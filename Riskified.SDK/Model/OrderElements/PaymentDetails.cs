@@ -26,14 +26,17 @@ namespace Riskified.SDK.Model.OrderElements
 
         public void Validate(bool isWeak = false)
         {
-            InputValidators.ValidateAvsResultCode(AvsResultCode);
+            if (!isWeak)
+            {
+                InputValidators.ValidateAvsResultCode(AvsResultCode);
+            }
             InputValidators.ValidateCvvResultCode(CvvResultCode);
             InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
             InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
             InputValidators.ValidateCreditCard(CreditCardNumber);
         }
 
-        [JsonProperty(PropertyName = "avs_result_code", Required = Required.Always)]
+        [JsonProperty(PropertyName = "avs_result_code", Required = Required.Default, NullValueHandling=NullValueHandling.Ignore)]
         public string AvsResultCode { get; set; }
 
         [JsonProperty(PropertyName = "credit_card_bin", Required = Required.Always)]
