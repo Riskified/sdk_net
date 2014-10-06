@@ -112,13 +112,14 @@ namespace Riskified.SDK.Sample
                             break;
                         case "h":
                             int startOrderNum = orderNum;
-                            Order o1 = GenerateOrder(orderNum++);
-                            o1.FinancialStatus = "paid";
-                            Order o2 = GenerateOrder(orderNum++);
-                            o2.FinancialStatus = "cancelled";
-                            Order o3 = GenerateOrder(orderNum++);
-                            o3.FinancialStatus = "chargeback";
-                            var orders = new[] {o1,o2,o3};
+                            var orders = new List<Order>();
+                            var financialStatuses = new[] { "paid", "cancelled", "chargeback" };
+                            for (int i = 0; i < 22; i++)
+                            {
+                                Order o = GenerateOrder(orderNum++);
+                                o.FinancialStatus = financialStatuses[i%3];
+                                orders.Add(o);
+                            }
                             Console.WriteLine("Orders Generated with merchant order numbers: {0} to {1}",startOrderNum,orderNum-1);
                             // sending 3 historical orders with different processing state
                             Dictionary<string,string> errors;

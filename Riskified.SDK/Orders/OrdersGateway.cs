@@ -126,7 +126,7 @@ namespace Riskified.SDK.Orders
             do
             {
                 batch.Clear();
-                while (enumerator.MoveNext() && batch.Count < batchSize)
+                while (batch.Count < batchSize && enumerator.MoveNext())
                 {
                     // validate orders and assign to next batch until full
                     Order order = enumerator.Current;
