@@ -35,14 +35,14 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateAvsResultCode(string resultCode)
         {
-            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Z,a-z0-9]+$"))
-                throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should be exactly 1 letter. Value was \"{0}\"", resultCode));   
+            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9]+$"))
+                throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));   
         }
 
         public static void ValidateCvvResultCode(string resultCode)
         {
             if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9]+$"))
-                throw new OrderFieldBadFormatException(string.Format("Cvv result Code field invalid. Should be 1 letter or empty-string. Value was \"{0}\"", resultCode));
+                throw new OrderFieldBadFormatException(string.Format("Cvv result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));
         }
 
         public static void ValidateValuedString(string stringToValidate, string fieldName)
