@@ -132,7 +132,7 @@ namespace Riskified.SDK.Orders
                     Order order = enumerator.Current;
                     try
                     {
-                        order.Validate();
+                        order.Validate(_isWeak);
                         batch.Add(order);
                     }
                     catch (OrderFieldBadFormatException e)
