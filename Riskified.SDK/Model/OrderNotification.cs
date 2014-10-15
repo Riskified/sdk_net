@@ -4,7 +4,7 @@ namespace Riskified.SDK.Model
 {
     public class OrderNotification
     {
-        [JsonProperty(PropertyName = "id",Required = Required.Always)]
+        [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public int? Id { get; set; }
 
         [JsonProperty(PropertyName = "status", Required = Required.Always)]

@@ -33,7 +33,7 @@ namespace Riskified.SDK.Model
         /// <param name="closedAt">The date and time when the order was closed. If the order was closed (optional)</param>
         /// <param name="financialStatus">The financial status of the order (could be paid/voided/refunded/partly_paid/etc.)</param>
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
-        public Order(int merchantOrderId, string email, Customer customer, PaymentDetails paymentDetails,
+        public Order(int merchantOrderId, string email, Customer customer, IPaymentDetails paymentDetails,
             AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
             ShippingLine[] shippingLines,
             string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
@@ -108,64 +108,64 @@ namespace Riskified.SDK.Model
         }
 
 
-        [JsonProperty(PropertyName = "cart_token", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "cart_token")]
         public string CartToken { get; set; }
 
-        [JsonProperty(PropertyName = "closed_at", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "closed_at")]
         public DateTime? ClosedAt { get; set; }
 
-        [JsonProperty(PropertyName = "created_at", Required = Required.Always)]
+        [JsonProperty(PropertyName = "created_at")]
         public DateTime? CreatedAt { get; set; }
 
-        [JsonProperty(PropertyName = "currency", Required = Required.Always)]
+        [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
 
-        [JsonProperty(PropertyName = "email", Required = Required.Always)]
+        [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
-        [JsonProperty(PropertyName = "gateway", Required = Required.Always)]
+        [JsonProperty(PropertyName = "gateway")]
         public string Gateway { get; set; }
 
-        [JsonProperty(PropertyName = "total_discounts", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "total_discounts")]
         public double? TotalDiscounts { get; set; }
 
-        [JsonProperty(PropertyName = "total_price", Required = Required.Always)]
+        [JsonProperty(PropertyName = "total_price")]
         public double? TotalPrice { get; set; }
 
-        [JsonProperty(PropertyName = "total_price_usd",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "total_price_usd")]
         public double? TotalPriceUsd { get; set; }
 
-        [JsonProperty(PropertyName = "updated_at", Required = Required.Always)]
+        [JsonProperty(PropertyName = "updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
-        [JsonProperty(PropertyName = "browser_ip", Required = Required.Always)]
+        [JsonProperty(PropertyName = "browser_ip")]
         public string CustomerBrowserIp { get; set; }
         
-        [JsonProperty(PropertyName = "discount_codes", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "discount_codes")]
         public DiscountCode[] DiscountCodes { get; set; }
 
-        [JsonProperty(PropertyName = "line_items", Required = Required.Always)]
+        [JsonProperty(PropertyName = "line_items")]
         public LineItem[] LineItems { get; set; }
 
-        [JsonProperty(PropertyName = "shipping_lines", Required = Required.Always)]
+        [JsonProperty(PropertyName = "shipping_lines")]
         public ShippingLine[] ShippingLines { get; set; }
 
-        [JsonProperty(PropertyName = "payment_details", Required = Required.Always)]
-        public PaymentDetails PaymentDetails { get; set; }
+        [JsonProperty(PropertyName = "payment_details")]
+        public IPaymentDetails PaymentDetails { get; set; }
 
-        [JsonProperty(PropertyName = "billing_address", Required = Required.Always)]
+        [JsonProperty(PropertyName = "billing_address")]
         public AddressInformation BillingAddress { get; set; }
 
-        [JsonProperty(PropertyName = "shipping_address", Required = Required.Always)]
+        [JsonProperty(PropertyName = "shipping_address")]
         public AddressInformation ShippingAddress { get; set; }
 
-        [JsonProperty(PropertyName = "customer", Required = Required.Always)]
+        [JsonProperty(PropertyName = "customer")]
         public Customer Customer { get; set; }
 
-        [JsonProperty(PropertyName = "financial_status", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "financial_status")]
         public string FinancialStatus { get; set; }
 
-        [JsonProperty(PropertyName = "fulfillment_status", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "fulfillment_status")]
         public string FulfillmentStatus { get; set; }
     }
 

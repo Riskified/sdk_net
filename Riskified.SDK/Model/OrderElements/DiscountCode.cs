@@ -20,10 +20,10 @@ namespace Riskified.SDK.Model.OrderElements
             return;
         }
 
-        [JsonProperty(PropertyName = "amount", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "amount")]
         public double? MoneyDiscountSum { get; set; }
 
-        [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "code")]
         public string Code { get; set; }
 
         

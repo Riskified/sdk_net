@@ -43,16 +43,32 @@ namespace Riskified.SDK.Model.OrderElements
 
         public void Validate(bool isWeak = false)
         {
-            InputValidators.ValidateValuedString(FirstName, "First Name");
-            if (!isWeak)
+            if (isWeak)
             {
+                if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+                {
+                    throw new Exceptions.OrderFieldBadFormatException("Both First name and last name are missing or empty - at least one should be specified");
+                }
+            }
+            else
+            {
+                InputValidators.ValidateValuedString(FirstName, "First Name");
                 InputValidators.ValidateValuedString(LastName, "Last Name");
                 InputValidators.ValidatePhoneNumber(Phone);
             }
+
             InputValidators.ValidateValuedString(Address1, "Address 1");
             InputValidators.ValidateValuedString(City, "City");
-            InputValidators.ValidateValuedString(Country, "Country");
-            InputValidators.ValidateCountryOrProvinceCode(CountryCode);
+
+            if(string.IsNullOrEmpty(Country) && string.IsNullOrEmpty(CountryCode))
+            {
+                throw new Exceptions.OrderFieldBadFormatException("Both Country or Country Code fields are missing - at least one should be speicified");
+            }
+            
+            if (!string.IsNullOrEmpty(CountryCode))
+            {
+                InputValidators.ValidateCountryOrProvinceCode(CountryCode);
+            }
 
             // optional fields validations
             if (!string.IsNullOrEmpty(ProvinceCode))
@@ -61,43 +77,43 @@ namespace Riskified.SDK.Model.OrderElements
             }
         }
 
-        [JsonProperty(PropertyName = "address1", Required = Required.Always)]
+        [JsonProperty(PropertyName = "address1")]
         public string Address1 { get; set; }
 
-        [JsonProperty(PropertyName = "address2",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "address2")]
         public string Address2 { get; set; }
 
-        [JsonProperty(PropertyName = "city", Required=Required.Always)]
+        [JsonProperty(PropertyName = "city")]
         public string City { get; set; }
 
-        [JsonProperty(PropertyName = "company", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "company")]
         public string Company { get; set; }
 
-        [JsonProperty(PropertyName = "country",Required = Required.Always)]
+        [JsonProperty(PropertyName = "country")]
         public string Country { get; set; }
 
-        [JsonProperty(PropertyName = "country_code", Required = Required.Always)]
+        [JsonProperty(PropertyName = "country_code")]
         public string CountryCode { get; set; }
 
-        [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "first_name")]
         public string FirstName { get; set; }
 
-        [JsonProperty(PropertyName = "last_name", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "last_name")]
         public string LastName { get; set; }
 
-        [JsonProperty(PropertyName = "name", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "name")]
         public string FullName { get; set; }
 
-        [JsonProperty(PropertyName = "phone", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "phone")]
         public string Phone { get; set; }
 
-        [JsonProperty(PropertyName = "province",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "province")]
         public string Province { get; set; }
 
-        [JsonProperty(PropertyName = "province_code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "province_code")]
         public string ProvinceCode { get; set; }
 
-        [JsonProperty(PropertyName = "zip", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "zip")]
         public string ZipCode { get; set; }
     }
 }

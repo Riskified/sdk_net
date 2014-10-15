@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Riskified.SDK.Model
+namespace Riskified.SDK.Model.OrderElements
 {
-    public interface IJsonSerializable
+    public interface IPaymentDetails : IJsonSerializable
     {
-        void Validate(bool isWeak=false);
     }
 }

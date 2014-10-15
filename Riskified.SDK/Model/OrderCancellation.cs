@@ -30,10 +30,10 @@ namespace Riskified.SDK.Model
         }
 
 
-        [JsonProperty(PropertyName = "cancel_reason", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "cancel_reason")]
         public string CancelReason { get; set; }
 
-        [JsonProperty(PropertyName = "cancelled_at", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "cancelled_at")]
         public DateTime? CancelledAt { get; set; }
     }
 }

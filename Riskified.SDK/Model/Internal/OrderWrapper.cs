@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.Internal
         [JsonProperty(PropertyName = "order", Required = Required.Always)]
         public TOrder Order { get; set; }
 
-        [JsonProperty(PropertyName = "warnings", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "warnings")]
         public string[] Warnings { get; set; }
 
         public OrderWrapper(TOrder order)

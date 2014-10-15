@@ -26,13 +26,13 @@ namespace Riskified.SDK.Model.OrderElements
             InputValidators.ValidateValuedString(Title, "Title");
         }
 
-        [JsonProperty(PropertyName = "code", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "code")]
         public string Code { get; set; }
 
-        [JsonProperty(PropertyName = "price", Required = Required.Always)]
+        [JsonProperty(PropertyName = "price")]
         public double? Price { get; set; }
 
-        [JsonProperty(PropertyName = "title", Required = Required.Always)]
+        [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
     }
 

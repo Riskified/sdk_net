@@ -41,31 +41,31 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// A title describing the product 
         /// </summary>
-        [JsonProperty(PropertyName = "title",Required = Required.Always)]
+        [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
 
         /// <summary>
         /// The product price in the currency matching the one used in the whole order and set in the "Currency" field
         /// </summary>
-        [JsonProperty(PropertyName = "price", Required = Required.Always)]
+        [JsonProperty(PropertyName = "price")]
         public double? Price { get; set; }
 
         /// <summary>
         /// The Product ID number
         /// </summary>
-        [JsonProperty(PropertyName = "product_id", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "product_id")]
         public int? ProductId { get; set; }
 
         /// <summary>
         /// Quantity of the item that was purchased
         /// </summary>
-        [JsonProperty(PropertyName = "quantity", Required = Required.Always)]
+        [JsonProperty(PropertyName = "quantity")]
         public int? QuantityPurchased { get; set; }
 
         /// <summary>
         /// The sku of the product
         /// </summary>
-        [JsonProperty(PropertyName = "sku", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "sku")]
         public string Sku { get; set; }
     }
 

@@ -49,6 +49,8 @@
     <Compile Include="Model\IJsonSerializable.cs" />
     <Compile Include="Model\Internal\OrdersWrapper.cs" />
     <Compile Include="Model\Internal\OrderWrapper.cs" />
+    <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
     <Compile Include="Model\AbstractOrder.cs" />
     <Compile Include="Model\OrderCancellation.cs" />
@@ -69,7 +71,7 @@
     <Compile Include="Model\OrderNotification.cs" />
     <Compile Include="Model\OrderElements\AddressInformation.cs" />
     <Compile Include="Model\Order.cs" />
-    <Compile Include="Model\OrderElements\PaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\CreditCardPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\ShippingLine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Orders\OrdersGateway.cs" />

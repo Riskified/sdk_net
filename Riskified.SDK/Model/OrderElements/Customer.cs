@@ -36,9 +36,16 @@ namespace Riskified.SDK.Model.OrderElements
 
         public void Validate(bool isWeak=false)
         {
-            InputValidators.ValidateValuedString(FirstName, "First Name");
-            if (!isWeak)
+            if (isWeak)
             {
+                if(string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
+                {
+                    throw new Exceptions.OrderFieldBadFormatException("Both First name and last name are missing or empty - at least one should be specified");
+                }
+            }
+            else
+            {
+                InputValidators.ValidateValuedString(FirstName, "First Name");
                 InputValidators.ValidateValuedString(LastName, "Last Name");
             }
 
@@ -57,28 +64,28 @@ namespace Riskified.SDK.Model.OrderElements
             }
         }
 
-        [JsonProperty(PropertyName = "created_at", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "created_at")]
         public DateTime? CreatedAt { get; set; }
 
-        [JsonProperty(PropertyName = "email", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
-        [JsonProperty(PropertyName = "first_name", Required = Required.Always)]
+        [JsonProperty(PropertyName = "first_name")]
         public string FirstName { get; set; }
 
-        [JsonProperty(PropertyName = "id", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "id")]
         public int? Id { get; set; }
 
-        [JsonProperty(PropertyName = "last_name", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "last_name")]
         public string LastName { get; set; }
 
-        [JsonProperty(PropertyName = "note", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }
 
-        [JsonProperty(PropertyName = "orders_count", Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "orders_count")]
         public int? OrdersCount { get; set; }
 
-        [JsonProperty(PropertyName = "verified_email",Required = Required.Default,NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "verified_email")]
         public bool? VerifiedEmail { get; set; }
 
         

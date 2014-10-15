@@ -17,7 +17,8 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateEmail(string email)
         {
-            if (!IsInputFullMatchingRegex(email, @"^([a-zA-Z0-9_\-\.\+\%]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})$"))
+            if(!IsInputFullMatchingRegex(email,@"^.+@.+\..+$"))
+                //|| (!isWeak && !IsInputFullMatchingRegex(email, @"^([a-zA-Z0-9_\-\.\+\%]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})$")))
                 throw new OrderFieldBadFormatException(string.Format("Email field invalid. Was \"{0}\"",email));
         }
 
@@ -35,13 +36,13 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateAvsResultCode(string resultCode)
         {
-            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9]+$"))
+            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9 ]+$"))
                 throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));   
         }
 
         public static void ValidateCvvResultCode(string resultCode)
         {
-            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9]+$"))
+            if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9 ]+$"))
                 throw new OrderFieldBadFormatException(string.Format("Cvv result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));
         }
 

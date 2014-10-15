@@ -259,5 +259,92 @@ namespace Riskified.SDK.Sample
             return order;
         }
 
+        private static Order PayPalGenerateOrder(int orderNum)
+        {
+            // IMPORTANT: all objects created here may throw OrderFieldBadFormatException 
+            // if one or more of the parameters values doesn't match the required format
+            // In the sample - this exception is handled in the rapping method
+
+            // putting sample customer details
+            var customer = new Customer(
+                firstName: "John",
+                lastName: "Doe",
+                id: 405050606,
+                ordersCount: 4,
+                email: "test@example.com",
+                verifiedEmail: true,
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                notes: "No additional info");
+
+            // putting sample billing details
+            var billing = new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling");
+
+            var shipping = new AddressInformation(
+                firstName: "Luke",
+                lastName: "Rolling",
+                address1: "4 Bermingham street",
+                city: "Cherry Hill",
+                country: "United States",
+                countryCode: "US",
+                phone: "55546665",
+                provinceCode: "NJ",
+                province: "New Jersey");
+
+            var payments = new PaypalPaymentDetails(
+                paymentStatus: "Authorized",
+                authorizationId: "AFSDF332432SDF45DS5FD",
+                payerEmail: "payer@gmail.com",
+                payerStatus: "Verified",
+                payerAddressStatus: "Unverified",
+                protectionEligibility: "Partly Eligibile",
+                pendingReason: "Review");
+
+            var lines = new[]
+            {
+                new ShippingLine(price: 22.22,title: "Mail"),
+                new ShippingLine(price: 2,title: "Ship",code: "A22F")
+            };
+
+            var items = new[]
+            {
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+            };
+
+            var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
+
+            var order = new Order(
+                merchantOrderId: orderNum,
+                email: "tester@exampler.com",
+                customer: customer,
+                paymentDetails: payments,
+                billingAddress: billing,
+                shippingAddress: shipping,
+                lineItems: items,
+                shippingLines: lines,
+                gateway: "authorize_net",
+                customerBrowserIp: "165.12.1.1",
+                currency: "USD",
+                totalPrice: 100.60,
+                createdAt: DateTime.Now,
+                updatedAt: DateTime.Now,
+                discountCodes: discountCodes);
+
+            return order;
+        }
+
     }
 }

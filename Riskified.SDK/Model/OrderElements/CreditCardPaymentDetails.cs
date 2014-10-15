@@ -4,7 +4,7 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public class PaymentDetails : IJsonSerializable
+    public class CreditCardPaymentDetails : IPaymentDetails
     {
         /// <summary>
         /// The payment information for the order
@@ -15,7 +15,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardCompany">The name of the company who issued the customer's credit card</param>
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public PaymentDetails(string avsResultCode, string cvvResultCode, string creditCardBin, string creditCardCompany, string creditCardNumber)
+        public CreditCardPaymentDetails(string avsResultCode, string cvvResultCode, string creditCardBin, string creditCardCompany, string creditCardNumber)
         {
             AvsResultCode = avsResultCode;
             CvvResultCode = cvvResultCode;
@@ -29,26 +29,27 @@ namespace Riskified.SDK.Model.OrderElements
             if (!isWeak)
             {
                 InputValidators.ValidateAvsResultCode(AvsResultCode);
+                InputValidators.ValidateCvvResultCode(CvvResultCode);
+                InputValidators.ValidateCreditCard(CreditCardNumber);
             }
-            InputValidators.ValidateCvvResultCode(CvvResultCode);
+            
             InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
             InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
-            InputValidators.ValidateCreditCard(CreditCardNumber);
         }
 
-        [JsonProperty(PropertyName = "avs_result_code", Required = Required.Default, NullValueHandling=NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "avs_result_code")]
         public string AvsResultCode { get; set; }
 
-        [JsonProperty(PropertyName = "credit_card_bin", Required = Required.Always)]
+        [JsonProperty(PropertyName = "credit_card_bin")]
         public string CreditCardBin { get; set; }
 
-        [JsonProperty(PropertyName = "credit_card_company", Required = Required.Always)]
+        [JsonProperty(PropertyName = "credit_card_company")]
         public string CreditCardCompany { get; set; }
 
-        [JsonProperty(PropertyName = "credit_card_number", Required = Required.Always)]
+        [JsonProperty(PropertyName = "credit_card_number")]
         public string CreditCardNumber { get; set; }
 
-        [JsonProperty(PropertyName = "cvv_result_code", Required = Required.Always)]
+        [JsonProperty(PropertyName = "cvv_result_code")]
         public string CvvResultCode { get; set; }
     }
 

@@ -24,7 +24,7 @@ namespace Riskified.SDK.Model
             InputValidators.ValidateValuedString(Id, "Merchant Order ID");
         }
 
-        [JsonProperty(PropertyName = "id", Required = Required.Always)]
+        [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
     }
 }

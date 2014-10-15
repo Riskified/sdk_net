@@ -9,7 +9,7 @@ namespace Riskified.SDK.Model.Internal
 {
     internal class OrdersWrapper
     {
-        [JsonProperty(PropertyName = "orders", Required = Required.Always)]
+        [JsonProperty(PropertyName = "orders")]
         public IEnumerable<AbstractOrder> Orders { get; set; }
 
         public OrdersWrapper(IEnumerable<AbstractOrder> orders)

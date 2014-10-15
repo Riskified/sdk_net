@@ -34,19 +34,19 @@ namespace Riskified.SDK.Model.RefundElements
             InputValidators.ValidateValuedString(Reason, "Refund Reason");
         }
 
-        [JsonProperty(PropertyName = "refund_id", Required = Required.Always)]
+        [JsonProperty(PropertyName = "refund_id")]
         public string RefundId { get; set; }
 
-        [JsonProperty(PropertyName = "refunded_at", Required = Required.Always)]
+        [JsonProperty(PropertyName = "refunded_at")]
         public DateTime RefundedAt { get; set; }
 
-        [JsonProperty(PropertyName = "amount", Required = Required.Always)]
+        [JsonProperty(PropertyName = "amount")]
         public double Amount { get; set; }
 
-        [JsonProperty(PropertyName = "currency", Required = Required.Always)]
+        [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
 
-        [JsonProperty(PropertyName = "reason", Required = Required.Always)]
+        [JsonProperty(PropertyName = "reason")]
         public string Reason { get; set; }
     }
 }

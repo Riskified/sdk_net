@@ -86,7 +86,7 @@ namespace Riskified.SDK.Utils
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(jsonObj);
+                jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
             }
             catch (Exception e)
             {
@@ -208,13 +208,13 @@ namespace Riskified.SDK.Utils
 
         internal class ErrorResponse
         {
-            [JsonProperty(PropertyName = "error", Required = Required.Default, NullValueHandling = NullValueHandling.Ignore)]
+            [JsonProperty(PropertyName = "error")]
             public ErrorMessage Error { get; set; }
         }
 
         internal class ErrorMessage
         {
-            [JsonProperty(PropertyName = "message", Required = Required.Always)]
+            [JsonProperty(PropertyName = "message")]
             public string Message { get; set; }
         }
 
