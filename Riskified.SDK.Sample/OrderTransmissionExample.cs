@@ -218,7 +218,7 @@ namespace Riskified.SDK.Sample
                 provinceCode: "NJ", 
                 province: "New Jersey");
 
-            var payments = new PaymentDetails(
+            var payments = new CreditCardPaymentDetails(
                 avsResultCode: "Y",
                 cvvResultCode: "n",
                 creditCardBin: "124580", 
