@@ -33,13 +33,14 @@ namespace Riskified.SDK.Model
         /// <param name="closedAt">The date and time when the order was closed. If the order was closed (optional)</param>
         /// <param name="financialStatus">The financial status of the order (could be paid/voided/refunded/partly_paid/etc.)</param>
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
+        /// <param name="source">The source of the order</param>
         public Order(int merchantOrderId, string email, Customer customer, IPaymentDetails paymentDetails,
             AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
             ShippingLine[] shippingLines,
             string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
             DateTime updatedAt,
             DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null,
-            double? totalPriceUsd = null, DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null) : base(merchantOrderId)
+            double? totalPriceUsd = null, DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null,string source = null) : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
@@ -63,8 +64,14 @@ namespace Riskified.SDK.Model
             ClosedAt = closedAt;
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;
+            Source = source;
         }
 
+        /// <summary>
+        /// Validates the objects fields content
+        /// </summary>
+        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public override void Validate(bool isWeak = false)
         {
             base.Validate(isWeak);
@@ -74,10 +81,29 @@ namespace Riskified.SDK.Model
             ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
             InputValidators.ValidateObjectNotNull(PaymentDetails, "Payment Details");
             PaymentDetails.Validate(isWeak);
-            InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
-            BillingAddress.Validate(isWeak);
-            InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
-            ShippingAddress.Validate(isWeak);
+            if (isWeak)
+            {
+                if (BillingAddress == null && ShippingAddress == null)
+                {
+                    throw new Exceptions.OrderFieldBadFormatException("Both shipping and billing addresses are missing - at least one should be specified");
+                }
+
+                if (BillingAddress != null)
+                {
+                    BillingAddress.Validate(isWeak);
+                }
+                else
+                {
+                    ShippingAddress.Validate(isWeak);
+                }
+            }
+            else
+            {
+                InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
+                BillingAddress.Validate(isWeak);
+                InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
+                ShippingAddress.Validate(isWeak);
+            }
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
             Customer.Validate(isWeak);
             InputValidators.ValidateEmail(Email);
@@ -167,6 +193,9 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "fulfillment_status")]
         public string FulfillmentStatus { get; set; }
+
+        [JsonProperty(PropertyName = "source")]
+        public string Source { get; set; }
     }
 
 }

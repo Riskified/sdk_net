@@ -8,6 +8,6 @@
     <add key="MerchantDomain" value="[your shop domain as registered to riskified]"/>
     <add key="MerchantAuthenticationToken" value="[Your authentication token string]"/>
     <add key="RiskifiedEnvironment" value="[Debug/Sandbox/Production]"/>
-    <add key="DebugRiskifiedHostUrl" value="[RiskifiedDebugUrl]"/>
+    <add key="DebugRiskifiedHostUrl" value="[RiskifiedDebugUrl - remove this setting]"/>
   </appSettings>
 </configuration>

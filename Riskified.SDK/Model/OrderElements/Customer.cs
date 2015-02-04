@@ -19,7 +19,6 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        /// <exception cref="OrderFieldBadFormatException">Thrown if one or more of the parameters is missing or of bad format</exception>
         public Customer(string firstName, string lastName,int? id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
         {
             FirstName = firstName;
@@ -34,6 +33,11 @@ namespace Riskified.SDK.Model.OrderElements
             Note = notes;
         }
 
+        /// <summary>
+        /// Validates the objects fields content
+        /// </summary>
+        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public void Validate(bool isWeak=false)
         {
             if (isWeak)

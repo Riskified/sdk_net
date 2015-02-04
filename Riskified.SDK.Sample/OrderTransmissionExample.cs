@@ -176,10 +176,6 @@ namespace Riskified.SDK.Sample
         /// <returns></returns>
         private static Order GenerateOrder(int orderNum)
         {
-            // IMPORTANT: all objects created here may throw OrderFieldBadFormatException 
-            // if one or more of the parameters values doesn't match the required format
-            // In the sample - this exception is handled in the rapping method
-
             // putting sample customer details
             var customer = new Customer(
                 firstName: "John",
@@ -254,17 +250,14 @@ namespace Riskified.SDK.Sample
                 totalPrice: 100.60,
                 createdAt: DateTime.Now,
                 updatedAt: DateTime.Now,
-                discountCodes: discountCodes);
+                discountCodes: discountCodes,
+                source: "web");
 
             return order;
         }
 
         private static Order PayPalGenerateOrder(int orderNum)
         {
-            // IMPORTANT: all objects created here may throw OrderFieldBadFormatException 
-            // if one or more of the parameters values doesn't match the required format
-            // In the sample - this exception is handled in the rapping method
-
             // putting sample customer details
             var customer = new Customer(
                 firstName: "John",

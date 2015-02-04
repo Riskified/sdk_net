@@ -16,7 +16,6 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="payerAddressStatus">The payer address status as received from paypal</param>
         /// <param name="protectionEligibility">The merchants protection eligibility for the order as received from paypal</param>
         /// <param name="pendingReason">The pending reason received from paypal</param>
-        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public PaypalPaymentDetails(string paymentStatus, string authorizationId = null, string payerEmail = null, string payerStatus = null, string payerAddressStatus = null , 
             string protectionEligibility = null , string pendingReason = null)
         {
@@ -29,6 +28,11 @@ namespace Riskified.SDK.Model.OrderElements
             PendingReason = PendingReason;
         }
 
+        /// <summary>
+        /// Validates the objects fields content
+        /// </summary>
+        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public void Validate(bool isWeak = false)
         {
             if (!isWeak)
