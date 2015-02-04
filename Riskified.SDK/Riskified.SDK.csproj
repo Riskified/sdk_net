@@ -50,6 +50,7 @@
     <Compile Include="Model\Internal\OrdersWrapper.cs" />
     <Compile Include="Model\Internal\OrderWrapper.cs" />
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\NonChargebackablePaymentDetails.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
     <Compile Include="Model\AbstractOrder.cs" />

@@ -14,7 +14,6 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardBin">The issuer identiﬁcation number (IIN), formerly known as bank identiﬁcation number (BIN) ] of the customer's credit card. This is made up of the ﬁrst few digits of the credit card number</param>
         /// <param name="creditCardCompany">The name of the company who issued the customer's credit card</param>
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
-        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public CreditCardPaymentDetails(string avsResultCode, string cvvResultCode, string creditCardBin, string creditCardCompany, string creditCardNumber)
         {
             AvsResultCode = avsResultCode;
@@ -24,6 +23,11 @@ namespace Riskified.SDK.Model.OrderElements
             CreditCardNumber = creditCardNumber;
         }
 
+        /// <summary>
+        /// Validates the objects fields content
+        /// </summary>
+        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public void Validate(bool isWeak = false)
         {
             if (!isWeak)
