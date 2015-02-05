@@ -34,17 +34,17 @@ namespace Riskified.SDK.Model
         /// <param name="financialStatus">The financial status of the order (could be paid/voided/refunded/partly_paid/etc.)</param>
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
         /// <param name="source">The source of the order</param>
-        public Order(int merchantOrderId, string email, Customer customer, IPaymentDetails paymentDetails,
+        /// <param name="noChargeDetails">No charge sums - including all payments made for this order in giftcards, cash, checks or other non chargebackable payment methods</param>
+        public Order(int merchantOrderId, string email, Customer customer,
             AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
             ShippingLine[] shippingLines,
             string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
             DateTime updatedAt,
-            DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null,
-            double? totalPriceUsd = null, DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null,string source = null) : base(merchantOrderId)
+            IPaymentDetails paymentDetails = null, DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null, double? totalPriceUsd = null, 
+            DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null,string source = null, NoChargeDetails noChargeDetails = null) : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
-            PaymentDetails = paymentDetails;
             BillingAddress = billingAddress;
             ShippingAddress = shippingAddress;
             Customer = customer;
@@ -57,6 +57,7 @@ namespace Riskified.SDK.Model
             UpdatedAt = updatedAt;
             
             // optional fields
+            PaymentDetails = paymentDetails;
             DiscountCodes = discountCodes;
             TotalPriceUsd = totalPriceUsd;
             TotalDiscounts = totalDiscounts;
@@ -65,6 +66,7 @@ namespace Riskified.SDK.Model
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;
             Source = source;
+            NoChargeAmount = noChargeDetails;
         }
 
         /// <summary>
@@ -79,8 +81,19 @@ namespace Riskified.SDK.Model
             LineItems.ToList().ForEach(item => item.Validate(isWeak));
             InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
             ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
-            InputValidators.ValidateObjectNotNull(PaymentDetails, "Payment Details");
-            PaymentDetails.Validate(isWeak);
+            if(PaymentDetails == null && NoChargeAmount == null)
+            {
+                throw new Exceptions.OrderFieldBadFormatException("Both PaymentDetails and NoChargeDetails are missing - at least one should be specified");
+            }
+            if(PaymentDetails != null)
+            {
+                PaymentDetails.Validate(isWeak);
+            }
+            else 
+            {
+                NoChargeAmount.Validate(isWeak);
+            }
+
             if (isWeak)
             {
                 if (BillingAddress == null && ShippingAddress == null)
@@ -104,6 +117,7 @@ namespace Riskified.SDK.Model
                 InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
                 ShippingAddress.Validate(isWeak);
             }
+
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
             Customer.Validate(isWeak);
             InputValidators.ValidateEmail(Email);
@@ -196,6 +210,9 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "source")]
         public string Source { get; set; }
+
+        [JsonProperty(PropertyName = "nocharge_amount")]
+        public NoChargeDetails NoChargeAmount { get; set; }
     }
 
 }
