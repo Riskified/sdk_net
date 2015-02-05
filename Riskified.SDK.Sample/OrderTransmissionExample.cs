@@ -180,7 +180,7 @@ namespace Riskified.SDK.Sample
             var customer = new Customer(
                 firstName: "John",
                 lastName: "Doe",
-                id: 405050606,
+                id: "405050606",
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
@@ -221,6 +221,13 @@ namespace Riskified.SDK.Sample
                 creditCardCompany: "Visa",
                 creditCardNumber: "XXXX-XXXX-XXXX-4242");
 
+            var noChargeAmount = new NoChargeDetails(
+                refundId: "123444",
+                amount: 20.5,
+                currency: "GBP",
+                reason: "giftcard"
+                );
+
             var lines = new[]
             {
                 new ShippingLine(price: 22.22,title: "Mail"),
@@ -251,7 +258,8 @@ namespace Riskified.SDK.Sample
                 createdAt: DateTime.Now,
                 updatedAt: DateTime.Now,
                 discountCodes: discountCodes,
-                source: "web");
+                source: "web",
+                noChargeDetails: noChargeAmount);
 
             return order;
         }
@@ -262,7 +270,7 @@ namespace Riskified.SDK.Sample
             var customer = new Customer(
                 firstName: "John",
                 lastName: "Doe",
-                id: 405050606,
+                id: "405050606",
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,

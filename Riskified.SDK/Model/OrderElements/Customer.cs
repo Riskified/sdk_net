@@ -19,7 +19,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        public Customer(string firstName, string lastName,int? id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
+        public Customer(string firstName, string lastName,string id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -78,7 +78,7 @@ namespace Riskified.SDK.Model.OrderElements
         public string FirstName { get; set; }
 
         [JsonProperty(PropertyName = "id")]
-        public int? Id { get; set; }
+        public string Id { get; set; }
 
         [JsonProperty(PropertyName = "last_name")]
         public string LastName { get; set; }
