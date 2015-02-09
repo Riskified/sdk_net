@@ -100,7 +100,7 @@ namespace Riskified.SDK.Orders
 
         /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
-        /// The FinancialStatus field of each order should contain the latest order status (paid, cancelled, chargeback, etc.)
+        /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
         /// 
         /// </summary>
         /// <param name="order">The Orders to send</param>
