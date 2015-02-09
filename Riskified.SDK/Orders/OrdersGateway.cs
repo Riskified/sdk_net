@@ -177,8 +177,8 @@ namespace Riskified.SDK.Orders
         {
             order.Validate(_isWeak);
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<OrderNotification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
-            return transactionResult.Order;
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            return new OrderNotification(transactionResult);
             
         }
 

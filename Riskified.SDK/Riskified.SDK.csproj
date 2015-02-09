@@ -52,6 +52,7 @@
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\NoChargeDetails.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
+    <Compile Include="Model\OrderNotification.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
     <Compile Include="Model\AbstractOrder.cs" />
     <Compile Include="Model\OrderCancellation.cs" />
@@ -69,7 +70,7 @@
     <Compile Include="Model\OrderElements\Customer.cs" />
     <Compile Include="Model\OrderElements\DiscountCode.cs" />
     <Compile Include="Model\OrderElements\LineItem.cs" />
-    <Compile Include="Model\OrderNotification.cs" />
+    <Compile Include="Model\Internal\Notification.cs" />
     <Compile Include="Model\OrderElements\AddressInformation.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\OrderElements\CreditCardPaymentDetails.cs" />
