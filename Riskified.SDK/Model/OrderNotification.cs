@@ -1,17 +1,20 @@
-﻿using Newtonsoft.Json;
+﻿using Riskified.SDK.Model.Internal;
 
 namespace Riskified.SDK.Model
 {
     public class OrderNotification
     {
-        [JsonProperty(PropertyName = "id", Required = Required.Always)]
-        public int? Id { get; set; }
+        internal OrderNotification(OrderWrapper<Notification> notificationInfo)
+        {
+            Id = notificationInfo.Order.Id;
+            Status = notificationInfo.Order.Status;
+            Description = notificationInfo.Order.Description;
+            Warnings = notificationInfo.Warnings;
+        }
 
-        [JsonProperty(PropertyName = "status", Required = Required.Always)]
-        public string Status { get; set; }
-
-        [JsonProperty(PropertyName = "description", Required = Required.Default)]
-        public string Description { get; set; }
-
+        public string Id { get; private set; }
+        public string Status { get; private set; }
+        public string Description { get; private set; }
+        public string[] Warnings { get; private set; }
     }
 }

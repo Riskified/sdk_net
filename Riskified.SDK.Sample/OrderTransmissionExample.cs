@@ -140,10 +140,11 @@ namespace Riskified.SDK.Sample
 
                     if (res != null)
                     {
-                        Console.WriteLine("Order sent successfully: " + 
-                                              " Status at Riskified: " + res.Status +
-                                              ". Order ID received: " + res.Id +
-                                              ". Description: " + res.Description);
+                        Console.WriteLine("\n\nOrder sent successfully:" + 
+                                              "\nStatus at Riskified: " + res.Status +
+                                              "\nOrder ID received:" + res.Id +
+                                              "\nDescription: " + res.Description + 
+                                              "\nWarnings: " + (res.Warnings==null ? "---" : string.Join("        \n",res.Warnings)) + "\n\n");
                     }
                 }
                 catch (OrderFieldBadFormatException e)

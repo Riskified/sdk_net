@@ -145,7 +145,8 @@ namespace Riskified.SDK.Notifications
                     OrderNotification n;
                     try
                     {
-                        n = HttpUtils.ParsePostRequestToObject<OrderWrapper<OrderNotification>>(request).Order;
+                        var notificationData = HttpUtils.ParsePostRequestToObject<OrderWrapper<Notification>>(request);
+                        n = new OrderNotification(notificationData);
                     }
                     catch(Exception)
                     {

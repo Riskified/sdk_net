@@ -16,21 +16,44 @@ namespace Riskified.SDK.Orders
         private readonly string _riskifiedBaseWebhookUrl;
         private readonly string _authToken;
         private readonly string _shopDomain;
-        private readonly bool _isWeak;
-        
+        private readonly Validations _validationMode;
+
         /// <summary>
         /// Creates the mediator class used to send order data to Riskified
         /// </summary>
         /// <param name="env">The Riskified environment to send to</param>
         /// <param name="authToken">The merchant's auth token</param>
         /// <param name="shopDomain">The merchant's shop domain</param>
-        /// <param name="isWeakValidation">Should weakly validate before sending</param>
-        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain, bool shouldUseWeakValidation=false)
+        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain) : this(env,authToken,shopDomain,Validations.All)
+        {            
+        }
+
+        /// <summary>
+        /// Old version - Deprecated
+        /// Creates the mediator class used to send order data to Riskified        
+        /// </summary>
+        /// <param name="env">The Riskified environment to send to</param>
+        /// <param name="authToken">The merchant's auth token</param>
+        /// <param name="shopDomain">The merchant's shop domain</param>
+        /// <param name="shouldUseWeakValidation">Should weakly validate before sending</param>
+        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain, bool shouldUseWeakValidation)
+            : this(env, authToken, shopDomain, shouldUseWeakValidation ? Validations.Weak : Validations.All)
         {
-            _riskifiedBaseWebhookUrl = EnvironmentsUrls.GetEnvUrl(env); 
+        }
+
+        /// <summary>
+        /// Creates the mediator class used to send order data to Riskified
+        /// </summary>
+        /// <param name="env">The Riskified environment to send to</param>
+        /// <param name="authToken">The merchant's auth token</param>
+        /// <param name="shopDomain">The merchant's shop domain</param>
+        /// <param name="validationMode">Validation mode to use</param>
+        public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain, Validations validationMode)
+        {
+            _riskifiedBaseWebhookUrl = EnvironmentsUrls.GetEnvUrl(env);
             _authToken = authToken;
             _shopDomain = shopDomain;
-            _isWeak = shouldUseWeakValidation;
+            _validationMode = validationMode;
         }
 
         /// <summary>
@@ -100,7 +123,7 @@ namespace Riskified.SDK.Orders
 
         /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
-        /// The FinancialStatus field of each order should contain the latest order status (paid, cancelled, chargeback, etc.)
+        /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
         /// 
         /// </summary>
         /// <param name="order">The Orders to send</param>
@@ -132,7 +155,11 @@ namespace Riskified.SDK.Orders
                     Order order = enumerator.Current;
                     try
                     {
-                        order.Validate(_isWeak);
+                        if (_validationMode != Validations.Skip)
+                        {
+                            bool isWeak = _validationMode == Validations.Weak;
+                            order.Validate(isWeak);
+                        }
                         batch.Add(order);
                     }
                     catch (OrderFieldBadFormatException e)
@@ -175,10 +202,14 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         private OrderNotification SendOrder(AbstractOrder order, Uri riskifiedEndpointUrl)
         {
-            order.Validate(_isWeak);
+            if(_validationMode != Validations.Skip)
+            {
+                bool isWeak = _validationMode == Validations.Weak;
+                order.Validate(isWeak);
+            }
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<OrderNotification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
-            return transactionResult.Order;
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            return new OrderNotification(transactionResult);
             
         }
 
