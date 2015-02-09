@@ -78,6 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Orders\OrdersGateway.cs" />
     <Compile Include="Utils\RiskifiedEnvironment.cs" />
+    <Compile Include="Utils\Validations.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
