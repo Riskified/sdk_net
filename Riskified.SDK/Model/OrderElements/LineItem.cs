@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Riskified.SDK.Utils;
+using System;
 
 namespace Riskified.SDK.Model.OrderElements
 {
@@ -13,7 +14,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="quantityPurchased">Quantity purchased of the item</param>
         /// <param name="productId">The Product ID number (optional)</param>
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
-        public LineItem(string title, double price, int quantityPurchased,int? productId=null,string sku=null)
+        public LineItem(string title, double price, int quantityPurchased, int? productId = null, string sku = null, string condition = null, bool? requiresShipping = null, Seller seller = null,
+                    string eventSubCategoryName = null, string eventName = null, string eventSectionName = null, DateTime? eventDate = null)
         {
             
             Title = title;
@@ -23,6 +25,13 @@ namespace Riskified.SDK.Model.OrderElements
             // optional
             ProductId = productId;
             Sku = sku;
+            Condition = condition;
+            RequiresShipping = requiresShipping;
+            Seller = seller;
+            EventSubCategoryName = eventSubCategoryName;
+            EventName = eventName;
+            EventSectionName = eventSectionName;
+            EventDate = eventDate;
         }
 
         /// <summary>
@@ -40,6 +49,11 @@ namespace Riskified.SDK.Model.OrderElements
             if(ProductId.HasValue)
             {
                 InputValidators.ValidateZeroOrPositiveValue(ProductId.Value, "Product Id");
+            }
+
+            if(Seller != null)
+            {
+                Seller.Validate(isWeak);
             }
         }
 
@@ -68,10 +82,52 @@ namespace Riskified.SDK.Model.OrderElements
         public int? QuantityPurchased { get; set; }
 
         /// <summary>
+        /// States whether or not the fulfillment requires shipping. This field is important for merchants dealing with digital goods.
+        /// </summary>
+        [JsonProperty(PropertyName = "requires_shipping")]
+        public bool? RequiresShipping { get; set; }
+
+        /// <summary>
         /// The sku of the product
         /// </summary>
         [JsonProperty(PropertyName = "sku")]
         public string Sku { get; set; }
+
+        /// <summary>
+        /// The sku of the product
+        /// </summary>
+        [JsonProperty(PropertyName = "condition")]
+        public string Condition { get; set; }
+
+        /// <summary>
+        /// Details about the seller of the item, relevant for marketplace orders.
+        /// </summary>
+        [JsonProperty(PropertyName = "seller")]
+        public Seller Seller { get; set; }
+
+        /// <summary>
+        /// The event sub category name.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_sub_category_name")]
+        public string EventSubCategoryName { get; set; }
+
+        /// <summary>
+        /// The event name.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_name")]
+        public string EventName { get; set; }
+
+        /// <summary>
+        /// The event section name.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_section_name")]
+        public string EventSectionName { get; set; }
+
+        /// <summary>
+        /// The event date.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_date")]
+        public DateTime? EventDate { get; set; }
     }
 
 }

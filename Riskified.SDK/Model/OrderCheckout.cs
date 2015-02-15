@@ -1,139 +1,110 @@
-﻿using System;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model
 {
-    
-    public class Order : AbstractOrder
+    public class OrderCheckout : AbstractOrder
     {
         /// <summary>
-        /// Creates a new order
+        /// Creates a new order checkout
         /// </summary>
         /// <param name="merchantOrderId">The unique id of the order at the merchant systems</param>
-        /// <param name="email">The email used for contact in the order</param>
-        /// <param name="customer">The customer information</param>
-        /// <param name="paymentDetails">The payment details</param>
-        /// <param name="billingAddress">Billing address</param>
-        /// <param name="shippingAddress">Shipping address</param>
-        /// <param name="lineItems">An array of all products in the order</param>
-        /// <param name="shippingLines">An array of all shipping details for the order</param>
-        /// <param name="gateway">The payment gateway that was used</param>
-        /// <param name="customerBrowserIp">The customer browser ip that was used for the order</param>
-        /// <param name="currency">A three letter code (ISO 4217) for the currency used for the payment</param>
-        /// <param name="totalPrice">The sum of all the prices of all the items in the order, taxes and discounts included</param>
-        /// <param name="createdAt">The date and time when the order was created</param>
-        /// <param name="updatedAt">The date and time when the order was last modified</param>
-        /// <param name="discountCodes">An array of objects, each one containing information about an item in the order (optional)</param>
-        /// <param name="totalDiscounts">The total amount of the discounts on the Order (optional)</param>
-        /// <param name="cartToken">Unique identifier for a particular cart or session that is attached to a particular order. The same ID should be passed in the Beacon JS (optional)</param>
-        /// <param name="totalPriceUsd">The price in USD (optional)</param>
-        /// <param name="closedAt">The date and time when the order was closed. If the order was closed (optional)</param>
-        /// <param name="financialStatus">The financial status of the order (could be paid/voided/refunded/partly_paid/etc.)</param>
-        /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
-        /// <param name="source">The source of the order</param>
-        /// <param name="noChargeDetails">No charge sums - including all payments made for this order in giftcards, cash, checks or other non chargebackable payment methods</param>
-        public Order(int merchantOrderId, string email, Customer customer,
-            AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
-            ShippingLine[] shippingLines,
-            string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
-            DateTime updatedAt,
-            IPaymentDetails paymentDetails = null, DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null, double? totalPriceUsd = null, 
-            DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null,string source = null, NoChargeDetails noChargeDetails = null) : base(merchantOrderId)
+        public OrderCheckout(int merchantOrderId) : base(merchantOrderId)
         {
-            LineItems = lineItems;
-            ShippingLines = shippingLines;
-            BillingAddress = billingAddress;
-            ShippingAddress = shippingAddress;
-            Customer = customer;
-            Email = email;
-            CustomerBrowserIp = customerBrowserIp;
-            Currency = currency;
-            TotalPrice = totalPrice;
-            Gateway = gateway;
-            CreatedAt = createdAt;
-            UpdatedAt = updatedAt;
-            
-            // optional fields
-            PaymentDetails = paymentDetails;
-            DiscountCodes = discountCodes;
-            TotalPriceUsd = totalPriceUsd;
-            TotalDiscounts = totalDiscounts;
-            CartToken = cartToken;
-            ClosedAt = closedAt;
-            FinancialStatus = financialStatus;
-            FulfillmentStatus = fulfillmentStatus;
-            Source = source;
-            NoChargeAmount = noChargeDetails;
+
         }
 
-        /// <summary>
-        /// Validates the objects fields content
-        /// </summary>
-        /// <param name="isWeak">Should use weak validations or strong</param>
-        /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public override void Validate(bool isWeak = false)
         {
             base.Validate(isWeak);
-            InputValidators.ValidateObjectNotNull(LineItems, "Line Items");
-            LineItems.ToList().ForEach(item => item.Validate(isWeak));
-            InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
-            ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
-            if(PaymentDetails == null && NoChargeAmount == null)
+
+            // All properties are optional, so we only validated when they're filled.
+            
+            if(LineItems != null)
             {
-                throw new Exceptions.OrderFieldBadFormatException("Both PaymentDetails and NoChargeDetails are missing - at least one should be specified");
+                LineItems.ToList().ForEach(item => item.Validate(isWeak));
             }
-            if(PaymentDetails != null)
+
+            
+            if(ShippingAddress != null)
+            {
+                ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
+            }
+            
+            if (PaymentDetails != null)
             {
                 PaymentDetails.Validate(isWeak);
             }
-            else 
+
+            if(NoChargeAmount != null)
             {
                 NoChargeAmount.Validate(isWeak);
             }
 
             if (isWeak)
             {
-                if (BillingAddress == null && ShippingAddress == null)
-                {
-                    throw new Exceptions.OrderFieldBadFormatException("Both shipping and billing addresses are missing - at least one should be specified");
-                }
-
                 if (BillingAddress != null)
                 {
                     BillingAddress.Validate(isWeak);
                 }
-                else
+                else if(ShippingAddress != null)
                 {
                     ShippingAddress.Validate(isWeak);
                 }
             }
             else
             {
-                InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
-                BillingAddress.Validate(isWeak);
-                InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
-                ShippingAddress.Validate(isWeak);
+                if(BillingAddress != null)
+                {
+                    BillingAddress.Validate(isWeak);
+                }
+                if(ShippingAddress != null)
+                {
+                    ShippingAddress.Validate(isWeak);
+                }
             }
 
-            InputValidators.ValidateObjectNotNull(Customer, "Customer");
-            Customer.Validate(isWeak);
-            InputValidators.ValidateEmail(Email);
-            InputValidators.ValidateIp(CustomerBrowserIp);
-            InputValidators.ValidateCurrency(Currency);
-            InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
-            InputValidators.ValidateValuedString(Gateway, "Gateway");
-            InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
-            InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
-            
-            // optional fields validations
-            if(DiscountCodes != null && DiscountCodes.Length > 0)
+            if(Customer != null)
+            {
+                Customer.Validate(isWeak);
+            }
+            if(!string.IsNullOrEmpty(Email))
+            {
+                InputValidators.ValidateEmail(Email);
+            }
+            if (!string.IsNullOrEmpty(CustomerBrowserIp))
+            {
+                InputValidators.ValidateIp(CustomerBrowserIp);
+            }
+            if (!string.IsNullOrEmpty(Currency))
+            {
+                InputValidators.ValidateCurrency(Currency);
+            }
+            if (TotalPrice.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
+            }
+           
+            if(CreatedAt != null)
+            {
+                InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+            }
+            if (UpdatedAt != null)
+            {
+                InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
+            }
+
+            if (DiscountCodes != null && DiscountCodes.Length > 0)
             {
                 DiscountCodes.ToList().ForEach(item => item.Validate(isWeak));
             }
-            if(TotalPriceUsd.HasValue)
+            if (TotalPriceUsd.HasValue)
             {
                 InputValidators.ValidateZeroOrPositiveValue(TotalPriceUsd.Value, "Total Price USD");
             }
@@ -145,16 +116,16 @@ namespace Riskified.SDK.Model
             {
                 InputValidators.ValidateDateNotDefault(ClosedAt.Value, "Closed At");
             }
+
         }
 
-        
         /// <summary>
         /// Overrides order object fields with an order checkout object fields (non null fields).
         /// </summary>
         /// <param name="orderCheckout">an order checkout object that his fields will be assign to the current order fields.</param>
         public void ImportOrderCheckout(OrderCheckout orderCheckout)
         {
-            if(!string.IsNullOrEmpty(orderCheckout.CartToken))
+            if (!string.IsNullOrEmpty(orderCheckout.CartToken))
             {
                 this.CartToken = orderCheckout.CartToken;
             }
@@ -220,11 +191,11 @@ namespace Riskified.SDK.Model
             {
                 this.TotalPrice = orderCheckout.TotalPrice;
             }
-            if(orderCheckout.CreatedAt != null)
+            if (orderCheckout.CreatedAt != null)
             {
                 this.CreatedAt = orderCheckout.CreatedAt;
             }
-            if(orderCheckout.UpdatedAt != null)
+            if (orderCheckout.UpdatedAt != null)
             {
                 this.UpdatedAt = orderCheckout.UpdatedAt;
             }
@@ -249,10 +220,9 @@ namespace Riskified.SDK.Model
                 this.ClosedAt = orderCheckout.ClosedAt;
             }
 
-            
+
         }
-        
-        
+
         /// <summary>
         /// The session id that this order was created on, this value should match the session id value that is passed in the beacon JavaScript.
         /// </summary>
@@ -315,7 +285,7 @@ namespace Riskified.SDK.Model
         /// </summary>
         [JsonProperty(PropertyName = "browser_ip")]
         public string CustomerBrowserIp { get; set; }
-        
+
         /// <summary>
         /// A list of discount code objects, each one containing information about an item in the order.
         /// </summary>
@@ -376,5 +346,4 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "vendor_name")]
         public string VendorName { get; set; }
     }
-
 }

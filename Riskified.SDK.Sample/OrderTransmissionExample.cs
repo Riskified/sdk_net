@@ -8,6 +8,7 @@ using Riskified.SDK.Model.RefundElements;
 using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
+using Riskified.SDK.Model.OrderCheckoutElements;
 
 namespace Riskified.SDK.Sample
 {
@@ -40,11 +41,14 @@ namespace Riskified.SDK.Sample
 
             // read action from console
             const string menu = "Commands:\n" +
+                                "'p' for checkout\n" +
+                                "'e' for checkout denied\n" +
                                 "'c' for create\n" +
                                 "'u' for update\n" +
                                 "'s' for submit\n" +
                                 "'d' for cancel\n" +
                                 "'r' for partial refund\n" +
+                                "'f' for fulfill\n" +
                                 "'h' for historical sending\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
@@ -64,6 +68,26 @@ namespace Riskified.SDK.Sample
                     OrderNotification res=null;
                     switch (commandStr)
                     {
+                        case "p":
+                            Console.WriteLine("Order checkout Generated with merchant order number: " + orderNum);
+                            var orderCheckout = GenerateOrderCheckout(orderNum);
+                            orderCheckout.Id = orderNum.ToString();
+                            
+                            // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
+                            res = gateway.Checkout(orderCheckout);
+                            break;
+                        case "e":
+                            Console.WriteLine("Order checkout Generated.");
+                            var orderCheckoutDenied = GenerateOrderCheckoutDenied(orderNum);
+                            
+                            Console.Write("checkout to deny id: ");
+                            string orderCheckoutDeniedId = Console.ReadLine();
+
+                            orderCheckoutDenied.Id = orderCheckoutDeniedId;
+                            
+                            // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
+                            res = gateway.CheckoutDenied(orderCheckoutDenied);
+                            break;
                         case "c":
                             Console.WriteLine("Order Generated with merchant order number: " + orderNum);
                             order.Id = orderNum.ToString();
@@ -109,6 +133,22 @@ namespace Riskified.SDK.Sample
                                             currency: "USD",
                                             reason: "Customer partly refunded on shipping fees")
                                     }));
+                            break;
+                        case "f":
+                            Console.Write("Fulfill order id: ");
+                            string fulfillOrderId = Console.ReadLine();
+                            res = gateway.Fulfill(
+                                new OrderFulfillment(
+                                    merchantOrderId: int.Parse(fulfillOrderId),
+                                    fulfillments: new FulfillmentDetails[] {
+                                        new FulfillmentDetails(
+                                            fulfillmentId: "123",
+                                            createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                                            status: "success",
+                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                            trackingCompany: "TestCompany")
+                                    }));
+
                             break;
                         case "h":
                             int startOrderNum = orderNum;
@@ -168,7 +208,49 @@ namespace Riskified.SDK.Sample
         }
 
 
+        private static OrderCheckout GenerateOrderCheckout(int orderNum)
+        {
+            var orderCheckout = new OrderCheckout(orderNum);
+            
+            // Fill optional fields
+            var customer = new Customer(
+                firstName: "John",
+                lastName: "Doe",
+                id: "405050606",
+                ordersCount: 4,
+                email: "test@example.com",
+                verifiedEmail: true,
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                notes: "No additional info");
 
+            var items = new[]
+            {
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+            };
+
+            orderCheckout.Customer = customer;
+            orderCheckout.LineItems = items;
+
+
+            return orderCheckout;
+
+        }
+
+        private static OrderCheckoutDenied GenerateOrderCheckoutDenied(int orderNum)
+        {
+            var authorizationError = new AuthorizationError(
+                                    createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                                    errorCode: "invalid_expiry_date",
+                                    message: "credit card expired.");
+
+            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum, authorizationError);
+
+
+
+            return orderCheckoutDenied;
+
+        }
         /// <summary>
         /// Generates a new order object
         /// Mind that some of the fields of the order (and it's sub-objects) are optional
