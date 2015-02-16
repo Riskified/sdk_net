@@ -29,7 +29,7 @@ namespace Riskified.SDK.Model.OrderElements
         }
 
 
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(Network, "Network");
             InputValidators.ValidateValuedString(PublicUsername, "Network");

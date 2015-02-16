@@ -18,9 +18,9 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// Validates the objects fields content
         /// </summary>
-        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <param name="validationType">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(RefundId, "Refund ID");
             InputValidators.ValidateZeroOrPositiveValue(Amount, "No Charge Amount");

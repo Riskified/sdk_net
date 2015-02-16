@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JsonConvert.cs" />
     <Compile Include="NotificationServerExample.cs" />
     <Compile Include="OrderTransmissionExample.cs" />
     <Compile Include="Program.cs" />

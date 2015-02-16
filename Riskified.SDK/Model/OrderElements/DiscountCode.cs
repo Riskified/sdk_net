@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
@@ -20,7 +21,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="isWeak">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
             return;
         }

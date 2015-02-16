@@ -196,8 +196,7 @@ namespace Riskified.SDK.Orders
                     {
                         if (_validationMode != Validations.Skip)
                         {
-                            bool isWeak = _validationMode == Validations.Weak;
-                            order.Validate(isWeak);
+                            order.Validate(_validationMode);
                         }
                         batch.Add(order);
                     }
@@ -243,8 +242,7 @@ namespace Riskified.SDK.Orders
         {
             if(_validationMode != Validations.Skip)
             {
-                bool isWeak = _validationMode == Validations.Weak;
-                order.Validate(isWeak);
+                order.Validate(_validationMode);
             }
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
@@ -265,8 +263,7 @@ namespace Riskified.SDK.Orders
         {
             if (_validationMode != Validations.Skip)
             {
-                bool isWeak = _validationMode == Validations.Weak;
-                orderCheckout.Validate(isWeak);
+                orderCheckout.Validate(_validationMode);
             }
             var wrappedOrder = new OrderCheckoutWrapper<AbstractOrder>(orderCheckout);
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);

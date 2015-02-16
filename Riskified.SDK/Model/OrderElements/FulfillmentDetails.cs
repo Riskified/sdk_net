@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Utils;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Riskified.SDK.Model.OrderElements
     public class FulfillmentDetails : IJsonSerializable
     {
 
-        public FulfillmentDetails(string fulfillmentId, DateTime? createdAt, string status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
+        public FulfillmentDetails(string fulfillmentId, DateTime? createdAt, StatusCode status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
             string trackingUrls = null, string message = null, string receipt = null)
         {
             this.FulfillmentId = fulfillmentId;
@@ -26,22 +27,19 @@ namespace Riskified.SDK.Model.OrderElements
             this.Message = message;
             this.Receipt = receipt;
         }
-        
 
-        public void Validate(bool isWeak = false)
+
+        public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(FulfillmentId, "Fulfillment Id");
             InputValidators.ValidateObjectNotNull(CreatedAt, "Created At");
             InputValidators.ValidateDateNotDefault((DateTime)CreatedAt, "Created At");
-            InputValidators.ValidateValuedString(Status, "Status");
-            if (!EnumUtil.GetDescriptions(typeof(StatusCode)).Contains(Status))
-            {
-                throw new Exceptions.OrderFieldBadFormatException("Status code is not valid.");
-            }
+            InputValidators.ValidateObjectNotNull(Status, "Status");
+            
 
             if(LineItems != null)
             {
-                LineItems.ToList().ForEach(item => item.Validate(isWeak));
+                LineItems.ToList().ForEach(item => item.Validate(validationType));
             }
 
             
@@ -62,8 +60,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The fulfillment status, Valid values are: success, cancelled, error, failure.
         /// </summary>
-        [JsonProperty(PropertyName = "status")]
-        public string Status { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public StatusCode Status { get; set; }
 
         /// <summary>
         /// A list of each line item in the attempted fulfillment.

@@ -85,6 +85,9 @@ namespace Riskified.SDK.Sample
 
                             orderCheckoutDenied.Id = orderCheckoutDeniedId;
                             
+
+
+
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.CheckoutDenied(orderCheckoutDenied);
                             break;
@@ -137,17 +140,8 @@ namespace Riskified.SDK.Sample
                         case "f":
                             Console.Write("Fulfill order id: ");
                             string fulfillOrderId = Console.ReadLine();
-                            res = gateway.Fulfill(
-                                new OrderFulfillment(
-                                    merchantOrderId: int.Parse(fulfillOrderId),
-                                    fulfillments: new FulfillmentDetails[] {
-                                        new FulfillmentDetails(
-                                            fulfillmentId: "123",
-                                            createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
-                                            status: "success",
-                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
-                                            trackingCompany: "TestCompany")
-                                    }));
+                            OrderFulfillment orderFulfillment = GenerateFulfillment(int.Parse(fulfillOrderId));
+                            res = gateway.Fulfill(orderFulfillment);
 
                             break;
                         case "h":
@@ -241,7 +235,7 @@ namespace Riskified.SDK.Sample
         {
             var authorizationError = new AuthorizationError(
                                     createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
-                                    errorCode: "invalid_expiry_date",
+                                    errorCode: AuthorizationErrorCode.IncorrectNumber,
                                     message: "credit card expired.");
 
             var orderCheckoutDenied = new OrderCheckoutDenied(orderNum, authorizationError);
@@ -251,6 +245,26 @@ namespace Riskified.SDK.Sample
             return orderCheckoutDenied;
 
         }
+
+
+        private static OrderFulfillment GenerateFulfillment(int fulfillOrderId)
+        {
+            FulfillmentDetails[] fulfillmentList = new FulfillmentDetails[] {
+                                        new FulfillmentDetails(
+                                            fulfillmentId: "123",
+                                            createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                                            status: StatusCode.Success,
+                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                            trackingCompany: "TestCompany")
+                                    };
+
+            OrderFulfillment orderFulfillment = new OrderFulfillment(
+                                    merchantOrderId: fulfillOrderId,
+                                    fulfillments: fulfillmentList);
+
+            return orderFulfillment;
+        }
+
         /// <summary>
         /// Generates a new order object
         /// Mind that some of the fields of the order (and it's sub-objects) are optional

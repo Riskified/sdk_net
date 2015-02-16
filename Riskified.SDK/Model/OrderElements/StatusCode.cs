@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,13 +10,13 @@ namespace Riskified.SDK.Model.OrderElements
 {
     public enum StatusCode
     {
-        [Description("success")]
+        [EnumMember(Value = "success")]
         Success,
-        [Description("cancelled")]
+        [EnumMember(Value = "cancelled")]
         Cancelled,
-        [Description("error")]
+        [EnumMember(Value = "error")]
         Error,
-        [Description("failure")]
+        [EnumMember(Value = "failure")]
         Failure
     }
 }

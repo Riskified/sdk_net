@@ -17,11 +17,11 @@ namespace Riskified.SDK.Model
             this.Fulfillments = fulfillments;
         }
 
-        public override void Validate(bool isWeak = false)
+        public override void Validate(Validations validationType = Validations.Weak)
         {
-            base.Validate(isWeak);
+            base.Validate(validationType);
             InputValidators.ValidateObjectNotNull(Fulfillments, "Fulfillments");
-            Fulfillments.ToList().ForEach(item => item.Validate(isWeak));
+            Fulfillments.ToList().ForEach(item => item.Validate(validationType));
 
         }
 

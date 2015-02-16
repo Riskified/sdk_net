@@ -23,10 +23,10 @@ namespace Riskified.SDK.Model.OrderElements
         }
 
 
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
-            Customer.Validate(isWeak);
+            Customer.Validate(validationType);
         }
 
         /// <summary>
