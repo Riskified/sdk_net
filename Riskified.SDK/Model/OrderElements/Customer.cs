@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
@@ -19,7 +20,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        public Customer(string firstName, string lastName,string id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null)
+        public Customer(string firstName, string lastName,string id, int? ordersCount = null,string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null, SocialDetails[] social = null)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -31,6 +32,7 @@ namespace Riskified.SDK.Model.OrderElements
             VerifiedEmail = verifiedEmail;
             CreatedAt = createdAt;
             Note = notes;
+            Social = social;
         }
 
         /// <summary>
@@ -38,9 +40,9 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="isWeak">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public void Validate(bool isWeak=false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
-            if (isWeak)
+            if (validationType == Validations.Weak)
             {
                 if(string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
                 {
@@ -65,6 +67,10 @@ namespace Riskified.SDK.Model.OrderElements
             if (CreatedAt.HasValue)
             {
                 InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
+            }
+            if(Social != null)
+            {
+                Social.ToList().ForEach(item => item.Validate(validationType));
             }
         }
 
@@ -91,6 +97,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "verified_email")]
         public bool? VerifiedEmail { get; set; }
+
+        [JsonProperty(PropertyName = "social")]
+        public SocialDetails[] Social { get; set; }
 
         
     }

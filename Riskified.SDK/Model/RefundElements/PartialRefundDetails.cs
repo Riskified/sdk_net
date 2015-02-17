@@ -25,7 +25,7 @@ namespace Riskified.SDK.Model.RefundElements
             Reason = reason;
         }
 
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(RefundId, "Refund ID");
             InputValidators.ValidateDateNotDefault(RefundedAt, "Refunded At");

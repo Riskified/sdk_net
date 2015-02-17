@@ -7,7 +7,7 @@ using Riskified.SDK.Utils;
 namespace Riskified.SDK.Model
 {
     
-    public class Order : AbstractOrder
+    public class Order : OrderBase
     {
         /// <summary>
         /// Creates a new order
@@ -74,27 +74,27 @@ namespace Riskified.SDK.Model
         /// </summary>
         /// <param name="isWeak">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public override void Validate(bool isWeak = false)
+        public override void Validate(Validations validationType = Validations.Weak)
         {
-            base.Validate(isWeak);
+            base.Validate(validationType);
             InputValidators.ValidateObjectNotNull(LineItems, "Line Items");
-            LineItems.ToList().ForEach(item => item.Validate(isWeak));
+            LineItems.ToList().ForEach(item => item.Validate(validationType));
             InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
-            ShippingLines.ToList().ForEach(item => item.Validate(isWeak));
+            ShippingLines.ToList().ForEach(item => item.Validate(validationType));
             if(PaymentDetails == null && NoChargeAmount == null)
             {
                 throw new Exceptions.OrderFieldBadFormatException("Both PaymentDetails and NoChargeDetails are missing - at least one should be specified");
             }
             if(PaymentDetails != null)
             {
-                PaymentDetails.Validate(isWeak);
+                PaymentDetails.Validate(validationType);
             }
             else 
             {
-                NoChargeAmount.Validate(isWeak);
+                NoChargeAmount.Validate(validationType);
             }
 
-            if (isWeak)
+            if (validationType == Validations.Weak)
             {
                 if (BillingAddress == null && ShippingAddress == null)
                 {
@@ -103,23 +103,23 @@ namespace Riskified.SDK.Model
 
                 if (BillingAddress != null)
                 {
-                    BillingAddress.Validate(isWeak);
+                    BillingAddress.Validate(validationType);
                 }
                 else
                 {
-                    ShippingAddress.Validate(isWeak);
+                    ShippingAddress.Validate(validationType);
                 }
             }
             else
             {
                 InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
-                BillingAddress.Validate(isWeak);
+                BillingAddress.Validate(validationType);
                 InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
-                ShippingAddress.Validate(isWeak);
+                ShippingAddress.Validate(validationType);
             }
 
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
-            Customer.Validate(isWeak);
+            Customer.Validate(validationType);
             InputValidators.ValidateEmail(Email);
             InputValidators.ValidateIp(CustomerBrowserIp);
             InputValidators.ValidateCurrency(Currency);
@@ -131,7 +131,7 @@ namespace Riskified.SDK.Model
             // optional fields validations
             if(DiscountCodes != null && DiscountCodes.Length > 0)
             {
-                DiscountCodes.ToList().ForEach(item => item.Validate(isWeak));
+                DiscountCodes.ToList().ForEach(item => item.Validate(validationType));
             }
             if(TotalPriceUsd.HasValue)
             {
@@ -147,72 +147,7 @@ namespace Riskified.SDK.Model
             }
         }
 
-
-        [JsonProperty(PropertyName = "cart_token")]
-        public string CartToken { get; set; }
-
-        [JsonProperty(PropertyName = "closed_at")]
-        public DateTime? ClosedAt { get; set; }
-
-        [JsonProperty(PropertyName = "created_at")]
-        public DateTime? CreatedAt { get; set; }
-
-        [JsonProperty(PropertyName = "currency")]
-        public string Currency { get; set; }
-
-        [JsonProperty(PropertyName = "email")]
-        public string Email { get; set; }
-
-        [JsonProperty(PropertyName = "gateway")]
-        public string Gateway { get; set; }
-
-        [JsonProperty(PropertyName = "total_discounts")]
-        public double? TotalDiscounts { get; set; }
-
-        [JsonProperty(PropertyName = "total_price")]
-        public double? TotalPrice { get; set; }
-
-        [JsonProperty(PropertyName = "total_price_usd")]
-        public double? TotalPriceUsd { get; set; }
-
-        [JsonProperty(PropertyName = "updated_at")]
-        public DateTime? UpdatedAt { get; set; }
-
-        [JsonProperty(PropertyName = "browser_ip")]
-        public string CustomerBrowserIp { get; set; }
         
-        [JsonProperty(PropertyName = "discount_codes")]
-        public DiscountCode[] DiscountCodes { get; set; }
-
-        [JsonProperty(PropertyName = "line_items")]
-        public LineItem[] LineItems { get; set; }
-
-        [JsonProperty(PropertyName = "shipping_lines")]
-        public ShippingLine[] ShippingLines { get; set; }
-
-        [JsonProperty(PropertyName = "payment_details")]
-        public IPaymentDetails PaymentDetails { get; set; }
-
-        [JsonProperty(PropertyName = "billing_address")]
-        public AddressInformation BillingAddress { get; set; }
-
-        [JsonProperty(PropertyName = "shipping_address")]
-        public AddressInformation ShippingAddress { get; set; }
-
-        [JsonProperty(PropertyName = "customer")]
-        public Customer Customer { get; set; }
-
-        [JsonProperty(PropertyName = "financial_status")]
-        public string FinancialStatus { get; set; }
-
-        [JsonProperty(PropertyName = "fulfillment_status")]
-        public string FulfillmentStatus { get; set; }
-
-        [JsonProperty(PropertyName = "source")]
-        public string Source { get; set; }
-
-        [JsonProperty(PropertyName = "nocharge_amount")]
-        public NoChargeDetails NoChargeAmount { get; set; }
     }
 
 }

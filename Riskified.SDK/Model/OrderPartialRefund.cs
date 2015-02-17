@@ -15,11 +15,11 @@ namespace Riskified.SDK.Model
             Refunds = partialRefunds;
         }
 
-        public override void Validate(bool isWeak)
+        public override void Validate(Validations validationType = Validations.Weak)
         {
-            base.Validate(isWeak);
+            base.Validate(validationType);
             InputValidators.ValidateObjectNotNull(Refunds, "Refunds");
-            Refunds.ToList().ForEach(item => item.Validate(isWeak));
+            Refunds.ToList().ForEach(item => item.Validate(validationType));
         }
     }
 }

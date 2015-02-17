@@ -57,6 +57,32 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
+        /// Validates the Order checkout object fields (All fields except merchendOrderId are optional)
+        /// Sends a new order checkout to Riskified Servers (without Submit for analysis)
+        /// </summary>
+        /// <param name="order">The Order checkout to create</param>
+        /// <returns>The order checkout notification result containing status,description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Checkout(OrderCheckout orderCheckout)
+        {
+            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/checkout_create"));
+        }
+
+        /// <summary>
+        /// Validates the Order checkout object fields (All fields except merchendOrderId are optional)
+        /// Sends a new order checkout to Riskified Servers (without Submit for analysis)
+        /// </summary>
+        /// <param name="order">The Order checkout to create</param>
+        /// <returns>The order checkout notification result containing status,description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification CheckoutDenied(OrderCheckoutDenied orderCheckout)
+        {
+            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/checkout_denied"));
+        }
+
+        /// <summary>
         /// Validates the Order object fields
         /// Sends a new order to Riskified Servers (without Submit for analysis)
         /// </summary>
@@ -122,6 +148,19 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
+        /// Validates the cancellation data
+        /// Sends a cancellation message for a specific order (id should already exist) to Riskified server for status and charge fees update
+        /// </summary>
+        /// <param name="orderCancellation"></param>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Fulfill(OrderFulfillment orderFulfillment)
+        {
+            return SendOrder(orderFulfillment, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/fulfill"));
+        }
+
+        /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
         /// 
@@ -157,8 +196,7 @@ namespace Riskified.SDK.Orders
                     {
                         if (_validationMode != Validations.Skip)
                         {
-                            bool isWeak = _validationMode == Validations.Weak;
-                            order.Validate(isWeak);
+                            order.Validate(_validationMode);
                         }
                         batch.Add(order);
                     }
@@ -204,8 +242,7 @@ namespace Riskified.SDK.Orders
         {
             if(_validationMode != Validations.Skip)
             {
-                bool isWeak = _validationMode == Validations.Weak;
-                order.Validate(isWeak);
+                order.Validate(_validationMode);
             }
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
@@ -213,6 +250,26 @@ namespace Riskified.SDK.Orders
             
         }
 
+        /// <summary>
+        /// Validates the Order object fields
+        /// Sends the order to riskified server endpoint as configured in the ctor
+        /// </summary>
+        /// <param name="order">The order checkout object to send</param>
+        /// <param name="riskifiedEndpointUrl">the endpoint to which the order should be sent</param>
+        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        private OrderNotification SendOrderCheckout(AbstractOrder orderCheckout, Uri riskifiedEndpointUrl)
+        {
+            if (_validationMode != Validations.Skip)
+            {
+                orderCheckout.Validate(_validationMode);
+            }
+            var wrappedOrder = new OrderCheckoutWrapper<AbstractOrder>(orderCheckout);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            return new OrderNotification(transactionResult);
+            
+        }
     }
 
     

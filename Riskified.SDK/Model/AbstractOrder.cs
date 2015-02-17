@@ -19,8 +19,9 @@ namespace Riskified.SDK.Model
             Id = merchantOrderId;
         }
 
-        public virtual void Validate(bool isWeak = false)
+        public virtual void Validate(Validations validationType = Validations.Weak)
         {
+            
             InputValidators.ValidateValuedString(Id, "Merchant Order ID");
         }
 

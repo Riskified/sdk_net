@@ -22,9 +22,9 @@ namespace Riskified.SDK.Model
             CancelReason = cancelReason;
         }
 
-        public override void Validate(bool isWeak = false)
+        public override void Validate(Validations validationType = Validations.Weak)
         {
-            base.Validate(isWeak);
+            base.Validate(validationType);
             InputValidators.ValidateDateNotDefault(CancelledAt.Value, "Cancelled At");
             InputValidators.ValidateValuedString(CancelReason, "Cancel Reason");
         }

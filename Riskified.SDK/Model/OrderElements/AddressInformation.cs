@@ -46,9 +46,9 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="isWeak">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public void Validate(bool isWeak = false)
+        public void Validate(Validations validationType = Validations.Weak)
         {
-            if (isWeak)
+            if (validationType == Validations.Weak)
             {
                 if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
                 {

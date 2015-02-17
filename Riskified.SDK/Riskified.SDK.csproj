@@ -38,6 +38,8 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,11 +49,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\IJsonSerializable.cs" />
+    <Compile Include="Model\Internal\OrderCheckoutWrapper.cs" />
     <Compile Include="Model\Internal\OrdersWrapper.cs" />
     <Compile Include="Model\Internal\OrderWrapper.cs" />
+    <Compile Include="Model\OrderBase.cs" />
+    <Compile Include="Model\OrderCheckout.cs" />
+    <Compile Include="Model\OrderCheckoutDenied.cs" />
+    <Compile Include="Model\OrderCheckoutElements\AuthorizationError.cs" />
+    <Compile Include="Model\OrderCheckoutElements\AuthorizationErrorCode.cs" />
+    <Compile Include="Model\OrderElements\FulfillmentDetails.cs" />
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\NoChargeDetails.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\Seller.cs" />
+    <Compile Include="Model\OrderElements\SocialDetails.cs" />
+    <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />
+    <Compile Include="Model\OrderFulfillment.cs" />
     <Compile Include="Model\OrderNotification.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
     <Compile Include="Model\AbstractOrder.cs" />
