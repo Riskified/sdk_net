@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public enum StatusCode
+    public enum FulfillmentStatusCode
     {
         [EnumMember(Value = "success")]
         Success,

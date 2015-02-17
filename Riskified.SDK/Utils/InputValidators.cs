@@ -64,6 +64,12 @@ namespace Riskified.SDK.Utils
                 throw new OrderFieldBadFormatException(string.Format("{0} must be positive or zero. Value was \"{1}\"",fieldName, number));
         }
 
+        public static void ValidateZeroOrPositiveValue(float number, string fieldName)
+        {
+            if (number < 0)
+                throw new OrderFieldBadFormatException(string.Format("{0} must be positive or zero. Value was \"{1}\"", fieldName, number));
+        }
+
         public static void ValidatePositiveValue(int number, string fieldName)
         {
             if (number <= 0)

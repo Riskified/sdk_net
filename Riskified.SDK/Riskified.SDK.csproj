@@ -57,14 +57,13 @@
     <Compile Include="Model\OrderCheckoutDenied.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthorizationError.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthorizationErrorCode.cs" />
-    <Compile Include="Model\OrderElements\CancelReason.cs" />
     <Compile Include="Model\OrderElements\FulfillmentDetails.cs" />
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\NoChargeDetails.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\Seller.cs" />
     <Compile Include="Model\OrderElements\SocialDetails.cs" />
-    <Compile Include="Model\OrderElements\StatusCode.cs" />
+    <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />
     <Compile Include="Model\OrderFulfillment.cs" />
     <Compile Include="Model\OrderNotification.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="Model\OrderCancellation.cs" />
     <Compile Include="Model\OrderPartialRefund.cs" />
     <Compile Include="Model\RefundElements\PartialRefundDetails.cs" />
-    <Compile Include="Utils\EnumUtil.cs" />
     <Compile Include="Utils\InputValidators.cs" />
     <Compile Include="Exceptions\NotifierServerFailedToStartException.cs" />
     <Compile Include="Exceptions\OrderFieldBadFormatException.cs" />

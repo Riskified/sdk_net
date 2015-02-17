@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.OrderElements
     public class FulfillmentDetails : IJsonSerializable
     {
 
-        public FulfillmentDetails(string fulfillmentId, DateTime? createdAt, StatusCode status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
+        public FulfillmentDetails(string fulfillmentId, DateTime createdAt, FulfillmentStatusCode status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
             string trackingUrls = null, string message = null, string receipt = null)
         {
             this.FulfillmentId = fulfillmentId;
@@ -32,8 +32,7 @@ namespace Riskified.SDK.Model.OrderElements
         public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(FulfillmentId, "Fulfillment Id");
-            InputValidators.ValidateObjectNotNull(CreatedAt, "Created At");
-            InputValidators.ValidateDateNotDefault((DateTime)CreatedAt, "Created At");
+            InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
             InputValidators.ValidateObjectNotNull(Status, "Status");
             
 
@@ -60,8 +59,9 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The fulfillment status, Valid values are: success, cancelled, error, failure.
         /// </summary>
+        [JsonProperty(PropertyName = "status")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public StatusCode Status { get; set; }
+        public FulfillmentStatusCode Status { get; set; }
 
         /// <summary>
         /// A list of each line item in the attempted fulfillment.

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    [JsonObject("seller")]
     public class Seller : IJsonSerializable
     {
 
@@ -27,6 +26,10 @@ namespace Riskified.SDK.Model.OrderElements
         {
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
             Customer.Validate(validationType);
+            if(StartingPrice != null)
+            {
+                InputValidators.ValidateZeroOrPositiveValue((float)StartingPrice, "Starting price");
+            }
         }
 
         /// <summary>

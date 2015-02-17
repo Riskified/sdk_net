@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model.OrderCheckoutElements
 {
-    [JsonObject("authorization_error")]
     public class AuthorizationError : IJsonSerializable
     {
 
-        public AuthorizationError(DateTime? createdAt, AuthorizationErrorCode errorCode, string message = null)
+        public AuthorizationError(DateTime createdAt, AuthorizationErrorCode errorCode, string message = null)
         {
             this.CreatedAt = createdAt;
             this.ErrorCode = errorCode;
@@ -24,7 +23,6 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 
         public void Validate(Validations validationType = Validations.Weak)
         {
-            InputValidators.ValidateObjectNotNull(CreatedAt, "Created At");
             InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
             InputValidators.ValidateObjectNotNull(ErrorCode, "Error Code");
 
@@ -34,6 +32,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [JsonProperty(PropertyName = "created_at")]
         public DateTime? CreatedAt { get; set; }
 
+        [JsonProperty(PropertyName = "error_code")]
         [JsonConverter(typeof(StringEnumConverter))]
         public AuthorizationErrorCode ErrorCode { get; set; }
 

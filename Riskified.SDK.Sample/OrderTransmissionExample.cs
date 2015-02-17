@@ -253,7 +253,7 @@ namespace Riskified.SDK.Sample
                                         new FulfillmentDetails(
                                             fulfillmentId: "123",
                                             createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
-                                            status: StatusCode.Success,
+                                            status: FulfillmentStatusCode.Success,
                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                             trackingCompany: "TestCompany")
                                     };
@@ -334,7 +334,7 @@ namespace Riskified.SDK.Sample
             var items = new[]
             {
                 new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
-                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120))
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };

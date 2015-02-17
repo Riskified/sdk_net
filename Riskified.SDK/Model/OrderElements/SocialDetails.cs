@@ -32,7 +32,7 @@ namespace Riskified.SDK.Model.OrderElements
         public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(Network, "Network");
-            InputValidators.ValidateValuedString(PublicUsername, "Network");
+            InputValidators.ValidateValuedString(PublicUsername, "Public Username");
 
             if(!string.IsNullOrEmpty(Email))
             {
