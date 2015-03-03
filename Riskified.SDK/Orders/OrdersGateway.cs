@@ -161,6 +161,20 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
+        /// Validates the decision data
+        /// Sends a decision message for a specific order (id should already exist) to Riskified server.
+        /// Update existing order external status. Lets Riskified know what was your decision on your order.
+        /// </summary>
+        /// <param name="OrderDecision">The decision details</param>
+        /// <returns>The order notification result containing status,description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Decision(OrderDecision orderDecision)
+        {
+            return SendOrder(orderDecision, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/decision"));
+        }
+
+        /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
         /// 

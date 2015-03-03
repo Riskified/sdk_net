@@ -49,6 +49,7 @@ namespace Riskified.SDK.Sample
                                 "'d' for cancel\n" +
                                 "'r' for partial refund\n" +
                                 "'f' for fulfill\n" +
+                                "'x' for decision\n" +
                                 "'h' for historical sending\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
@@ -144,6 +145,13 @@ namespace Riskified.SDK.Sample
                             res = gateway.Fulfill(orderFulfillment);
 
                             break;
+                        case "x":
+                            Console.Write("Decision order id: ");
+                            string decisionOrderId = Console.ReadLine();
+                            OrderDecision orderDecision = GenerateDecision(int.Parse(decisionOrderId));
+                            res = gateway.Decision(orderDecision);
+
+                            break;
                         case "h":
                             int startOrderNum = orderNum;
                             var orders = new List<Order>();
@@ -199,6 +207,12 @@ namespace Riskified.SDK.Sample
 
             #endregion
 
+        }
+
+        private static OrderDecision GenerateDecision(int p)
+        {
+            OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargedbackFraud, DateTime.Now, "used proxy and stolen credit card."));
+            return orderDecision;
         }
 
 
