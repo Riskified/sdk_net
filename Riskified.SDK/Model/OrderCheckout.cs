@@ -117,6 +117,11 @@ namespace Riskified.SDK.Model
                 InputValidators.ValidateDateNotDefault(ClosedAt.Value, "Closed At");
             }
 
+            if (Decision != null)
+            {
+                Decision.Validate(validationType);
+            }
+
         }
 
     }

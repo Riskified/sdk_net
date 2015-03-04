@@ -111,6 +111,13 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "event_sub_category_name")]
         public string EventSubCategoryName { get; set; }
 
+
+        /// <summary>
+        /// The event category name.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_category_name")]
+        public string EventCategoryName { get; set; }
+
         /// <summary>
         /// The event name.
         /// </summary>
