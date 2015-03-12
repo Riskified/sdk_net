@@ -147,6 +147,11 @@ namespace Riskified.SDK.Model
             }
         }
 
+        /// <summary>
+        /// The unique identifier of the Checkout that created this order.
+        /// </summary>
+        [JsonProperty(PropertyName = "checkout_id")]
+        public string CheckoutId { get; set; }
         
     }
 
