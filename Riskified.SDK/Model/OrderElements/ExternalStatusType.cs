@@ -19,9 +19,9 @@ namespace Riskified.SDK.Model
         Declined,
         [EnumMember(Value = "declined_fraud")]
         DeclinedFraud,
-        [EnumMember(Value = "chargedback_fraud")]
-        ChargedbackFraud,
-        [EnumMember(Value = "chargedback_not_fraud")]
-        ChargedbackNotFraud
+        [EnumMember(Value = "chargeback_fraud")]
+        ChargebackFraud,
+        [EnumMember(Value = "chargeback_not_fraud")]
+        ChargebackNotFraud
     }
 }
