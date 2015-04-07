@@ -135,6 +135,12 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "event_date")]
         public DateTime? EventDate { get; set; }
+
+        /// <summary>
+        /// The brand name of the product.
+        /// </summary>
+        [JsonProperty(PropertyName = "brand")]
+        public string Brand { get; set; }
     }
 
 }
