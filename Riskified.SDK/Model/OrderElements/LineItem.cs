@@ -131,6 +131,24 @@ namespace Riskified.SDK.Model.OrderElements
         public string EventSectionName { get; set; }
 
         /// <summary>
+        /// The country where the event is taking place.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_country")]
+        public string EventCountry { get; set; }
+
+        /// <summary>
+        /// The city where the event is taking place.
+        /// </summary>
+        [JsonProperty(PropertyName = "event_city")]
+        public string EventCity { get; set; }
+
+        /// <summary>
+        /// The geographic coordinates (Decimal degrees) where the event is taking place. (United States capitol for example is 38.8897,-77.0089).
+        /// </summary>
+        [JsonProperty(PropertyName = "event_location")]
+        public string EventLocation { get; set; }
+
+        /// <summary>
         /// The event date.
         /// </summary>
         [JsonProperty(PropertyName = "event_date")]
@@ -141,6 +159,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "brand")]
         public string Brand { get; set; }
+
     }
 
 }

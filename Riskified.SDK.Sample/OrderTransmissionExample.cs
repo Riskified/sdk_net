@@ -211,7 +211,7 @@ namespace Riskified.SDK.Sample
 
         private static OrderDecision GenerateDecision(int p)
         {
-            OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargedbackFraud, DateTime.Now, "used proxy and stolen credit card."));
+            OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
             return orderDecision;
         }
 
