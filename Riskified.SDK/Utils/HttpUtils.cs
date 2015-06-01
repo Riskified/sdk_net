@@ -79,14 +79,12 @@ namespace Riskified.SDK.Utils
             return resObj;
         }
 
-
-
         private static HttpWebResponse PostObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
         {
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
+                jsonStr = JsonConvert.SerializeObject(jsonObj, new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
             }
             catch (Exception e)
             {
@@ -99,12 +97,12 @@ namespace Riskified.SDK.Utils
                 WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
                 response = (HttpWebResponse)request.GetResponse();
             }
-            catch (WebException wex)
+            catch (WebException e)
             {
                 string error = "There was an unknown error sending data to server";
-                if (wex.Response != null)
+                if (e.Response != null)
                 {
-                    HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
+                    HttpWebResponse errorResponse = (HttpWebResponse)e.Response;
                     try
                     {
                         var errorObj = ParseObjectFromJsonResponse<ErrorResponse>(errorResponse);
@@ -122,8 +120,8 @@ namespace Riskified.SDK.Utils
                     }
 
                 }
-                LoggingServices.Error(error, wex);
-                throw new RiskifiedTransactionException(error, wex);
+                LoggingServices.Error(error, e);
+                throw new RiskifiedTransactionException(error, e);
             }
             catch (Exception e)
             {
@@ -254,15 +252,19 @@ namespace Riskified.SDK.Utils
             return calculatedHmac.Equals(hmacValueToVerify);
         }
         */
-        public static void BuildAndSendResponse(HttpListenerResponse response, string authToken,string shopDomain, string body,bool isActionSucceeded)
+        public static void BuildAndSendResponse(HttpListenerResponse response, string authToken, string shopDomain, string body, bool isActionSucceeded)
         {
-            AddDefaultHeaders(response.Headers,authToken,shopDomain,body);
+            AddDefaultHeaders(response.Headers, authToken, shopDomain, body);
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
             if (isActionSucceeded)
+            {
                 response.StatusCode = (int) HttpStatusCode.OK;
+            }
             else
+            {
                 response.StatusCode = (int) HttpStatusCode.BadRequest;
+            }
 
             byte[] buffer = Encoding.UTF8.GetBytes(body);
             response.ContentLength64 = buffer.Length;
@@ -273,7 +275,7 @@ namespace Riskified.SDK.Utils
 
         public static Uri BuildUrl(string hostUrl, string relativePath)
         {
-            Uri fullUrl = new Uri(new Uri(hostUrl),relativePath);
+            Uri fullUrl = new Uri(new Uri(hostUrl), relativePath);
             return fullUrl;
         }
     }
