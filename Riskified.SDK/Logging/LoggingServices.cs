@@ -31,7 +31,7 @@ namespace Riskified.SDK.Logging
         {
             if (_loggerProxy != null)
             {
-                _loggerProxy.Debug(message,exception);
+                _loggerProxy.Debug(message, exception);
             }
         }
 
@@ -47,7 +47,7 @@ namespace Riskified.SDK.Logging
         {
             if (_loggerProxy != null)
             {
-                _loggerProxy.Info(message,exception);
+                _loggerProxy.Info(message, exception);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Riskified.SDK.Logging
         {
             if (_loggerProxy != null)
             {
-                _loggerProxy.Error(message,exception);
+                _loggerProxy.Error(message, exception);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Riskified.SDK.Logging
         {
             if (_loggerProxy != null)
             {
-                _loggerProxy.Fatal(message,exception);
+                _loggerProxy.Fatal(message, exception);
             }
         }
     }
