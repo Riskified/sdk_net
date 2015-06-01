@@ -107,7 +107,7 @@ namespace Riskified.SDK.Notifications
         public void ReceiveNotifications()
         {
             if (!_isStopped)
-                throw new NotifierAlreadyRunningException("Notification handler already running.");
+                throw new NotifierAlreadyRunningException("Notification handler already running");
 
             if (!_listener.IsListening)
             {
@@ -118,13 +118,13 @@ namespace Riskified.SDK.Notifications
                 catch (Exception e)
                 {
                     string errorMsg = string.Format(
-                        "Unable to start the HTTP webhook listener on: {0}. Check firewall configuration and make sure the app is running under admin privleges.",
+                        "Unable to start the HTTP webhook listener on: {0}. Check firewall configuration and make sure the app is running under admin privleges",
                         _localListeningEndpoint);
                     LoggingServices.Fatal(errorMsg, e);
                     throw new NotifierServerFailedToStartException(errorMsg, e);
                 }
             }
-            
+
             _isStopped = false;
 
             while (!_isStopped)
@@ -142,36 +142,48 @@ namespace Riskified.SDK.Notifications
                         continue;
                     }
 
-                    OrderNotification n;
+                    OrderNotification n = null;
+                    string responseString;
+
                     try
                     {
-                        var notificationData = HttpUtils.ParsePostRequestToObject<OrderWrapper<Notification>>(request);
-                        n = new OrderNotification(notificationData);
+                        string requestContent;
+                        var isRequestAuthenticated = HttpUtils.IsRequestAuthenticated(request, _authToken, out requestContent);
+                        if (isRequestAuthenticated)
+                        {
+                            try
+                            {
+                                var notificationData = HttpUtils.ParsePostRequestContentToObject<OrderWrapper<Notification>>(requestContent);
+                                n = new OrderNotification(notificationData);
+                                responseString = string.Format(
+                                    "<HTML><BODY>Merchant received notification for order: {0} with status: {1} and description: {2}</BODY></HTML>",
+                                    n.Id,
+                                    n.Status,
+                                    n.Description);
+                            }
+                            catch (Exception)
+                            {
+                                LoggingServices.Error("Unable to parse notification message. Some or all of the post params are missing or invalid.");
+                                responseString = "<HTML><BODY>Merchant couldn't parse notification message.</BODY></HTML>";
+                            }
+                        }
+                        else
+                        {
+                            LoggingServices.Info("Received non-authenticated notification message.");
+                            responseString = "<HTML><BODY>Merchant couldn't authenticate notification message.</BODY></HTML>";
+                        }
                     }
-                    catch(Exception)
+                    catch (Exception ex)
                     {
-                        n = null;
+                        LoggingServices.Error("Failed attempt at authenticating notification message.", ex);
+                        responseString = "<HTML><BODY>Merchant couldn't authenticate notification message.</BODY></HTML>";
                     }
-                    
-                    string responseString;
-                    if(n == null)
-                    {
-                        LoggingServices.Error("Unable to parse notification message. Some or all of the post params are missing or invalid.");
-                        responseString = "<HTML><BODY>Merchant couldn't parse notification message.</BODY></HTML>";
-                    }
-                    else
-                    {
-                        responseString = string.Format(
-                            "<HTML><BODY>Merchant received notification for order: {0} with status: {1} and description: {2}</BODY></HTML>",
-                            n.Id,
-                            n.Status,
-                            n.Description);
-                    }
+
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;
                     // Construct a simple response. 
-                    HttpUtils.BuildAndSendResponse(response, _authToken, _shopDomain, responseString, (n!=null));
-                    if(n != null)
+                    HttpUtils.BuildAndSendResponse(response, _authToken, _shopDomain, responseString, (n != null));
+                    if (n != null)
                     {
                         // running callback to call merchant code on the notification
                         Task.Factory.StartNew(() => _notificationReceivedCallback(n));
@@ -179,7 +191,7 @@ namespace Riskified.SDK.Notifications
                 }
                 catch (Exception e)
                 {
-                    LoggingServices.Error("An error occured will receiving notification. Specific request was skipped.", e);
+                    LoggingServices.Error("An error occured will receiving notification. Specific request was skipped", e);
                     // trying to restart listening - maybe connection was cut shortly
                     if (!_listener.IsListening)
                     {

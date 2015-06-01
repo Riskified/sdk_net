@@ -12,8 +12,8 @@ namespace Riskified.SDK.Utils
 {
     internal enum HttpBodyType
     {
-        JSON,
-        XML,
+        Json,
+        Xml,
         Text
     }
 
@@ -94,7 +94,7 @@ namespace Riskified.SDK.Utils
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
+                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.Json);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException e)
@@ -216,16 +216,71 @@ namespace Riskified.SDK.Utils
             public string Message { get; set; }
         }
 
-        public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
+        /// <summary>
+        /// Checks if an incoming notification request is authenticated or not.
+        /// </summary>
+        /// <param name="request">The <see cref="HttpListenerRequest"/> instance.</param>
+        /// <param name="authToken">The authentication token that is used as the cryptographic key for the hash function that serves as the signature generator.</param>
+        /// <param name="requestContent">The contents of the <see cref="HttpListenerRequest"/>.</param>
+        /// <returns>True if the request is authenticated, False if it's not.</returns>
+        public static bool IsRequestAuthenticated(HttpListenerRequest request, string authToken, out string requestContent)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
+            bool result;
             if (request.HasEntityBody)
             {
                 Stream s = request.InputStream;
-                string postData = ExtractStreamData(s);
-                T obj = JsonStringToObject<T>(postData);
-                return obj;
+                requestContent = ExtractStreamData(s);
+                // Since hash calculation is relatively expensive on CPU compared to a Contains check, no need to perform a calculation if the header doesn't exist.
+                result = request.Headers.AllKeys.Contains(HmacHeaderName)
+                    && string.Equals(request.Headers[HmacHeaderName], CalcHmac(requestContent, authToken), StringComparison.Ordinal);
             }
-            return null;
+            else
+            {
+                requestContent = null;
+                result = false;
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Parses the content of the whole request and deserializes it into the provided type.
+        /// This method is deprecated, and it should be avoided. The reason is:
+        /// This method reads the input from the stream, deserializes it, and closes the stream.
+        /// It doesn't perform an authentication attempt itself, and it doesn't allow the following code-path to perform one since the stream is closed.
+        /// So the <see cref="ParsePostRequestContentToObject"/> method should be used instead,
+        /// preceded with a <see cref="IsRequestAuthenticated"/> that outputs the POST content.
+        /// </summary>
+        /// <typeparam name="T">Type of the object to be used while deserializing.</typeparam>
+        /// <param name="request">The <see cref="HttpListenerRequest"/> instance that carries the post data.</param>
+        /// <returns>Instance of T built using the serialized input.</returns>
+        [Obsolete("Perform an auth check via IsRequestAuthenticated and use ParsePostRequestContentToObject instead.")]
+        public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
+        {
+            if (!request.HasEntityBody)
+            {
+                return null;
+            }
+            Stream s = request.InputStream;
+            string postData = ExtractStreamData(s);
+            return ParsePostRequestContentToObject<T>(postData);
+        }
+
+        /// <summary>
+        /// Parses the extracted content of the request and deserializes it into the provided type.
+        /// Currently this is just a wrapper method over the private JsonStringToObject method.
+        /// </summary>
+        /// <typeparam name="T">Type of the object to be used while deserializing.</typeparam>
+        /// <param name="requestContent">String content of the request.</param>
+        /// <returns>Instance of T built using the serialized input.</returns>
+        public static T ParsePostRequestContentToObject<T>(string requestContent) where T : class
+        {
+            T obj = JsonStringToObject<T>(requestContent);
+            return obj;
         }
 
         private static string ExtractStreamData(Stream stream)
