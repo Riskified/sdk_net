@@ -35,59 +35,7 @@ namespace Riskified.SDK.Notifications
             _authToken = authToken;
             _shopDomain = shopDomain;
         }
-        /*
-        /// <summary>
-        /// Registers (maps) the merchant's webhook for notification messages  
-        /// Will replace all previous endpoints registered by that specific merchant
-        /// This method doesn't test or verify that the webhook exists and responsive
-        /// </summary>
-        /// <param name="riskifiedHostUrl">Riskified registration webhook as received from Riskified</param>
-        /// <param name="merchantNotificationsWebhook">The merchant webhook that will receive notifications on orders status</param>
-        /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
-        /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
-        /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
-        /// <returns>Registration result - can be successful or failed</returns>
-        public static NotificationRegistrationResult RegisterMerchantNotificationsWebhook(string riskifiedHostUrl,
-            string merchantNotificationsWebhook, string authToken, string shopDomain)
-        {
-            string createJson = "{\"action_type\" : \"create\" , \"webhook_url\" : \"" + merchantNotificationsWebhook + "\"}";
-            var regRes =  SendMerchantRegistrationRequest(createJson,riskifiedHostUrl,authToken,shopDomain);
-            if (regRes.IsSuccessful)
-            {
-                LoggingServices.Info("Registration Successful: " + regRes.Result.Message);
-            }
-            else
-            {
-                LoggingServices.Error("Registration Unsuccessful: " + regRes.FailedResult.Message);
-            }
-            return regRes;
-        }
 
-        /// <summary>
-        /// Un-Registers (erases mapping) of any webhooks existed for notification messages for the merchant at Riskified
-        /// </summary>
-        /// <param name="riskifiedRegistrationEndpoint">Riskified registration webhook as received from Riskified</param>
-        /// <param name="authToken">The agreed authentication token between the merchant and Riskified</param>
-        /// <param name="shopDomain">The shop domain url as registered to Riskified with</param>
-        /// <exception cref="RiskifiedTransactionException">thrown if an error occured in the connection to the server (timeout/error response/500 status code)</exception>
-        /// <returns>Registration result - can be successful or failed</returns>
-        public static NotificationRegistrationResult UnRegisterMerchantNotificationWebhooks(string riskifiedRegistrationEndpoint, string authToken,
-            string shopDomain)
-        {
-            const string deleteJson = "{\"action_type\" : \"delete\"}";
-
-            var unregisterRes =  SendMerchantRegistrationRequest(deleteJson,riskifiedRegistrationEndpoint, authToken, shopDomain);
-            if (unregisterRes.IsSuccessful)
-            {
-                LoggingServices.Info("Unregistration Successful: " + unregisterRes.Result.Message);
-            }
-            else
-            {
-                LoggingServices.Error("Unregistration Unsuccessful: " + unregisterRes.FailedResult.Message);
-            }
-            return unregisterRes;
-        }
-        */
         /// <summary>
         /// Stops the notifications server listener
         /// </summary>
@@ -142,39 +90,35 @@ namespace Riskified.SDK.Notifications
                         continue;
                     }
 
-                    OrderNotification n;
+                    string responseString;
+                    bool acionSucceeded = false;
                     try
                     {
-                        var notificationData = HttpUtils.ParsePostRequestToObject<OrderWrapper<Notification>>(request);
-                        n = new OrderNotification(notificationData);
-                    }
-                    catch(Exception)
-                    {
-                        n = null;
-                    }
-                    
-                    string responseString;
-                    if(n == null)
-                    {
-                        LoggingServices.Error("Unable to parse notification message. Some or all of the post params are missing or invalid");
-                        responseString = "<HTML><BODY>Merchant couldn't parse notification message</BODY></HTML>";
-                    }
-                    else
-                    {
+                        var notificationData = HttpUtils.ParsePostRequestToObject<OrderWrapper<Notification>>(request,_authToken);
+                        OrderNotification n = new OrderNotification(notificationData);
                         responseString =
                                 string.Format(
                                     "<HTML><BODY>Merchant Received Notification For Order {0} with status {1} and description {2}</BODY></HTML>",
                                     n.Id, n.Status, n.Description);
+                        // running callback to call merchant code on the notification
+                        Task.Factory.StartNew(() => _notificationReceivedCallback(n));
+                        acionSucceeded = true;
                     }
+                    catch (RiskifiedAuthenticationException uae)
+                    {
+                        LoggingServices.Error("Notification message authentication failed",uae);
+                        responseString = "<HTML><BODY>Merchant couldn't authenticate notification message</BODY></HTML>";
+                    }
+                    catch(Exception e)
+                    {
+                        LoggingServices.Error("Unable to parse notification message. Some or all of the post params are missing or invalid",e);
+                        responseString = "<HTML><BODY>Merchant couldn't parse notification message</BODY></HTML>";
+                    }
+                    
                     // Obtain a response object to write back a ack response to the riskified server
                     HttpListenerResponse response = context.Response;
                     // Construct a simple response. 
-                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString,(n!=null));
-                    if(n != null)
-                    {
-                        // running callback to call merchant code on the notification
-                        Task.Factory.StartNew(() => _notificationReceivedCallback(n));
-                    }
+                    HttpUtils.BuildAndSendResponse(response, _authToken,_shopDomain, responseString,acionSucceeded);
                 }
                 catch (Exception e)
                 {
@@ -213,14 +157,6 @@ namespace Riskified.SDK.Notifications
             LoggingServices.Fatal(errorMsg);
             throw new NotifierServerFailedToStartException(errorMsg);
         }
-        /*
-        private static NotificationRegistrationResult SendMerchantRegistrationRequest(string jsonBody, string riskifiedHostUrl, string authToken, string shopDomain)
-        {
-            Uri riskifiedRegistrationWebhookUrl = HttpUtils.BuildUrl(riskifiedHostUrl, "/webhooks/merchant_register_notification_webhook");
-            var registerResult = HttpUtils.JsonPostAndParseResponseToObject<NotificationRegistrationResult>(riskifiedRegistrationWebhookUrl,jsonBody, authToken, shopDomain);
-            return registerResult;
-        }
-        */
     }
 
 

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\RiskifiedAuthenticationException.cs" />
     <Compile Include="Model\OrderElements\ExternalStatusType.cs" />
     <Compile Include="Model\IJsonSerializable.cs" />
     <Compile Include="Model\Internal\OrderCheckoutWrapper.cs" />

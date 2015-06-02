@@ -200,8 +200,7 @@ namespace Riskified.SDK.Utils
             {
                 string errorMsg =
                     "Unable to parse JSON response body to type: " + typeof(T).Name + ". Body was: " + responseBody;
-                LoggingServices.Error(errorMsg, e);
-                throw new RiskifiedTransactionException(errorMsg, e);
+                throw new RiskifiedTransactionException(errorMsg, e); // should be replaced with a better named exception
             }
             return transactionResult;
         }
@@ -218,16 +217,39 @@ namespace Riskified.SDK.Utils
             public string Message { get; set; }
         }
 
-        public static T ParsePostRequestToObject<T>(HttpListenerRequest request) where T : class
+        /// <summary>
+        /// Authenticates the http request using the received auth token and tries to parse it into an object of of type T
+        /// In case of failed authentication or parsing an exception will be thrown
+        /// </summary>
+        /// <typeparam name="T">The expected object type to be parsed from the request content</typeparam>
+        /// <param name="request">The request</param>
+        /// <param name="authToken">The merchant authentication token</param>
+        /// <returns>An object of type T containing data parsed from the request</returns>
+        /// <exception cref="RiskifiedAuthenticationException">On missing/bad HMAC signature that doesn't match the given auth token</exception>
+        /// <exception cref="RiskifiedTransactionException">On parsing error from string into the relevant object of type T</exception>
+        public static T ParsePostRequestToObject<T>(HttpListenerRequest request,string authToken) where T : class
         {
-            if (request.HasEntityBody)
+            if (!request.HasEntityBody)
+            {
+                return null;
+            }
+            string postData = AuthorizeAndExtractContent(request, authToken);
+            T obj = JsonStringToObject<T>(postData);
+            return obj;
+        }
+
+        private static string AuthorizeAndExtractContent(HttpListenerRequest request, string authToken)
+        {
+            if (!string.IsNullOrEmpty(request.Headers[HmacHeaderName]))
             {
                 Stream s = request.InputStream;
                 string postData = ExtractStreamData(s);
-                T obj = JsonStringToObject<T>(postData);
-                return obj;
+                if (string.Equals(request.Headers[HmacHeaderName], CalcHmac(postData, authToken), StringComparison.Ordinal))
+                {
+                    return postData;
+                }
             }
-            return null;
+            throw new RiskifiedAuthenticationException("Request HMAC signature was either missing or incorrect");
         }
 
         private static string ExtractStreamData(Stream stream)
