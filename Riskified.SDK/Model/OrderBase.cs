@@ -142,5 +142,13 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "decision")]
         public DecisionDetails Decision { get; set; }
 
+        [JsonProperty(PropertyName = "referring_site")]
+        public string ReferringSite { get; set; }
+
+        [JsonProperty(PropertyName = "note")]
+        public string Note { get; set; }
+
+        [JsonProperty(PropertyName = "decision_timeout")]
+        public int? DecisionTimeout { get; set; }
     }
 }
