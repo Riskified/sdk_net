@@ -102,7 +102,7 @@ namespace Riskified.SDK.Model.OrderElements
         public SocialDetails[] Social { get; set; }
 
         [JsonProperty(PropertyName = "buyer_anonymous_id")]
-        public string BuyerAnonymousId { get; set; }
+        public string AnonymousId { get; set; }
 
         
     }
