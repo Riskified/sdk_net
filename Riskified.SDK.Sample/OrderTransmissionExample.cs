@@ -296,7 +296,8 @@ namespace Riskified.SDK.Sample
                 email: "test@example.com",
                 verifiedEmail: true,
                 createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
-                notes: "No additional info");
+                notes: "No additional info",
+                phone: "55523369");
 
             // putting sample billing details
             var billing = new AddressInformation(

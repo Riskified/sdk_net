@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Utils;
 using System;
 
@@ -15,7 +16,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="productId">The Product ID number (optional)</param>
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
         public LineItem(string title, double price, int quantityPurchased, int? productId = null, string sku = null, string condition = null, bool? requiresShipping = null, Seller seller = null,
-                    string eventSubCategoryName = null, string eventName = null, string eventSectionName = null, DateTime? eventDate = null)
+                    string eventSubCategoryName = null, string eventName = null, string eventSectionName = null, DateTime? eventDate = null, DeliveredToType deliveredTo = DeliveredToType.ShippingAddress)
         {
             
             Title = title;
@@ -32,6 +33,7 @@ namespace Riskified.SDK.Model.OrderElements
             EventName = eventName;
             EventSectionName = eventSectionName;
             EventDate = eventDate;
+            DeliveredTo = deliveredTo;
         }
 
         /// <summary>
@@ -160,6 +162,11 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "brand")]
         public string Brand { get; set; }
 
+        /// <summary>
+        /// The devlivered_to will tell us where is the customer would like to get the product
+        /// </summary>
+        [JsonProperty(PropertyName = "delivered_to")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public DeliveredToType DeliveredTo { get; set; }
     }
-
 }
