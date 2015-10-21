@@ -287,6 +287,16 @@ namespace Riskified.SDK.Sample
         /// <returns></returns>
         private static Order GenerateOrder(int orderNum)
         {
+            var customerAddress = new BasicAddress(
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545"
+                );
+
             // putting sample customer details
             var customer = new Customer(
                 firstName: "John",
@@ -297,7 +307,7 @@ namespace Riskified.SDK.Sample
                 verifiedEmail: true,
                 createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
                 notes: "No additional info",
-                phone: "55523369");
+                address: customerAddress);
 
             // putting sample billing details
             var billing = new AddressInformation(

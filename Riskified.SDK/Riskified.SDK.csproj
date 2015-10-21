@@ -71,6 +71,7 @@
     <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />
     <Compile Include="Model\OrderFulfillment.cs" />
     <Compile Include="Model\OrderNotification.cs" />
+    <Compile Include="Model\OrderElements\BasicAddress.cs" />
     <Compile Include="Notifications\NotificationHandler.cs" />
     <Compile Include="Model\AbstractOrder.cs" />
     <Compile Include="Model\OrderCancellation.cs" />

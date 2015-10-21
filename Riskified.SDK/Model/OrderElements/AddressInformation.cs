@@ -4,7 +4,7 @@ using Riskified.SDK.Utils;
 namespace Riskified.SDK.Model.OrderElements
 {
     
-    public class AddressInformation : IJsonSerializable
+    public class AddressInformation : BasicAddress
     {
         /// <summary>
         /// Creates an AddressInformation instance
@@ -22,32 +22,25 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="provinceCode">The 2 letter code of the province (optional)</param>
         /// <param name="company">The company of the addressee (optional)</param>
         /// <param name="fullName">The full name of the addressee (optional)</param>
-        public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null)
+        public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null) :
+            base(address1,city,country,countryCode,phone,address2,zipCode,province,provinceCode,company)
         {
             FirstName = firstName;
             LastName = lastName;
-            Address1 = address1;
-            City = city;
-            Country = country;
-            CountryCode = countryCode;
-            Phone = phone;
             
             // optional fields:
-            ProvinceCode = provinceCode;
-            Address2 = address2;
-            Province = province;
-            ZipCode = zipCode;
-            Company = company;
             FullName = fullName;
         }
 
         /// <summary>
         /// Validates the objects fields content
         /// </summary>
-        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <param name="validationType">Validation level to use on this model</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public void Validate(Validations validationType = Validations.Weak)
         {
+            base.Validate(validationType);
+
             if (validationType == Validations.Weak)
             {
                 if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
@@ -59,7 +52,7 @@ namespace Riskified.SDK.Model.OrderElements
             {
                 InputValidators.ValidateValuedString(FirstName, "First Name");
                 InputValidators.ValidateValuedString(LastName, "Last Name");
-                InputValidators.ValidatePhoneNumber(Phone);
+                InputValidators.ValidatePhoneNumber(Phone); // make sure phone exists and has a value (addition to validation of BaseAddress)
             }
 
             InputValidators.ValidateValuedString(Address1, "Address 1");
@@ -69,36 +62,7 @@ namespace Riskified.SDK.Model.OrderElements
             {
                 throw new Exceptions.OrderFieldBadFormatException("Both Country or Country Code fields are missing - at least one should be speicified");
             }
-            
-            if (!string.IsNullOrEmpty(CountryCode))
-            {
-                InputValidators.ValidateCountryOrProvinceCode(CountryCode);
-            }
-
-            // optional fields validations
-            if (!string.IsNullOrEmpty(ProvinceCode))
-            {
-                InputValidators.ValidateCountryOrProvinceCode(ProvinceCode);
-            }
         }
-
-        [JsonProperty(PropertyName = "address1")]
-        public string Address1 { get; set; }
-
-        [JsonProperty(PropertyName = "address2")]
-        public string Address2 { get; set; }
-
-        [JsonProperty(PropertyName = "city")]
-        public string City { get; set; }
-
-        [JsonProperty(PropertyName = "company")]
-        public string Company { get; set; }
-
-        [JsonProperty(PropertyName = "country")]
-        public string Country { get; set; }
-
-        [JsonProperty(PropertyName = "country_code")]
-        public string CountryCode { get; set; }
 
         [JsonProperty(PropertyName = "first_name")]
         public string FirstName { get; set; }
@@ -108,17 +72,5 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "name")]
         public string FullName { get; set; }
-
-        [JsonProperty(PropertyName = "phone")]
-        public string Phone { get; set; }
-
-        [JsonProperty(PropertyName = "province")]
-        public string Province { get; set; }
-
-        [JsonProperty(PropertyName = "province_code")]
-        public string ProvinceCode { get; set; }
-
-        [JsonProperty(PropertyName = "zip")]
-        public string ZipCode { get; set; }
     }
 }
