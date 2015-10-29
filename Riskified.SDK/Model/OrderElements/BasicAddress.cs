@@ -38,7 +38,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="validationType">Validation level to use on this model</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public void Validate(Validations validationType = Validations.Weak)
+        public virtual void Validate(Validations validationType = Validations.Weak)
         {
             // optional fields validations
             if(!string.IsNullOrEmpty(Phone))

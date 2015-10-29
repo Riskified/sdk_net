@@ -132,7 +132,7 @@ namespace Riskified.SDK.Sample
                                     {
                                         new PartialRefundDetails(
                                             refundId: "12345",
-                                            refundedAt: DateTime.Now,
+                                            refundedAt: DateTime.Now,  // make sure to initialize DateTime with the correct timezone
                                             amount: 5.3,
                                             currency: "USD",
                                             reason: "Customer partly refunded on shipping fees")
@@ -211,6 +211,7 @@ namespace Riskified.SDK.Sample
 
         private static OrderDecision GenerateDecision(int p)
         {
+            // make sure to initialize DateTime with the correct timezone
             OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
             return orderDecision;
         }
@@ -228,7 +229,7 @@ namespace Riskified.SDK.Sample
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
-                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 notes: "No additional info");
 
             var items = new[]
@@ -248,7 +249,7 @@ namespace Riskified.SDK.Sample
         private static OrderCheckoutDenied GenerateOrderCheckoutDenied(int orderNum)
         {
             var authorizationError = new AuthorizationError(
-                                    createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                                    createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                                     errorCode: AuthorizationErrorCode.IncorrectNumber,
                                     message: "credit card expired.");
 
@@ -266,7 +267,7 @@ namespace Riskified.SDK.Sample
             FulfillmentDetails[] fulfillmentList = new FulfillmentDetails[] {
                                         new FulfillmentDetails(
                                             fulfillmentId: "123",
-                                            createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                                            createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local),
                                             status: FulfillmentStatusCode.Success,
                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                             trackingCompany: "TestCompany")
@@ -305,7 +306,7 @@ namespace Riskified.SDK.Sample
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
-                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 notes: "No additional info",
                 address: customerAddress);
 
@@ -359,10 +360,24 @@ namespace Riskified.SDK.Sample
             var items = new[]
             {
                 new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
-                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120))
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
+                // Events Tickets Industry 
+                new LineItem(title: "Concert", 
+                             price: 123, 
+                             quantityPurchased: 1, 
+                             category: "Singers", 
+                             subCategory: "Rock", 
+                             eventName: "Bon Jovy", 
+                             eventSectionName: "Section", 
+                             eventCountry: "USA", 
+                             eventCountryCode: "US",
+                             latitude: 0,
+                             longitude: 0)
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
+
+            DecisionDetails decisionDetails = new DecisionDetails(ExternalStatusType.Approved, DateTime.Now); // make sure to initialize DateTime with the correct timezone
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(), 
@@ -377,11 +392,15 @@ namespace Riskified.SDK.Sample
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD", 
                 totalPrice: 100.60,
-                createdAt: DateTime.Now,
-                updatedAt: DateTime.Now,
+                createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes,
                 source: "web",
-                noChargeDetails: noChargeAmount);
+                noChargeDetails: noChargeAmount,
+                decisionDetails: decisionDetails,
+                vendorId: "2",
+                vendorName: "domestic",
+                additionalEmails: new [] {"a@a.com","b@b.com"});
 
             return order;
         }
@@ -396,7 +415,7 @@ namespace Riskified.SDK.Sample
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
-                createdAt: new DateTime(2013, 12, 8, 14, 12, 12),
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 notes: "No additional info");
 
             // putting sample billing details
@@ -462,8 +481,8 @@ namespace Riskified.SDK.Sample
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD",
                 totalPrice: 100.60,
-                createdAt: DateTime.Now,
-                updatedAt: DateTime.Now,
+                createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes);
 
             return order;

@@ -90,7 +90,7 @@ namespace Riskified.SDK.Model
             AdditionalEmails = additionalEmails;
             VendorId = vendorId;
             VendorName = vendorName;
-            DecisionDetails = decisionDetails;
+            Decision = decisionDetails;
         }
 
         /// <summary>
