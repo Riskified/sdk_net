@@ -11,7 +11,7 @@ namespace Riskified.SDK.Model
     public abstract class OrderBase : AbstractOrder
     {
 
-        public OrderBase(int merchantOrderId) : base(merchantOrderId)
+        public OrderBase(string merchantOrderId) : base(merchantOrderId)
         {
             
         }
@@ -150,5 +150,11 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "decision_timeout")]
         public int? DecisionTimeout { get; set; }
+
+        [JsonProperty(PropertyName = "additional_emails")]
+        public string[] AdditionalEmails { get; set; }
+
+        [JsonProperty(PropertyName = "decision")]
+        public DecisionDetails DecisionDetails { get; set; }
     }
 }

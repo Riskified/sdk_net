@@ -15,7 +15,7 @@ namespace Riskified.SDK.Model
         /// Creates a new order checkout
         /// </summary>
         /// <param name="merchantOrderId">The unique id of the order at the merchant systems</param>
-        public OrderCheckout(int merchantOrderId) : base(merchantOrderId)
+        public OrderCheckout(string merchantOrderId) : base(merchantOrderId)
         {
 
         }

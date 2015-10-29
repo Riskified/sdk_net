@@ -71,7 +71,7 @@ namespace Riskified.SDK.Sample
                     {
                         case "p":
                             Console.WriteLine("Order checkout Generated with merchant order number: " + orderNum);
-                            var orderCheckout = GenerateOrderCheckout(orderNum);
+                            var orderCheckout = GenerateOrderCheckout(orderNum.ToString());
                             orderCheckout.Id = orderNum.ToString();
                             
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
@@ -216,7 +216,7 @@ namespace Riskified.SDK.Sample
         }
 
 
-        private static OrderCheckout GenerateOrderCheckout(int orderNum)
+        private static OrderCheckout GenerateOrderCheckout(string orderNum)
         {
             var orderCheckout = new OrderCheckout(orderNum);
             
@@ -365,7 +365,7 @@ namespace Riskified.SDK.Sample
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
             var order = new Order(
-                merchantOrderId: orderNum, 
+                merchantOrderId: orderNum.ToString(), 
                 email: "tester@exampler.com", 
                 customer: customer, 
                 paymentDetails: payments,
@@ -450,7 +450,7 @@ namespace Riskified.SDK.Sample
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
             var order = new Order(
-                merchantOrderId: orderNum,
+                merchantOrderId: orderNum.ToString(),
                 email: "tester@exampler.com",
                 customer: customer,
                 paymentDetails: payments,
