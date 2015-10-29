@@ -15,8 +15,29 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="quantityPurchased">Quantity purchased of the item</param>
         /// <param name="productId">The Product ID number (optional)</param>
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
-        public LineItem(string title, double price, int quantityPurchased, int? productId = null, string sku = null, string condition = null, bool? requiresShipping = null, Seller seller = null,
-                    string eventSubCategoryName = null, string eventName = null, string eventSectionName = null, DateTime? eventDate = null, DeliveredToType deliveredTo = DeliveredToType.ShippingAddress)
+        public LineItem(string title,
+                        double price, 
+                        int quantityPurchased, 
+                        int? productId = null, 
+                        string sku = null, 
+                        string condition = null,
+                        bool? requiresShipping = null, 
+                        Seller seller = null,
+                        string sender_name = null, 
+                        string display_name = null,
+                        DeliveredToType deliveredTo = DeliveredToType.ShippingAddress,
+
+                        // These are for events tickets industry
+                        string category = null,
+                        string subCategory = null, 
+                        string eventName = null, 
+                        string eventSectionName = null, 
+                        DateTime? eventDate = null, 
+                        string eventCity = null,
+                        string eventCountry = null,
+                        string eventCountryCode = null,
+                        float? latitude = null,
+                        float? longitude = null)
         {
             
             Title = title;
@@ -29,11 +50,18 @@ namespace Riskified.SDK.Model.OrderElements
             Condition = condition;
             RequiresShipping = requiresShipping;
             Seller = seller;
-            EventSubCategoryName = eventSubCategoryName;
+            DeliveredTo = deliveredTo;
+
+            // Events Tickets Industry
+            Category = category;
+            SubCategory = subCategory;
             EventName = eventName;
             EventSectionName = eventSectionName;
             EventDate = eventDate;
-            DeliveredTo = deliveredTo;
+            EventCountryCode = eventCountryCode;
+            EventCity = eventCity;
+            Latitude = latitude;
+            Longitude = longitude;
         }
 
         /// <summary>
@@ -110,15 +138,14 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The event sub category name.
         /// </summary>
-        [JsonProperty(PropertyName = "event_sub_category_name")]
-        public string EventSubCategoryName { get; set; }
-
+        [JsonProperty(PropertyName = "sub_category")]
+        public string SubCategory { get; set; }
 
         /// <summary>
         /// The event category name.
         /// </summary>
-        [JsonProperty(PropertyName = "event_category_name")]
-        public string EventCategoryName { get; set; }
+        [JsonProperty(PropertyName = "category")]
+        public string Category { get; set; }
 
         /// <summary>
         /// The event name.
@@ -133,10 +160,10 @@ namespace Riskified.SDK.Model.OrderElements
         public string EventSectionName { get; set; }
 
         /// <summary>
-        /// The country where the event is taking place.
+        /// The country code where the event is taking place.
         /// </summary>
-        [JsonProperty(PropertyName = "event_country")]
-        public string EventCountry { get; set; }
+        [JsonProperty(PropertyName = "event_country_code")]
+        public string EventCountryCode { get; set; }
 
         /// <summary>
         /// The city where the event is taking place.
@@ -145,16 +172,16 @@ namespace Riskified.SDK.Model.OrderElements
         public string EventCity { get; set; }
 
         /// <summary>
-        /// The geographic coordinates (Decimal degrees) where the event is taking place. (United States capitol for example is 38.8897,-77.0089).
-        /// </summary>
-        [JsonProperty(PropertyName = "event_location")]
-        public string EventLocation { get; set; }
-
-        /// <summary>
         /// The event date.
         /// </summary>
         [JsonProperty(PropertyName = "event_date")]
         public DateTime? EventDate { get; set; }
+
+        [JsonProperty(PropertyName = "latitude")]
+        public float? Latitude { get; set; }
+
+        [JsonProperty(PropertyName = "longitude")]
+        public float? Longitude { get; set; }
 
         /// <summary>
         /// The brand name of the product.
@@ -168,5 +195,7 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "delivered_to")]
         [JsonConverter(typeof(StringEnumConverter))]
         public DeliveredToType DeliveredTo { get; set; }
+
+
     }
 }
