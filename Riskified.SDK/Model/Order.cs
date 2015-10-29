@@ -35,13 +35,33 @@ namespace Riskified.SDK.Model
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
         /// <param name="source">The source of the order</param>
         /// <param name="noChargeDetails">No charge sums - including all payments made for this order in giftcards, cash, checks or other non chargebackable payment methods</param>
-        public Order(int merchantOrderId, string email, Customer customer,
-            AddressInformation billingAddress, AddressInformation shippingAddress, LineItem[] lineItems,
-            ShippingLine[] shippingLines,
-            string gateway, string customerBrowserIp, string currency, double totalPrice, DateTime createdAt,
-            DateTime updatedAt,
-            IPaymentDetails paymentDetails = null, DiscountCode[] discountCodes = null, double? totalDiscounts = null, string cartToken = null, double? totalPriceUsd = null, 
-            DateTime? closedAt = null,string financialStatus = null,string fulfillmentStatus = null,string source = null, NoChargeDetails noChargeDetails = null) : base(merchantOrderId)
+        public Order(string merchantOrderId,
+                     string email, 
+                     Customer customer,
+                     AddressInformation billingAddress, 
+                     AddressInformation shippingAddress, 
+                     LineItem[] lineItems,
+                     ShippingLine[] shippingLines,
+                     string gateway, 
+                     string customerBrowserIp, 
+                     string currency, 
+                     double totalPrice, 
+                     DateTime createdAt,
+                     DateTime updatedAt,
+                     IPaymentDetails paymentDetails = null, 
+                     DiscountCode[] discountCodes = null, 
+                     double? totalDiscounts = null, 
+                     string cartToken = null, 
+                     double? totalPriceUsd = null, 
+                     DateTime? closedAt = null,
+                     string financialStatus = null,
+                     string fulfillmentStatus = null,
+                     string source = null, 
+                     NoChargeDetails noChargeDetails = null,
+                     string[] additionalEmails = null,
+                     string vendorId = null,
+                     string vendorName = null,
+                     DecisionDetails decisionDetails = null) : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
@@ -67,6 +87,10 @@ namespace Riskified.SDK.Model
             FulfillmentStatus = fulfillmentStatus;
             Source = source;
             NoChargeAmount = noChargeDetails;
+            AdditionalEmails = additionalEmails;
+            VendorId = vendorId;
+            VendorName = vendorName;
+            DecisionDetails = decisionDetails;
         }
 
         /// <summary>

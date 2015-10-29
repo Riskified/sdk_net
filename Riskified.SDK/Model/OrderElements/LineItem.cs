@@ -28,7 +28,7 @@ namespace Riskified.SDK.Model.OrderElements
                         DeliveredToType deliveredTo = DeliveredToType.ShippingAddress,
 
                         // These are for events tickets industry
-                        string eventCategoryName = null,
+                        string category = null,
                         string eventSubCategoryName = null, 
                         string eventName = null, 
                         string eventSectionName = null, 
@@ -53,7 +53,7 @@ namespace Riskified.SDK.Model.OrderElements
             DeliveredTo = deliveredTo;
 
             // Events Tickets Industry
-            EventCategoryName = eventCategoryName;
+            Category = category;
             EventSubCategoryName = eventSubCategoryName;
             EventName = eventName;
             EventSectionName = eventSectionName;
@@ -147,7 +147,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// The event category name.
         /// </summary>
         [JsonProperty(PropertyName = "category")]
-        public string EventCategoryName { get; set; }
+        public string Category { get; set; }
 
         /// <summary>
         /// The event name.
