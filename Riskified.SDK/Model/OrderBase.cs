@@ -153,8 +153,5 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "additional_emails")]
         public string[] AdditionalEmails { get; set; }
-
-        [JsonProperty(PropertyName = "decision")]
-        public DecisionDetails DecisionDetails { get; set; }
     }
 }
