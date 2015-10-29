@@ -29,7 +29,7 @@ namespace Riskified.SDK.Model.OrderElements
 
                         // These are for events tickets industry
                         string category = null,
-                        string eventSubCategoryName = null, 
+                        string subCategory = null, 
                         string eventName = null, 
                         string eventSectionName = null, 
                         DateTime? eventDate = null, 
@@ -54,11 +54,10 @@ namespace Riskified.SDK.Model.OrderElements
 
             // Events Tickets Industry
             Category = category;
-            EventSubCategoryName = eventSubCategoryName;
+            SubCategory = subCategory;
             EventName = eventName;
             EventSectionName = eventSectionName;
             EventDate = eventDate;
-            EventCountry = eventCountry;
             EventCountryCode = eventCountryCode;
             EventCity = eventCity;
             Latitude = latitude;
@@ -139,9 +138,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The event sub category name.
         /// </summary>
-        [JsonProperty(PropertyName = "event_sub_category_name")]
-        public string EventSubCategoryName { get; set; }
-
+        [JsonProperty(PropertyName = "sub_category")]
+        public string SubCategory { get; set; }
 
         /// <summary>
         /// The event category name.
@@ -160,12 +158,6 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "event_section_name")]
         public string EventSectionName { get; set; }
-
-        /// <summary>
-        /// The country where the event is taking place.
-        /// </summary>
-        [JsonProperty(PropertyName = "event_country")]
-        public string EventCountry { get; set; }
 
         /// <summary>
         /// The country code where the event is taking place.
