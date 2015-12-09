@@ -35,6 +35,8 @@ namespace Riskified.SDK.Model
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
         /// <param name="source">The source of the order</param>
         /// <param name="noChargeDetails">No charge sums - including all payments made for this order in giftcards, cash, checks or other non chargebackable payment methods</param>
+        /// <param name="ClientDetails">Technical information regarding the customer's browsing session</param>
+        /// <param name="chargeFreePaymentDetails">Payment sums made using non-chargebackable methods and should be omitted from the Chargeback gurantee sum and Riskified fee</param>
         public Order(string merchantOrderId,
                      string email, 
                      Customer customer,
@@ -61,7 +63,9 @@ namespace Riskified.SDK.Model
                      string[] additionalEmails = null,
                      string vendorId = null,
                      string vendorName = null,
-                     DecisionDetails decisionDetails = null) : base(merchantOrderId)
+                     DecisionDetails decisionDetails = null,
+                     ClientDetails clientDetails = null,
+                     ChargeFreePaymentDetails chargeFreePaymentDetails = null) : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
@@ -91,6 +95,8 @@ namespace Riskified.SDK.Model
             VendorId = vendorId;
             VendorName = vendorName;
             Decision = decisionDetails;
+            ClientDetails = clientDetails;
+            ChargeFreePaymentDetails = chargeFreePaymentDetails;
         }
 
         /// <summary>

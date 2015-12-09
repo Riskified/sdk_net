@@ -379,6 +379,19 @@ namespace Riskified.SDK.Sample
 
             DecisionDetails decisionDetails = new DecisionDetails(ExternalStatusType.Approved, DateTime.Now); // make sure to initialize DateTime with the correct timezone
 
+            // This is an example for an order with charge free sums (e.g. gift card payment)
+            var chargeFreePayments = new ChargeFreePaymentDetails(
+                gateway: "giftcard",
+                amount: 45
+                );
+
+            // This is an example for client details section
+            var clientDetails = new ClientDetails(
+                accept_language: "en-CA",   
+                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+                );
+
+
             var order = new Order(
                 merchantOrderId: orderNum.ToString(), 
                 email: "tester@exampler.com", 
@@ -400,7 +413,9 @@ namespace Riskified.SDK.Sample
                 decisionDetails: decisionDetails,
                 vendorId: "2",
                 vendorName: "domestic",
-                additionalEmails: new [] {"a@a.com","b@b.com"});
+                additionalEmails: new [] {"a@a.com","b@b.com"},
+                chargeFreePaymentDetails: chargeFreePayments,
+                clientDetails: clientDetails);
 
             return order;
         }

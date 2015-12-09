@@ -62,6 +62,10 @@ namespace Riskified.SDK.Model.OrderElements
             EventCity = eventCity;
             Latitude = latitude;
             Longitude = longitude;
+
+            // Digital Goods (gift cards)
+            SenderName = sender_name;
+            DisplayName = display_name;
         }
 
         /// <summary>
@@ -196,6 +200,16 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonConverter(typeof(StringEnumConverter))]
         public DeliveredToType DeliveredTo { get; set; }
 
+        /// <summary>
+        /// The digital good's (giftcard) sender name.
+        /// </summary>
+        [JsonProperty(PropertyName = "sender_name")]
+        public string SenderName { get; set; }
 
+        /// <summary>
+        /// The digital good's (giftcard) display name.
+        /// </summary>
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
     }
 }

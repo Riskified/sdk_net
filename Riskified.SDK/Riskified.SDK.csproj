@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\RiskifiedAuthenticationException.cs" />
+    <Compile Include="Model\OrderElements\ChargeFreePaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\ClientDetails.cs" />
     <Compile Include="Model\OrderElements\DeliveredToType.cs" />
     <Compile Include="Model\OrderElements\ExternalStatusType.cs" />
     <Compile Include="Model\IJsonSerializable.cs" />
