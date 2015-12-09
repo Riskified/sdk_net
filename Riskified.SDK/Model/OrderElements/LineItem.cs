@@ -17,15 +17,15 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
         public LineItem(string title,
                         double price, 
-                        int quantityPurchased, 
+                        int quantityPurchased,
+
+                        //optional
                         int? productId = null, 
                         string sku = null, 
                         string condition = null,
                         bool? requiresShipping = null, 
                         Seller seller = null,
-                        string sender_name = null, 
-                        string display_name = null,
-                        DeliveredToType deliveredTo = DeliveredToType.ShippingAddress,
+                        DeliveredToType? deliveredTo = null,
 
                         // These are for events tickets industry
                         string category = null,
@@ -37,7 +37,18 @@ namespace Riskified.SDK.Model.OrderElements
                         string eventCountry = null,
                         string eventCountryCode = null,
                         float? latitude = null,
-                        float? longitude = null)
+                        float? longitude = null,
+            
+                        // These are for digital goods (gift card) industry
+                        string sender_name = null, 
+                        string display_name = null,
+                        bool   photo_uploaded = false,
+                        string photo_url = null,
+                        string greeting_photo_url = null,
+                        string message = null,
+                        string greeting_message = null,
+                        string card_type = null,
+                        string card_sub_type = null)
         {
             
             Title = title;
@@ -66,6 +77,13 @@ namespace Riskified.SDK.Model.OrderElements
             // Digital Goods (gift cards)
             SenderName = sender_name;
             DisplayName = display_name;
+            PhotoUploaded = photo_uploaded;
+            PhotoUrl = photo_url;
+            GreetingPhotoUrl = greeting_photo_url;
+            Message = message;
+            GreetingMessage = greeting_message;
+            CardType = card_type;
+            CardSubtype = card_sub_type;
         }
 
         /// <summary>
@@ -198,7 +216,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "delivered_to")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public DeliveredToType DeliveredTo { get; set; }
+        public DeliveredToType? DeliveredTo { get; set; }
 
         /// <summary>
         /// The digital good's (giftcard) sender name.
@@ -211,5 +229,47 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "display_name")]
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Is the gift card sender added a photo.
+        /// </summary>
+        [JsonProperty(PropertyName = "photo_uploaded")]
+        public bool PhotoUploaded { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) sender photo's url.
+        /// </summary>
+        [JsonProperty(PropertyName = "photo_url")]
+        public string PhotoUrl { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) greeting's photo url.
+        /// </summary>
+        [JsonProperty(PropertyName = "greeting_photo_url")]
+        public string GreetingPhotoUrl { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) message.
+        /// </summary>
+        [JsonProperty(PropertyName = "message")]
+        public string Message { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) greeting message.
+        /// </summary>
+        [JsonProperty(PropertyName = "greeting_message")]
+        public string GreetingMessage { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) type.
+        /// </summary>
+        [JsonProperty(PropertyName = "card_type")]
+        public string CardType { get; set; }
+
+        /// <summary>
+        /// The digital good's (giftcard) sub type.
+        /// </summary>
+        [JsonProperty(PropertyName = "card_subtype")]
+        public string CardSubtype { get; set; }
     }
 }

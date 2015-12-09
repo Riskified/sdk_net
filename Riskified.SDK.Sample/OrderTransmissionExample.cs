@@ -359,7 +359,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727",deliveredTo: DeliveredToType.StorePickup),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Industry 
                 new LineItem(title: "Concert", 
@@ -372,7 +372,20 @@ namespace Riskified.SDK.Sample
                              eventCountry: "USA", 
                              eventCountryCode: "US",
                              latitude: 0,
-                             longitude: 0)
+                             longitude: 0),
+                // Digital Goods (giftcard) industry
+                new LineItem(title: "Concert", 
+                            price: 123, 
+                            quantityPurchased: 1, 
+                            sender_name: "John", 
+                            display_name: "JohnJohn", 
+                            photo_uploaded: true, 
+                            photo_url: "http://my_pic_url", 
+                            greeting_photo_url: "http://my_greeting_pic_url", 
+                            message: "Happy Birthday",
+                            greeting_message: "Happy Birthday from John",
+                            card_type: "regular",
+                            card_sub_type: "birthday"),
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
