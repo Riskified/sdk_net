@@ -68,6 +68,7 @@
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\NoChargeDetails.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\Recipient.cs" />
     <Compile Include="Model\OrderElements\Seller.cs" />
     <Compile Include="Model\OrderElements\SocialDetails.cs" />
     <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />

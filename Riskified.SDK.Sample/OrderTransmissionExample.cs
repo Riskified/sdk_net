@@ -359,7 +359,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727",deliveredTo: DeliveredToType.StorePickup),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727",deliveredTo: DeliveredToType.StorePickup, delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Industry 
                 new LineItem(title: "Concert", 
@@ -385,7 +385,8 @@ namespace Riskified.SDK.Sample
                             message: "Happy Birthday",
                             greeting_message: "Happy Birthday from John",
                             card_type: "regular",
-                            card_sub_type: "birthday"),
+                            card_sub_type: "birthday",
+                            sender_email: "new_email@bb.com"),
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
@@ -395,15 +396,22 @@ namespace Riskified.SDK.Sample
             // This is an example for an order with charge free sums (e.g. gift card payment)
             var chargeFreePayments = new ChargeFreePaymentDetails(
                 gateway: "giftcard",
-                amount: 45
-                );
+                amount: 45);
 
             // This is an example for client details section
             var clientDetails = new ClientDetails(
                 accept_language: "en-CA",   
-                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
-                );
+                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
 
+            var recipientSocial = new SocialDetails(
+                network: "Facebook", 
+                publicUsername:"john.smith", 
+                accountUrl:"http://www.facebook.com/john.smith");
+
+            var recipient = new Recipient(
+                email: "aa@bb.com", 
+                phone: "96522444221",
+                social: recipientSocial);
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(), 
@@ -428,7 +436,9 @@ namespace Riskified.SDK.Sample
                 vendorName: "domestic",
                 additionalEmails: new [] {"a@a.com","b@b.com"},
                 chargeFreePaymentDetails: chargeFreePayments,
-                clientDetails: clientDetails);
+                clientDetails: clientDetails,
+                groupInitiatorOrderID: "2222",
+                recipient: recipient);
 
             return order;
         }

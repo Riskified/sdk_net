@@ -48,7 +48,9 @@ namespace Riskified.SDK.Model.OrderElements
                         string message = null,
                         string greeting_message = null,
                         string card_type = null,
-                        string card_sub_type = null)
+                        string card_sub_type = null,
+                        DateTime? delivered_at = null,
+                        string sender_email = null)
         {
             
             Title = title;
@@ -84,6 +86,8 @@ namespace Riskified.SDK.Model.OrderElements
             GreetingMessage = greeting_message;
             CardType = card_type;
             CardSubtype = card_sub_type;
+            DeliveredAt = delivered_at;
+            SenderEmail = sender_email;
         }
 
         /// <summary>
@@ -225,6 +229,12 @@ namespace Riskified.SDK.Model.OrderElements
         public string SenderName { get; set; }
 
         /// <summary>
+        /// The digital good's (giftcard) sender email.
+        /// </summary>
+        [JsonProperty(PropertyName = "sender_email")]
+        public string SenderEmail { get; set; }
+        
+        /// <summary>
         /// The digital good's (giftcard) display name.
         /// </summary>
         [JsonProperty(PropertyName = "display_name")]
@@ -271,5 +281,11 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "card_subtype")]
         public string CardSubtype { get; set; }
+
+        /// <summary>
+        /// The delivery date of the goods (e.g. gift card).
+        /// </summary>
+        [JsonProperty(PropertyName = "delivered_at")]
+        public DateTime? DeliveredAt { get; set; }
     }
 }
