@@ -159,5 +159,11 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "charge_free_payment_details")]
         public ChargeFreePaymentDetails ChargeFreePaymentDetails { get; set; }
+
+        [JsonProperty(PropertyName = "group_founder_order_id")]
+        public string GroupFounderOrderID { get; set; }
+
+        [JsonProperty(PropertyName = "recipient")]
+        public Recipient Recipient { get; set; }
     }
 }

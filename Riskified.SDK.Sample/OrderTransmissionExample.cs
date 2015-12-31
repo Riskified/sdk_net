@@ -437,7 +437,7 @@ namespace Riskified.SDK.Sample
                 additionalEmails: new [] {"a@a.com","b@b.com"},
                 chargeFreePaymentDetails: chargeFreePayments,
                 clientDetails: clientDetails,
-                groupInitiatorOrderID: "2222",
+                groupFounderOrderID: "2222",
                 recipient: recipient);
 
             return order;

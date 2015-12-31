@@ -65,7 +65,9 @@ namespace Riskified.SDK.Model
                      string vendorName = null,
                      DecisionDetails decisionDetails = null,
                      ClientDetails clientDetails = null,
-                     ChargeFreePaymentDetails chargeFreePaymentDetails = null) : base(merchantOrderId)
+                     ChargeFreePaymentDetails chargeFreePaymentDetails = null,
+                     string groupFounderOrderID = null,
+                     Recipient recipient = null) : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
@@ -97,6 +99,12 @@ namespace Riskified.SDK.Model
             Decision = decisionDetails;
             ClientDetails = clientDetails;
             ChargeFreePaymentDetails = chargeFreePaymentDetails;
+
+            // This field is added for gift card group purchase
+            GroupFounderOrderID = groupFounderOrderID;
+
+            // Recipient details 
+            Recipient = recipient;
         }
 
         /// <summary>
