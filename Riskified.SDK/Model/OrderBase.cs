@@ -162,8 +162,5 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "group_founder_order_id")]
         public string GroupFounderOrderID { get; set; }
-
-        [JsonProperty(PropertyName = "recipient")]
-        public Recipient Recipient { get; set; }
     }
 }

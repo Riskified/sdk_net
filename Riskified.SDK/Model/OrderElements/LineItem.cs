@@ -50,7 +50,8 @@ namespace Riskified.SDK.Model.OrderElements
                         string card_type = null,
                         string card_sub_type = null,
                         DateTime? delivered_at = null,
-                        string sender_email = null)
+                        string sender_email = null,
+                        Recipient recipient = null)
         {
             
             Title = title;
@@ -88,6 +89,9 @@ namespace Riskified.SDK.Model.OrderElements
             CardSubtype = card_sub_type;
             DeliveredAt = delivered_at;
             SenderEmail = sender_email;
+
+            // Recipient details 
+            Recipient = recipient;
         }
 
         /// <summary>
@@ -287,5 +291,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "delivered_at")]
         public DateTime? DeliveredAt { get; set; }
+
+        [JsonProperty(PropertyName = "recipient")]
+        public Recipient Recipient { get; set; }
     }
 }
