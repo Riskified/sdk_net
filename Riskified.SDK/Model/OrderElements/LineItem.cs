@@ -198,7 +198,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The city where the event is taking place.
         /// </summary>
-        [JsonProperty(PropertyName = "event_city")]
+        [JsonProperty(PropertyName = "city")]
         public string EventCity { get; set; }
 
         /// <summary>
