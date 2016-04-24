@@ -17,6 +17,12 @@ namespace Riskified.SDK.Model
         }
 
         /// <summary>
+        /// The customer's order name as represented by a number.
+        /// </summary>
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
+        /// <summary>
         /// The session id that this order was created on, this value should match the session id value that is passed in the beacon JavaScript.
         /// </summary>
         [JsonProperty(PropertyName = "cart_token")]
@@ -116,6 +122,12 @@ namespace Riskified.SDK.Model
         public AddressInformation ShippingAddress { get; set; }
 
         /// <summary>
+        /// Applicable only for Merchants from the travel industry.
+        /// </summary>
+        [JsonProperty(PropertyName = "passengers")]
+        public Passenger[] Passengers { get; set; }
+
+        /// <summary>
         /// An object containing information about the customer.
         /// </summary>
         [JsonProperty(PropertyName = "customer")]
@@ -158,7 +170,7 @@ namespace Riskified.SDK.Model
         public ClientDetails ClientDetails { get; set; }
 
         [JsonProperty(PropertyName = "charge_free_payment_details")]
-        public ChargeFreePaymentDetails ChargeFreePaymentDetails { get; set; }
+        public ChargeFreePaymentDetails ChargeFreePaymentDetails { get; set; } 
 
         [JsonProperty(PropertyName = "group_founder_order_id")]
         public string GroupFounderOrderID { get; set; }

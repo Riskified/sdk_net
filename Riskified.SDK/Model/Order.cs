@@ -6,7 +6,6 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model
 {
-    
     public class Order : OrderBase
     {
         /// <summary>
@@ -38,27 +37,28 @@ namespace Riskified.SDK.Model
         /// <param name="ClientDetails">Technical information regarding the customer's browsing session</param>
         /// <param name="chargeFreePaymentDetails">Payment sums made using non-chargebackable methods and should be omitted from the Chargeback gurantee sum and Riskified fee</param>
         public Order(string merchantOrderId,
-                     string email, 
+                     string email,
                      Customer customer,
-                     AddressInformation billingAddress, 
-                     AddressInformation shippingAddress, 
+                     AddressInformation billingAddress,
+                     AddressInformation shippingAddress,
                      LineItem[] lineItems,
                      ShippingLine[] shippingLines,
-                     string gateway, 
-                     string customerBrowserIp, 
-                     string currency, 
-                     double totalPrice, 
-                     DateTime createdAt,
+                     string gateway,
+                     string customerBrowserIp,
+                     string currency,
+                     double totalPrice,
+                     DateTime? createdAt,
                      DateTime updatedAt,
-                     IPaymentDetails paymentDetails = null, 
-                     DiscountCode[] discountCodes = null, 
-                     double? totalDiscounts = null, 
-                     string cartToken = null, 
-                     double? totalPriceUsd = null, 
+                     Passenger[] passengers = null,
+                     IPaymentDetails paymentDetails = null,
+                     DiscountCode[] discountCodes = null,
+                     double? totalDiscounts = null,
+                     string cartToken = null,
+                     double? totalPriceUsd = null,
                      DateTime? closedAt = null,
                      string financialStatus = null,
                      string fulfillmentStatus = null,
-                     string source = null, 
+                     string source = null,
                      NoChargeDetails noChargeDetails = null,
                      string[] additionalEmails = null,
                      string vendorId = null,
@@ -66,7 +66,11 @@ namespace Riskified.SDK.Model
                      DecisionDetails decisionDetails = null,
                      ClientDetails clientDetails = null,
                      ChargeFreePaymentDetails chargeFreePaymentDetails = null,
-                     string groupFounderOrderID = null) : base(merchantOrderId)
+                     string groupFounderOrderID = null,
+                     string referringSite = null,
+                     string note = null,
+                     string name = null)
+            : base(merchantOrderId)
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
@@ -80,8 +84,9 @@ namespace Riskified.SDK.Model
             Gateway = gateway;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
-            
+
             // optional fields
+            Passengers = passengers;
             PaymentDetails = paymentDetails;
             DiscountCodes = discountCodes;
             TotalPriceUsd = totalPriceUsd;
@@ -98,6 +103,9 @@ namespace Riskified.SDK.Model
             Decision = decisionDetails;
             ClientDetails = clientDetails;
             ChargeFreePaymentDetails = chargeFreePaymentDetails;
+            Name = name;
+            ReferringSite = referringSite;
+            Note = note;
 
             // This field is added for gift card group purchase
             GroupFounderOrderID = groupFounderOrderID;
@@ -115,15 +123,15 @@ namespace Riskified.SDK.Model
             LineItems.ToList().ForEach(item => item.Validate(validationType));
             InputValidators.ValidateObjectNotNull(ShippingLines, "Shipping Lines");
             ShippingLines.ToList().ForEach(item => item.Validate(validationType));
-            if(PaymentDetails == null && NoChargeAmount == null)
+            if (PaymentDetails == null && NoChargeAmount == null)
             {
                 throw new Exceptions.OrderFieldBadFormatException("Both PaymentDetails and NoChargeDetails are missing - at least one should be specified");
             }
-            if(PaymentDetails != null)
+            if (PaymentDetails != null)
             {
                 PaymentDetails.Validate(validationType);
             }
-            else 
+            else
             {
                 NoChargeAmount.Validate(validationType);
             }
@@ -161,13 +169,13 @@ namespace Riskified.SDK.Model
             InputValidators.ValidateValuedString(Gateway, "Gateway");
             InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
             InputValidators.ValidateDateNotDefault(UpdatedAt.Value, "Updated At");
-            
+
             // optional fields validations
-            if(DiscountCodes != null && DiscountCodes.Length > 0)
+            if (DiscountCodes != null && DiscountCodes.Length > 0)
             {
                 DiscountCodes.ToList().ForEach(item => item.Validate(validationType));
             }
-            if(TotalPriceUsd.HasValue)
+            if (TotalPriceUsd.HasValue)
             {
                 InputValidators.ValidateZeroOrPositiveValue(TotalPriceUsd.Value, "Total Price USD");
             }
@@ -186,7 +194,7 @@ namespace Riskified.SDK.Model
         /// </summary>
         [JsonProperty(PropertyName = "checkout_id")]
         public string CheckoutId { get; set; }
-        
+
     }
 
 }
