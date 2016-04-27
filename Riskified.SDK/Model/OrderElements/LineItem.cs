@@ -32,7 +32,7 @@ namespace Riskified.SDK.Model.OrderElements
                         string subCategory = null, 
                         string eventName = null, 
                         string eventSectionName = null, 
-                        DateTime? eventDate = null, 
+                        DateTimeOffset? eventDate = null, 
                         string eventCity = null,
                         string eventCountry = null,
                         string eventCountryCode = null,
@@ -41,7 +41,7 @@ namespace Riskified.SDK.Model.OrderElements
             
                         // These are for digital goods (gift card) industry
                         string sender_name = null, 
-                        string display_name = null,
+                        string display_name = null, 
                         bool   photo_uploaded = false,
                         string photo_url = null,
                         string greeting_photo_url = null,
@@ -192,7 +192,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The country code where the event is taking place.
         /// </summary>
-        [JsonProperty(PropertyName = "event_country_code")]
+        [JsonProperty(PropertyName = "country_code")]
         public string EventCountryCode { get; set; }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// The event date.
         /// </summary>
         [JsonProperty(PropertyName = "event_date")]
-        public DateTime? EventDate { get; set; }
+        public DateTimeOffset? EventDate { get; set; }
 
         [JsonProperty(PropertyName = "latitude")]
         public float? Latitude { get; set; }

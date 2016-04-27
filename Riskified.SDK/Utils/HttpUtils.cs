@@ -7,17 +7,18 @@ using System.Text;
 using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
+using System.Web;
 
 namespace Riskified.SDK.Utils
 {
-    internal enum HttpBodyType
+    public enum HttpBodyType
     {
         JSON,
         XML,
         Text
     }
 
-    internal static class HttpUtils
+    public static class HttpUtils
     {
         private const string ShopDomainHeaderName = "X-RISKIFIED-SHOP-DOMAIN";
         private const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
@@ -205,13 +206,13 @@ namespace Riskified.SDK.Utils
             return transactionResult;
         }
 
-        internal class ErrorResponse
+        public class ErrorResponse
         {
             [JsonProperty(PropertyName = "error")]
             public ErrorMessage Error { get; set; }
         }
 
-        internal class ErrorMessage
+        public class ErrorMessage
         {
             [JsonProperty(PropertyName = "message")]
             public string Message { get; set; }
@@ -227,18 +228,15 @@ namespace Riskified.SDK.Utils
         /// <returns>An object of type T containing data parsed from the request</returns>
         /// <exception cref="RiskifiedAuthenticationException">On missing/bad HMAC signature that doesn't match the given auth token</exception>
         /// <exception cref="RiskifiedTransactionException">On parsing error from string into the relevant object of type T</exception>
-        public static T ParsePostRequestToObject<T>(HttpListenerRequest request,string authToken) where T : class
+        public static T ParsePostRequestToObject<T>(HttpRequestBase request,string authToken) where T : class
         {
-            if (!request.HasEntityBody)
-            {
-                return null;
-            }
+            
             string postData = AuthorizeAndExtractContent(request, authToken);
             T obj = JsonStringToObject<T>(postData);
             return obj;
         }
 
-        private static string AuthorizeAndExtractContent(HttpListenerRequest request, string authToken)
+        private static string AuthorizeAndExtractContent(HttpRequestBase request, string authToken)
         {
             if (!string.IsNullOrEmpty(request.Headers[HmacHeaderName]))
             {

@@ -12,7 +12,7 @@ namespace Riskified.SDK.Utils
         Production
     }
 
-    internal static class EnvironmentsUrls 
+    public static class EnvironmentsUrls 
     {
         private static readonly Dictionary<RiskifiedEnvironment, string> EnvToUrl;
 

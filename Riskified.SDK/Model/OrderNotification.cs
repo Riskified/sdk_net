@@ -4,7 +4,7 @@ namespace Riskified.SDK.Model
 {
     public class OrderNotification
     {
-        internal OrderNotification(OrderWrapper<Notification> notificationInfo)
+        public OrderNotification(OrderWrapper<Notification> notificationInfo)
         {
             Id = notificationInfo.Order.Id;
             Status = notificationInfo.Order.Status;
@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model
             Warnings = notificationInfo.Warnings;
         }
 
-        internal OrderNotification(OrderCheckoutWrapper<Notification> notificationInfo)
+        public OrderNotification(OrderCheckoutWrapper<Notification> notificationInfo)
         {
             Id = notificationInfo.Order.Id;
             Status = notificationInfo.Order.Status;

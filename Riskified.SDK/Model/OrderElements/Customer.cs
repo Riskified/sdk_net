@@ -14,7 +14,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="firstName">The customer first name</param>
         /// <param name="lastName">The customer last name</param>
-        /// <param name="id">The customer id (optional)</param>
+        /// <param name="id">The customer id (optional)</param> 
         /// <param name="ordersCount">The total number of orders made to the merchant by this customer (optional)</param>
         /// <param name="email">The customer email - as registered with (optional) </param>
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>

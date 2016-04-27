@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model.Internal
 {
-    internal class OrderCheckoutWrapper<TOrderCheckout>
+    public class OrderCheckoutWrapper<TOrderCheckout>
     {
         [JsonProperty(PropertyName = "checkout", Required = Required.Always)]
         public TOrderCheckout Order { get; set; }

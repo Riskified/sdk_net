@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Riskified.SDK.Model.Internal
 {
-    internal class OrdersWrapper
+    public class OrdersWrapper
     {
         [JsonProperty(PropertyName = "orders")]
         public IEnumerable<AbstractOrder> Orders { get; set; }

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Riskified.SDK.Model.Internal
 {
-    internal class OrderWrapper<TOrder>
+    public class OrderWrapper<TOrder>
     {
         [JsonProperty(PropertyName = "order", Required = Required.Always)]
         public TOrder Order { get; set; }
