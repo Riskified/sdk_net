@@ -147,10 +147,10 @@ namespace Riskified.SDK.Utils
 
         private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType)
         {
-            HttpWebRequest request = WebRequest.CreateHttp(url);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
             // Set custom Riskified headers
             AddDefaultHeaders(request.Headers,authToken,shopDomain,body);
-            
             request.Method = "POST";
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
             request.UserAgent = "Riskified.SDK_NET/" + AssemblyVersion;
