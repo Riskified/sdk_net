@@ -34,6 +34,8 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [EnumMember(Value = "call_issuer")]
         CallIssuer,
         [EnumMember(Value = "pick_up_card")]
-        PickUpCard
+        PickUpCard,
+        [EnumMember(Value = "risk_system_declined")]
+        RiskSystemDeclined
     }
 }

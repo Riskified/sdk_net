@@ -250,8 +250,8 @@ namespace Riskified.SDK.Sample
         {
             var authorizationError = new AuthorizationError(
                                     createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
-                                    errorCode: AuthorizationErrorCode.IncorrectNumber,
-                                    message: "credit card expired.");
+                                    errorCode: AuthorizationErrorCode.RiskSystemDeclined,
+                                    message: "Risk System Declined.");
 
             var orderCheckoutDenied = new OrderCheckoutDenied(orderNum, authorizationError);
 
