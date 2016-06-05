@@ -234,7 +234,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
@@ -342,7 +342,8 @@ namespace Riskified.SDK.Sample
                 cvvResultCode: "n",
                 creditCardBin: "124580", 
                 creditCardCompany: "Visa",
-                creditCardNumber: "XXXX-XXXX-XXXX-4242");
+                creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                creditCardToken: "2233445566778899");
 
             var noChargeAmount = new NoChargeDetails(
                 refundId: "123444",
@@ -370,7 +371,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727",deliveredTo: DeliveredToType.StorePickup, delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727",deliveredTo: DeliveredToType.StorePickup, delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Industry 
                 new LineItem(title: "Concert", 
@@ -502,7 +503,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: 48484,sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727"),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 

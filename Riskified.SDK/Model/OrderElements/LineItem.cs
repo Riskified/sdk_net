@@ -20,7 +20,7 @@ namespace Riskified.SDK.Model.OrderElements
                         int quantityPurchased,
 
                         //optional
-                        int? productId = null, 
+                        string productId = null, 
                         string sku = null, 
                         string condition = null,
                         bool? requiresShipping = null, 
@@ -106,9 +106,9 @@ namespace Riskified.SDK.Model.OrderElements
             InputValidators.ValidatePositiveValue(QuantityPurchased.Value, "Quantity Purchased");
 
             // optional fields validations
-            if(ProductId.HasValue)
+            if(ProductId != null)
             {
-                InputValidators.ValidateZeroOrPositiveValue(ProductId.Value, "Product Id");
+                InputValidators.ValidateValuedString(ProductId, "Product Id");
             }
 
             if(Seller != null)
@@ -133,7 +133,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// The Product ID number
         /// </summary>
         [JsonProperty(PropertyName = "product_id")]
-        public int? ProductId { get; set; }
+        public string ProductId { get; set; }
 
         /// <summary>
         /// Quantity of the item that was purchased
