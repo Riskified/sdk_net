@@ -61,6 +61,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "cvv_result_code")]
         public string CvvResultCode { get; set; }
+
+        [JsonProperty(PropertyName = "credit_card_token")]
+        public string CreditCardToken { get; set; }
     }
 
 }
