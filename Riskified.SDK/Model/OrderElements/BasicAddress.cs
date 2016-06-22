@@ -18,7 +18,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="province">The full province name (optional)</param>
         /// <param name="provinceCode">The 2 letter code of the province (optional)</param>
         /// <param name="company">The company of the addressee (optional)</param>
-        public BasicAddress(string address1 = null, string city = null, string country = null, string countryCode = null, string phone = null, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company = null)
+        public BasicAddress(string address1 = null, string city = null, string country = null, string countryCode = null, string phone = null, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company = null, bool? verifiedPhone = null)
         {
             // optional fields:
             Address1 = address1;
@@ -31,6 +31,7 @@ namespace Riskified.SDK.Model.OrderElements
             Province = province;
             ZipCode = zipCode;
             Company = company;
+            VerifiedPhone = verifiedPhone;
         }
 
         /// <summary>
@@ -79,7 +80,7 @@ namespace Riskified.SDK.Model.OrderElements
         public string Phone { get; set; }
 
         [JsonProperty(PropertyName = "verified_phone")]
-        public bool? PhoneVerified { get; set; }
+        public bool? VerifiedPhone { get; set; }
 
         [JsonProperty(PropertyName = "province")]
         public string Province { get; set; }
