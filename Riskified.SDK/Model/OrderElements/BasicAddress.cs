@@ -78,6 +78,9 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "phone")]
         public string Phone { get; set; }
 
+        [JsonProperty(PropertyName = "phone_verified")]
+        public string PhoneVerified { get; set; }
+
         [JsonProperty(PropertyName = "province")]
         public string Province { get; set; }
 
