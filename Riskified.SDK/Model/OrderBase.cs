@@ -174,5 +174,8 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "group_founder_order_id")]
         public string GroupFounderOrderID { get; set; }
+
+        [JsonProperty(PropertyName = "order_type")]
+        public string OrderType { get; set; }
     }
 }

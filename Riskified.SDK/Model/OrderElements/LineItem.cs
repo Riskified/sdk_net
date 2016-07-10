@@ -16,33 +16,33 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="productId">The Product ID number (optional)</param>
         /// <param name="sku">The stock keeping unit of the product (optional)</param>
         public LineItem(string title,
-                        double price, 
+                        double price,
                         int quantityPurchased,
 
                         //optional
-                        string productId = null, 
-                        string sku = null, 
+                        string productId = null,
+                        string sku = null,
                         string condition = null,
-                        bool? requiresShipping = null, 
+                        bool? requiresShipping = null,
                         Seller seller = null,
                         DeliveredToType? deliveredTo = null,
 
                         // These are for events tickets industry
                         string category = null,
-                        string subCategory = null, 
-                        string eventName = null, 
-                        string eventSectionName = null, 
-                        DateTime? eventDate = null, 
+                        string subCategory = null,
+                        string eventName = null,
+                        string eventSectionName = null,
+                        DateTime? eventDate = null,
                         string eventCity = null,
                         string eventCountry = null,
                         string eventCountryCode = null,
                         float? latitude = null,
                         float? longitude = null,
-            
+
                         // These are for digital goods (gift card) industry
-                        string sender_name = null, 
+                        string sender_name = null,
                         string display_name = null,
-                        bool   photo_uploaded = false,
+                        bool photo_uploaded = false,
                         string photo_url = null,
                         string greeting_photo_url = null,
                         string message = null,
@@ -51,9 +51,26 @@ namespace Riskified.SDK.Model.OrderElements
                         string card_sub_type = null,
                         DateTime? delivered_at = null,
                         string sender_email = null,
-                        Recipient recipient = null)
+                        Recipient recipient = null,
+
+                        // These are for travel/transportaion industry
+                        string legId = null,
+                        string departurePortCode = null,
+                        string departureCity = null,
+                        string departureCountryCode = null,
+                        string arrivalPortCode = null,
+                        string arrivalCity = null,
+                        string arrivalCountryCode = null,
+                        DateTime? departureDate = null,
+                        DateTime? arrivalDate = null,
+                        string carrierName = null,
+                        string carrierCode = null,
+                        int? routeIndex = null,
+                        int? legIndex = null,
+                        string ticketClass = null,
+                        TransportMethodType? transportMethod = null)
         {
-            
+
             Title = title;
             Price = price;
             QuantityPurchased = quantityPurchased;
@@ -92,6 +109,24 @@ namespace Riskified.SDK.Model.OrderElements
 
             // Recipient details 
             Recipient = recipient;
+
+            // Travel industry
+            LegId = legId;
+            DeparturePortCode = departurePortCode;
+            DepartureCity = departureCity;
+            DepartureCountryCode = departureCountryCode;
+            ArrivalPortCode = arrivalPortCode;
+            ArrivalCity = arrivalCity;
+            ArrivalCountryCode = arrivalCountryCode;
+            DepartureDate = departureDate;
+            ArrivalDate = arrivalDate;
+            CarrierName = carrierName;
+            CarrierCode = carrierCode;
+            RouteIndex = routeIndex;
+            LegIndex = legIndex;
+            TicketClass = ticketClass;
+            TransportMethod = transportMethod;
+
         }
 
         /// <summary>
@@ -106,12 +141,12 @@ namespace Riskified.SDK.Model.OrderElements
             InputValidators.ValidatePositiveValue(QuantityPurchased.Value, "Quantity Purchased");
 
             // optional fields validations
-            if(ProductId != null)
+            if (ProductId != null)
             {
                 InputValidators.ValidateValuedString(ProductId, "Product Id");
             }
 
-            if(Seller != null)
+            if (Seller != null)
             {
                 Seller.Validate(validationType);
             }
@@ -237,7 +272,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "sender_email")]
         public string SenderEmail { get; set; }
-        
+
         /// <summary>
         /// The digital good's (giftcard) display name.
         /// </summary>
@@ -294,5 +329,107 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "recipient")]
         public Recipient Recipient { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The current leg id.
+        /// For flight tickets, flight number (e.g. '101').
+        /// For bus tickets, bus number (e.g: 'A7')
+        /// </summary>
+        [JsonProperty(PropertyName = "leg_id")]
+        public string LegId { get; set; }
+
+        /// <summary>
+        /// (for travel industry) Departure port code for the current leg. For flights: the 3 letter IATA airport code.
+        /// </summary>
+        [JsonProperty(PropertyName = "departure_port_code")]
+        public string DeparturePortCode { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The name of the city of departure for the current leg.
+        /// </summary>
+        [JsonProperty(PropertyName = "departure_city")]
+        public string DepartureCity { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The 2 letter country code (ISO 3166-1 alpha-2) for the departure country of the current leg.
+        /// </summary>
+        [JsonProperty(PropertyName = "departure_country_code")]
+        public string DepartureCountryCode { get; set; }
+
+        /// <summary>
+        /// (for travel industry) Arrival port code for the current leg. For flights: the 3 letter IATA airport code.
+        /// </summary>
+        [JsonProperty(PropertyName = "arrival_port_code")]
+        public string ArrivalPortCode { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The name of the city of arrival for the current leg.
+        /// </summary>
+        [JsonProperty(PropertyName = "arrival_city")]
+        public string ArrivalCity { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The 2 letter country code (ISO 3166-1 alpha-2) for the arrival country of the current leg.
+        /// </summary>
+        [JsonProperty(PropertyName = "arrival_country_code")]
+        public string ArrivalCountryCode { get; set; }
+
+        /// <summary>
+        /// (for travel industry) Date and time of departure for the current leg (ISO8601).
+        /// </summary>
+        [JsonProperty(PropertyName = "departure_date")]
+        public DateTime? DepartureDate { get; set; }
+
+        /// <summary>
+        /// (for travel industry) Date and time of arrival for the current leg (ISO8601).
+        /// </summary>
+        [JsonProperty(PropertyName = "arrival_date")]
+        public DateTime? ArrivalDate { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The name of the carrier/company conducting the current leg.
+        /// </summary>
+        [JsonProperty(PropertyName = "carrier_name")]
+        public string CarrierName { get; set; }
+
+        /// <summary>
+        /// (for travel industry) A publicly agreed code describing the carrier/company conducting the current leg.
+        /// For Flights: The IATA 2 letter carrier code.
+        /// </summary>
+        [JsonProperty(PropertyName = "carrier_code")]
+        public string CarrierCode { get; set; }
+
+        /// <summary>
+        /// (for travel industry) A running index (starts with 1), describing the order of routes by time.
+        /// E.g: If an order contains 2 Routes:
+        /// * New-York->London->Paris (connection in London)
+        /// ** New-York->London should have route_index=1, leg_index=1
+        /// ** London->Paris should have route_index=1, leg_index=2
+        /// * Paris->London->New-York
+        /// ** Paris->London should have route_index=2, leg_index=1
+        /// ** London->New-York should have route_index=2, leg_index=2
+        /// </summary>
+        [JsonProperty(PropertyName = "route_index")]
+        public int? RouteIndex { get; set; }
+
+        /// <summary>
+        /// (for travel industry) A running index (starts with 1), describing the order of legs in the same route.
+        /// For more details, see route_index field.
+        /// </summary>
+        [JsonProperty(PropertyName = "leg_index")]
+        public int? LegIndex { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The class for this leg's ticket (e.g. business, economy, first)
+        /// </summary>
+        [JsonProperty(PropertyName = "ticket_class")]
+        public string TicketClass { get; set; }
+
+        /// <summary>
+        /// (for travel industry) The method of transportation.
+        /// </summary>
+        [JsonProperty(PropertyName = "transport_method")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public TransportMethodType? TransportMethod { get; set; }
     }
 }

@@ -69,7 +69,8 @@ namespace Riskified.SDK.Model
                      string groupFounderOrderID = null,
                      string referringSite = null,
                      string note = null,
-                     string name = null)
+                     string name = null,
+                     string orderType = null)
             : base(merchantOrderId)
         {
             LineItems = lineItems;
@@ -106,6 +107,7 @@ namespace Riskified.SDK.Model
             Name = name;
             ReferringSite = referringSite;
             Note = note;
+            OrderType = orderType;
 
             // This field is added for gift card group purchase
             GroupFounderOrderID = groupFounderOrderID;
