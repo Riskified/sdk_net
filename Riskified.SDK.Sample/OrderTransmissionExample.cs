@@ -17,10 +17,10 @@ namespace Riskified.SDK.Sample
         public static void SendOrdersToRiskifiedExample()
         {
             #region preprocessing and loading config
-            
+
             string domain = ConfigurationManager.AppSettings["MerchantDomain"];
             string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment) Enum.Parse(typeof (RiskifiedEnvironment),ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
+            RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
 
             // Generating a random starting order number
             // we need to send the order with a new order number in order to create it on riskified
@@ -55,39 +55,34 @@ namespace Riskified.SDK.Sample
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
 
-            
+
             // loop on console actions 
             while (commandStr != null && (!commandStr.Equals("q")))
             {
-                
-                
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
                 OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
                 try
                 {
-                    OrderNotification res=null;
+                    OrderNotification res = null;
                     switch (commandStr)
                     {
                         case "p":
                             Console.WriteLine("Order checkout Generated with merchant order number: " + orderNum);
                             var orderCheckout = GenerateOrderCheckout(orderNum.ToString());
                             orderCheckout.Id = orderNum.ToString();
-                            
+
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.Checkout(orderCheckout);
                             break;
                         case "e":
                             Console.WriteLine("Order checkout Generated.");
                             var orderCheckoutDenied = GenerateOrderCheckoutDenied(orderNum);
-                            
+
                             Console.Write("checkout to deny id: ");
                             string orderCheckoutDeniedId = Console.ReadLine();
 
                             orderCheckoutDenied.Id = orderCheckoutDeniedId;
-                            
-
-
 
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.CheckoutDenied(orderCheckoutDenied);
@@ -159,14 +154,14 @@ namespace Riskified.SDK.Sample
                             for (int i = 0; i < 22; i++)
                             {
                                 Order o = GenerateOrder(orderNum++);
-                                o.FinancialStatus = financialStatuses[i%3];
+                                o.FinancialStatus = financialStatuses[i % 3];
                                 orders.Add(o);
                             }
-                            Console.WriteLine("Orders Generated with merchant order numbers: {0} to {1}",startOrderNum,orderNum-1);
+                            Console.WriteLine("Orders Generated with merchant order numbers: {0} to {1}", startOrderNum, orderNum - 1);
                             // sending 3 historical orders with different processing state
-                            Dictionary<string,string> errors;
-                            bool success = gateway.SendHistoricalOrders(orders,out errors);
-                            if(success)
+                            Dictionary<string, string> errors;
+                            bool success = gateway.SendHistoricalOrders(orders, out errors);
+                            if (success)
                             {
                                 Console.WriteLine("All historical orders sent successfully");
                             }
@@ -182,11 +177,11 @@ namespace Riskified.SDK.Sample
 
                     if (res != null)
                     {
-                        Console.WriteLine("\n\nOrder sent successfully:" + 
+                        Console.WriteLine("\n\nOrder sent successfully:" +
                                               "\nStatus at Riskified: " + res.Status +
                                               "\nOrder ID received:" + res.Id +
-                                              "\nDescription: " + res.Description + 
-                                              "\nWarnings: " + (res.Warnings==null ? "---" : string.Join("        \n",res.Warnings)) + "\n\n");
+                                              "\nDescription: " + res.Description +
+                                              "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
                     }
                 }
                 catch (OrderFieldBadFormatException e)
@@ -216,11 +211,10 @@ namespace Riskified.SDK.Sample
             return orderDecision;
         }
 
-
         private static OrderCheckout GenerateOrderCheckout(string orderNum)
         {
             var orderCheckout = new OrderCheckout(orderNum);
-            
+
             // Fill optional fields
             var customer = new Customer(
                 firstName: "John",
@@ -260,7 +254,6 @@ namespace Riskified.SDK.Sample
             return orderCheckoutDenied;
 
         }
-
 
         private static OrderFulfillment GenerateFulfillment(int fulfillOrderId)
         {
@@ -315,10 +308,10 @@ namespace Riskified.SDK.Sample
                 firstName: "Ben",
                 lastName: "Rolling",
                 address1: "27 5th avenue",
-                city: "Manhattan", 
+                city: "Manhattan",
                 country: "United States",
                 countryCode: "US",
-                phone: "5554321234", 
+                phone: "5554321234",
                 address2: "Appartment 5",
                 zipCode: "54545",
                 province: "New York",
@@ -329,18 +322,18 @@ namespace Riskified.SDK.Sample
             var shipping = new AddressInformation(
                 firstName: "Luke",
                 lastName: "Rolling",
-                address1: "4 Bermingham street", 
+                address1: "4 Bermingham street",
                 city: "Cherry Hill",
                 country: "United States",
-                countryCode: "US", 
-                phone: "55546665", 
-                provinceCode: "NJ", 
+                countryCode: "US",
+                phone: "55546665",
+                provinceCode: "NJ",
                 province: "New Jersey");
 
             var payments = new CreditCardPaymentDetails(
                 avsResultCode: "Y",
                 cvvResultCode: "n",
-                creditCardBin: "124580", 
+                creditCardBin: "124580",
                 creditCardCompany: "Visa",
                 creditCardNumber: "XXXX-XXXX-XXXX-4242",
                 creditCardToken: "2233445566778899");
@@ -400,6 +393,12 @@ namespace Riskified.SDK.Sample
                             card_sub_type: "birthday",
                             sender_email: "new_email@bb.com",
                             recipient: recipient),
+                new LineItem(title: "Concert", 
+                             price: 123, 
+                             quantityPurchased: 1, 
+                             departureCity: "ashdod",
+                             departureCountryCode: "IL",
+                             transportMethod: TransportMethodType.Plane),
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
@@ -413,13 +412,13 @@ namespace Riskified.SDK.Sample
 
             // This is an example for client details section
             var clientDetails = new ClientDetails(
-                accept_language: "en-CA",   
+                accept_language: "en-CA",
                 user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
 
             var order = new Order(
-                merchantOrderId: orderNum.ToString(), 
-                email: "tester@exampler.com", 
-                customer: customer, 
+                merchantOrderId: orderNum.ToString(),
+                email: "tester@exampler.com",
+                customer: customer,
                 paymentDetails: payments,
                 billingAddress: billing,
                 shippingAddress: shipping,
@@ -427,7 +426,7 @@ namespace Riskified.SDK.Sample
                 shippingLines: lines,
                 gateway: "authorize_net",
                 customerBrowserIp: "165.12.1.1",
-                currency: "USD", 
+                currency: "USD",
                 totalPrice: 100.60,
                 createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
@@ -437,7 +436,7 @@ namespace Riskified.SDK.Sample
                 decisionDetails: decisionDetails,
                 vendorId: "2",
                 vendorName: "domestic",
-                additionalEmails: new [] {"a@a.com","b@b.com"},
+                additionalEmails: new[] { "a@a.com", "b@b.com" },
                 chargeFreePaymentDetails: chargeFreePayments,
                 clientDetails: clientDetails,
                 groupFounderOrderID: "2222"
@@ -528,6 +527,100 @@ namespace Riskified.SDK.Sample
 
             return order;
         }
+
+        #region Run all endpoints
+        public static int runAll()
+        {
+            try
+            {
+                string domain = ConfigurationManager.AppSettings["MerchantDomain"];
+                string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
+                RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
+
+                OrderNotification res = null;
+                var rand = new Random();
+                int orderNum = rand.Next(1000, 200000);
+                var order = GenerateOrder(orderNum);
+
+                OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
+
+                var orderCheckout = GenerateOrderCheckout(orderNum.ToString());
+                orderCheckout.Id = orderNum.ToString();
+                res = gateway.Checkout(orderCheckout);
+
+                var orderCheckoutDenied = GenerateOrderCheckoutDenied(orderNum);
+                orderNum++;
+                orderCheckoutDenied.Id = orderNum.ToString();
+                res = gateway.CheckoutDenied(orderCheckoutDenied);
+
+                orderNum++;
+                order.Id = orderNum.ToString();
+                res = gateway.Create(order);
+
+                order.Id = orderNum.ToString();
+                orderNum++;
+                res = gateway.Submit(order);
+
+                res = gateway.Update(order);
+                res = gateway.Cancel(
+                                new OrderCancellation(
+                                    merchantOrderId: order.Id,
+                                    cancelledAt: DateTime.Now,
+                                    cancelReason: "Customer cancelled before shipping"));
+
+                order.Id = orderNum.ToString();
+                orderNum++;
+                // sending order for creation (if new orderNum) or update (if existing orderNum)
+                res = gateway.Create(order);
+
+                order.Id = orderNum.ToString();
+                orderNum++;
+                // sending order for submitting and analysis 
+                // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
+                res = gateway.Submit(order);
+
+                order.Id = order.Id;
+                res = gateway.Update(order);
+
+                res = gateway.Cancel(
+                    new OrderCancellation(
+                        merchantOrderId: int.Parse(order.Id),
+                        cancelledAt: DateTime.Now,
+                        cancelReason: "Customer cancelled before shipping"));
+
+                res = gateway.PartlyRefund(
+                    new OrderPartialRefund(
+                        merchantOrderId: int.Parse(order.Id),
+                        partialRefunds: new[]
+                                    {
+                                        new PartialRefundDetails(
+                                            refundId: "12345",
+                                            refundedAt: DateTime.Now,  // make sure to initialize DateTime with the correct timezone
+                                            amount: 5.3,
+                                            currency: "USD",
+                                            reason: "Customer partly refunded on shipping fees")
+                                    }));
+
+                OrderFulfillment orderFulfillment = GenerateFulfillment(int.Parse(order.Id));
+                res = gateway.Fulfill(orderFulfillment);
+
+
+                OrderDecision orderDecision = GenerateDecision(int.Parse(order.Id));
+                res = gateway.Decision(orderDecision);
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[failed] " + ex.ToString());
+                return -1;
+            }
+
+            return 0;
+
+        } 
+        #endregion
 
     }
 }
