@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
+using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
@@ -64,6 +65,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "credit_card_token")]
         public string CreditCardToken { get; set; }
+
+        [JsonProperty(PropertyName = "authorization_error")]
+        public AuthorizationError AuthorizationError { get; set; }
     }
 
 }

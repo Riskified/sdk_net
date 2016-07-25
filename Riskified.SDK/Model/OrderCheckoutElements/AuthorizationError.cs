@@ -23,7 +23,6 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 
         public void Validate(Validations validationType = Validations.Weak)
         {
-            InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
             InputValidators.ValidateObjectNotNull(ErrorCode, "Error Code");
 
         }

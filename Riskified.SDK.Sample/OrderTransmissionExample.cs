@@ -244,12 +244,20 @@ namespace Riskified.SDK.Sample
         {
             var authorizationError = new AuthorizationError(
                                     createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
-                                    errorCode: AuthorizationErrorCode.RiskSystemDeclined,
-                                    message: "Risk System Declined.");
+                                    errorCode: AuthorizationErrorCode.CardDeclined,
+                                    message: "Card was Declined.");
 
-            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum, authorizationError);
+            var payments = new CreditCardPaymentDetails(
+                            avsResultCode: "Y",
+                            cvvResultCode: "n",
+                            creditCardBin: "124580",
+                            creditCardCompany: "Visa",
+                            creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                            creditCardToken: "2233445566778899");
+            payments.AuthorizationError = authorizationError;
 
-
+            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString());
+            orderCheckoutDenied.PaymentDetails = payments;
 
             return orderCheckoutDenied;
 
