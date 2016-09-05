@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Configuration;
 using Riskified.SDK.Model;
+using Riskified.SDK.Model.ChargebackElements;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Model.RefundElements;
 using Riskified.SDK.Orders;
@@ -51,6 +52,7 @@ namespace Riskified.SDK.Sample
                                 "'f' for fulfill\n" +
                                 "'x' for decision\n" +
                                 "'h' for historical sending\n" +
+                                "'y' for chargeback submission\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
@@ -171,7 +173,13 @@ namespace Riskified.SDK.Sample
                                 Console.WriteLine(String.Join("\n", errors.Select(p => p.Key + ":" + p.Value).ToArray()));
                             }
                             break;
+                        case "y":
+                            Console.Write("Chargeback order id: ");
+                            string chargebackOrderId = Console.ReadLine();
+                            OrderChargeback orderChargeback = GenerateOrderChargeback(chargebackOrderId);
+                            res = gateway.Chargeback(orderChargeback);
 
+                            break;
                     }
 
 
@@ -534,6 +542,45 @@ namespace Riskified.SDK.Sample
                 discountCodes: discountCodes);
 
             return order;
+        }
+
+        private static OrderChargeback GenerateOrderChargeback(string orderNum)
+        {
+            var chargebackDetails = new ChargebackDetails(id: "id1234",
+                                charegbackAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                chargebackCurrency: "USD",
+                                chargebackAmount: (float)50.5,
+                                reasonCode: "4863",
+                                reasonDesc: "Transaction not recognised",
+                                type: "cb",
+                                mid: "t_123",
+                                creditCardCompany: "visa",
+                                respondBy: new DateTime(2016, 9, 1),
+                                arn: "a123456789012bc3de45678901f23a45",
+                                feeAmount: 20,
+                                feeCurrency: "USD",
+                                cardIssuer: "Wells Fargo Bank",
+                                gateway: "braintree",
+                                cardholder: "John Smith",
+                                message: "Cardholder disputes quality/ mischaracterization of service/merchandise. Supply detailed refute of these claims, along with any applicable/supporting doc");
+
+            var fulfillmentDetails = new FulfillmentDetails(
+                                             fulfillmentId: "123",
+                                             createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                             status: FulfillmentStatusCode.Success,
+                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                             trackingCompany: "TestCompany");
+
+            var disputeDetails = new DisputeDetails(
+                                        disputeType: "first_dispute",
+                                        caseId: "a1234",
+                                        status: "pending",
+                                        issuerPocPhoneNumber: "+1-877-111-1111",
+                                        disputedAt:  new DateTime(2016, 9, 15),
+                                        expectedResolutionDate: new DateTime(2016, 11, 1));
+
+            return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
+
         }
 
         #region Run all endpoints
