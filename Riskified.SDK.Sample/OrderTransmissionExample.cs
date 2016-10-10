@@ -10,6 +10,7 @@ using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
+using System.Collections;
 
 namespace Riskified.SDK.Sample
 {
@@ -53,6 +54,7 @@ namespace Riskified.SDK.Sample
                                 "'x' for decision\n" +
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
+                                "'w' for Polling decisions\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
@@ -66,7 +68,7 @@ namespace Riskified.SDK.Sample
                 OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
                 try
                 {
-                    OrderNotification res = null;
+                    dynamic res = null;
                     switch (commandStr)
                     {
                         case "p":
@@ -180,16 +182,25 @@ namespace Riskified.SDK.Sample
                             res = gateway.Chargeback(orderChargeback);
 
                             break;
+                        case "w":
+                            var time = DateTime.Now - TimeSpan.FromDays(30);
+                            Console.WriteLine("Polling for decisions starting at: {0}", time.ToString());
+                            res = gateway.Decisions(sinceDateTime: time, limit: 20, offset: 40, status: new string[] { "approved" });
+                            break;
                     }
 
 
                     if (res != null)
                     {
-                        Console.WriteLine("\n\nOrder sent successfully:" +
-                                              "\nStatus at Riskified: " + res.Status +
-                                              "\nOrder ID received:" + res.Id +
-                                              "\nDescription: " + res.Description +
-                                              "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
+                        if (res is IEnumerable)
+                        {
+                            Console.WriteLine("Notifications received ({0}):", ((IEnumerable<OrderNotification>)res).Count());
+                            foreach (var r in res) { PrintNotification(r); }
+                        }
+                        else
+                        {
+                            PrintNotification(res);
+                        }
                     }
                 }
                 catch (OrderFieldBadFormatException e)
@@ -210,6 +221,15 @@ namespace Riskified.SDK.Sample
 
             #endregion
 
+        }
+
+        private static void PrintNotification(OrderNotification res)
+        {
+            Console.WriteLine("\n\nOrder sent successfully:" +
+                                                          "\nStatus at Riskified: " + res.Status +
+                                                          "\nOrder ID received:" + res.Id +
+                                                          "\nDescription: " + res.Description +
+                                                          "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
         }
 
         private static OrderDecision GenerateDecision(int p)

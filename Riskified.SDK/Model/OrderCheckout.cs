@@ -1,11 +1,6 @@
-﻿using Newtonsoft.Json;
-using Riskified.SDK.Model.OrderElements;
+﻿using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model
 {

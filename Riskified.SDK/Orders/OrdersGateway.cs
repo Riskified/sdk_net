@@ -5,6 +5,7 @@ using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
 using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
+using System.Collections.Specialized;
 
 namespace Riskified.SDK.Orders
 {
@@ -179,6 +180,24 @@ namespace Riskified.SDK.Orders
             return SendOrder(orderChargeback, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/chargeback"));
         }
 
+        public IEnumerable<OrderNotification> Decisions( 
+            DateTime? sinceDateTime = null, 
+            IEnumerable<string> status = null, 
+            ushort? limit = null, 
+            ushort? offset = null)
+        {
+            var getParams = new List<KeyValuePair<string,string>>();
+            getParams.Add(new KeyValuePair<string, string>("since_datetime", sinceDateTime.Value.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz")));
+            if(limit.HasValue)
+                getParams.Add(new KeyValuePair<string, string>("limit", limit.Value.ToString()));
+            if(offset.HasValue)
+                getParams.Add(new KeyValuePair<string, string>("offset", offset.Value.ToString()));
+            if(status != null && status.Count() > 0)
+                getParams.Add(new KeyValuePair<string, string>("status", string.Join(",",status)));
+            Uri fullpath = HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/decisions", getParams);
+            return SendOrders(fullpath);
+        }
+
         /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
@@ -227,10 +246,10 @@ namespace Riskified.SDK.Orders
                 if (batch.Count > 0)
                 {
                     // send batch
-                    OrdersWrapper wrappedOrders = new OrdersWrapper(batch);
+                    var wrappedOrders = new OrdersWrapper<Order>(batch);
                     try
                     {
-                        HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
+                        HttpUtils.JsonPostAndParseResponseToObject(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
                     }
                     catch (RiskifiedTransactionException e)
                     {
@@ -288,6 +307,20 @@ namespace Riskified.SDK.Orders
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return new OrderNotification(transactionResult);
             
+        }
+
+        /// <summary>
+        /// Validates the Order object fields
+        /// Sends the order to riskified server endpoint as configured in the ctor
+        /// </summary>
+        /// <param name="riskifiedEndpointUrl">the endpoint to which the order should be sent</param>
+        /// <returns>The order tranaction result containing status and order id  in riskified servers (for followup only - not used latter) in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        private IEnumerable<OrderNotification> SendOrders(Uri riskifiedEndpointUrl)
+        {
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper<OrderWrapper<Notification>>, object>(riskifiedEndpointUrl, null, _authToken, _shopDomain);
+            return transactionResult.Orders.Select(n => new OrderNotification(n));
         }
     }
 

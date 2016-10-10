@@ -7,6 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
+using System.Collections.Generic;
 
 namespace Riskified.SDK.Utils
 {
@@ -45,7 +46,7 @@ namespace Riskified.SDK.Utils
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public static void JsonPostAndParseResponseToObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
         {
-            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+            var response = SendApiCall(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
 
             if(response != null)
             {
@@ -73,7 +74,7 @@ namespace Riskified.SDK.Utils
             where TRespObj : class
             where TReqObj  : class 
         {
-            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+            var response = SendApiCall(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
 
             var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
             return resObj;
@@ -81,22 +82,25 @@ namespace Riskified.SDK.Utils
 
 
 
-        private static HttpWebResponse PostObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
+        private static HttpWebResponse SendApiCall<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
         {
-            string jsonStr;
-            try
+            string jsonStr = null;
+            if(jsonObj != null)
             {
-                jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
-            }
-            catch (Exception e)
-            {
-                throw new OrderFieldBadFormatException("The order could not be serialized to JSON: " + e.Message, e);
+                try
+                {
+                    jsonStr = JsonConvert.SerializeObject(jsonObj, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+                }
+                catch (Exception e)
+                {
+                    throw new OrderFieldBadFormatException("The order could not be serialized to JSON: " + e.Message, e);
+                }
             }
 
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
+                WebRequest request = GenerateRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -145,22 +149,31 @@ namespace Riskified.SDK.Utils
             return result;
         }
 
-        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType)
+        private static WebRequest GenerateRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
-            // Set custom Riskified headers
-            AddDefaultHeaders(request.Headers,authToken,shopDomain,body);
             
-            request.Method = "POST";
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
             request.UserAgent = "Riskified.SDK_NET/" + AssemblyVersion;
             request.Accept = string.Format("application/vnd.riskified.com; version={0}", ServerApiVersion);
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-            byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
-            request.ContentLength = bodyBytes.Length;
-            Stream bodyStream = request.GetRequestStream();
-            bodyStream.Write(bodyBytes, 0, bodyBytes.Length);
-            bodyStream.Close();
+            if(body != null)
+            {
+                request.Method = "POST";
+                AddDefaultHeaders(request.Headers, authToken, shopDomain, body);
+                byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+                request.ContentLength = bodyBytes.Length;
+                Stream bodyStream = request.GetRequestStream();
+                bodyStream.Write(bodyBytes, 0, bodyBytes.Length);
+                bodyStream.Close();
+            }
+            else
+            {
+                request.Method = "GET";
+                AddDefaultHeaders(request.Headers, authToken, shopDomain, url.PathAndQuery);
+            }
+            // Set custom Riskified headers
+           // AddDefaultHeaders(request.Headers, authToken, shopDomain, body);
 
             return request;
         }
@@ -293,9 +306,16 @@ namespace Riskified.SDK.Utils
             output.Close();
         }
 
-        public static Uri BuildUrl(string hostUrl, string relativePath)
+        public static Uri BuildUrl(string hostUrl, string relativePath, IEnumerable<KeyValuePair<string,string>> queryParams = null)
         {
-            Uri fullUrl = new Uri(new Uri(hostUrl),relativePath);
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat("{0}{1}", hostUrl, relativePath);
+
+            if(queryParams != null)
+            {
+                builder.AppendFormat("?{0}", string.Join("&", queryParams.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value))));
+            }
+            Uri fullUrl = new Uri(builder.ToString());
             return fullUrl;
         }
     }
