@@ -256,8 +256,22 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
-                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+                new LineItem(
+                    title: "Bag",
+                    price: 55.44,
+                    quantityPurchased: 1,
+                    productId: "48484",
+                    sku: "1272727",
+                    requiresShipping: true,
+                    brand: "Nike"),
+                new LineItem(
+                    title: "Monster", 
+                    price: 22.3, 
+                    quantityPurchased: 3, 
+                    requiresShipping: true,
+                    category: "Games",
+                    subCategory: "Puppets",
+                    brand: "Toys4Me")
             };
 
             orderCheckout.Customer = customer;
@@ -298,7 +312,7 @@ namespace Riskified.SDK.Sample
                                             fulfillmentId: "123",
                                             createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local),
                                             status: FulfillmentStatusCode.Success,
-                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1, true) },
                                             trackingCompany: "TestCompany")
                                     };
 
@@ -324,7 +338,8 @@ namespace Riskified.SDK.Sample
                 countryCode: "US",
                 phone: "5554321234",
                 address2: "Appartment 5",
-                zipCode: "54545"
+                zipCode: "54545",
+                additionalPhone: "555322222"
                 );
 
             // putting sample customer details
@@ -348,6 +363,7 @@ namespace Riskified.SDK.Sample
                 country: "United States",
                 countryCode: "US",
                 phone: "5554321234",
+                additionalPhone: "746555332",
                 address2: "Appartment 5",
                 zipCode: "54545",
                 province: "New York",
@@ -398,44 +414,67 @@ namespace Riskified.SDK.Sample
                 social: recipientSocial);
 
 
-            var items = new[]
-            {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727",deliveredTo: DeliveredToType.StorePickup, delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
-                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
-                // Events Tickets Industry 
-                new LineItem(title: "Concert", 
-                             price: 123, 
-                             quantityPurchased: 1, 
-                             category: "Singers", 
-                             subCategory: "Rock", 
-                             eventName: "Bon Jovy", 
-                             eventSectionName: "Section", 
-                             eventCountry: "USA", 
-                             eventCountryCode: "US",
-                             latitude: 0,
-                             longitude: 0),
-                // Digital Goods (giftcard) industry
-                new LineItem(title: "Concert", 
-                            price: 123, 
-                            quantityPurchased: 1, 
-                            sender_name: "John", 
-                            display_name: "JohnJohn", 
-                            photo_uploaded: true, 
-                            photo_url: "http://my_pic_url", 
-                            greeting_photo_url: "http://my_greeting_pic_url", 
-                            message: "Happy Birthday",
-                            greeting_message: "Happy Birthday from John",
-                            card_type: "regular",
-                            card_sub_type: "birthday",
-                            sender_email: "new_email@bb.com",
-                            recipient: recipient),
-                new LineItem(title: "Concert", 
-                             price: 123, 
-                             quantityPurchased: 1, 
-                             departureCity: "ashdod",
-                             departureCountryCode: "IL",
-                             transportMethod: TransportMethodType.Plane),
-            };
+			var items = new[]
+			{
+				new LineItem(
+                    title: "Bag", 
+                    price: 55.44, 
+                    quantityPurchased: 1,
+                    productId: "48484", 
+                    sku: "1272727",
+                    requiresShipping: true,
+                    deliveredTo: DeliveredToType.StorePickup, 
+                    delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                    category: "Accessories",
+                    subCategory: "Bags",
+                    brand: "Hershel"),
+				new LineItem(
+                    title: "Monster", 
+                    price: 22.3, 
+                    quantityPurchased: 3, 
+                    requiresShipping: true,
+                    seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
+				// Events Tickets Industry 
+				new LineItem(
+                    title: "Concert", 
+                    price: 123, 
+                    quantityPurchased: 1, 
+                    requiresShipping: false,
+					category: "Singers", 
+					subCategory: "Rock", 
+					eventName: "Bon Jovy", 
+					eventSectionName: "Section", 
+					eventCountry: "USA", 
+					eventCountryCode: "US",
+					latitude: 0,
+					longitude: 0),
+				// Digital Goods (giftcard) industry
+				new LineItem(
+                    title: "Concert", 
+					price: 123, 
+					quantityPurchased: 1, 
+					requiresShipping: false,
+					sender_name: "John", 
+					display_name: "JohnJohn", 
+					photo_uploaded: true, 
+					photo_url: "http://my_pic_url", 
+					greeting_photo_url: "http://my_greeting_pic_url", 
+					message: "Happy Birthday",
+					greeting_message: "Happy Birthday from John",
+					card_type: "regular",
+					card_sub_type: "birthday",
+					sender_email: "new_email@bb.com",
+					recipient: recipient),
+				// Travel Tickets (Travel) industry
+				new LineItem(
+                    title: "Concert", 
+					price: 123, 
+					quantityPurchased: 1, 
+					requiresShipping: false,
+					departureCity: "Atlanta",
+					departureCountryCode: "US",
+					transportMethod: TransportMethodType.Plane),
+			};
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
@@ -538,8 +577,8 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727"),
-                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727", requiresShipping: true),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3, requiresShipping: true)
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
@@ -588,7 +627,7 @@ namespace Riskified.SDK.Sample
                                              fulfillmentId: "123",
                                              createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
                                              status: FulfillmentStatusCode.Success,
-                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1, requiresShipping: true) },
                                              trackingCompany: "TestCompany");
 
             var disputeDetails = new DisputeDetails(

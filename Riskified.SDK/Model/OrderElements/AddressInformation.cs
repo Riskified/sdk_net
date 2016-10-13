@@ -22,8 +22,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="provinceCode">The 2 letter code of the province (optional)</param>
         /// <param name="company">The company of the addressee (optional)</param>
         /// <param name="fullName">The full name of the addressee (optional)</param>
-        public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null) :
-            base(address1,city,country,countryCode,phone,address2,zipCode,province,provinceCode,company)
+        public AddressInformation(string firstName, string lastName, string address1, string city, string country, string countryCode, string phone, string address2 = null, string zipCode = null, string province = null, string provinceCode = null, string company= null, string fullName = null, bool? verifiedPhone = null, string additionalPhone = null) :
+            base(address1,city,country,countryCode,phone,address2,zipCode,province,provinceCode,company, verifiedPhone, additionalPhone)
         {
             FirstName = firstName;
             LastName = lastName;

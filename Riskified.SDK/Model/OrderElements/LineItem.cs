@@ -18,14 +18,15 @@ namespace Riskified.SDK.Model.OrderElements
         public LineItem(string title,
                         double price,
                         int quantityPurchased,
+                        bool requiresShipping,
 
                         //optional
                         string productId = null,
                         string sku = null,
                         string condition = null,
-                        bool? requiresShipping = null,
                         Seller seller = null,
                         DeliveredToType? deliveredTo = null,
+                        string brand = null,
 
                         // These are for events tickets industry
                         string category = null,
@@ -82,6 +83,7 @@ namespace Riskified.SDK.Model.OrderElements
             RequiresShipping = requiresShipping;
             Seller = seller;
             DeliveredTo = deliveredTo;
+            Brand = brand;
 
             // Events Tickets Industry
             Category = category;
@@ -180,7 +182,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// States whether or not the fulfillment requires shipping. This field is important for merchants dealing with digital goods.
         /// </summary>
         [JsonProperty(PropertyName = "requires_shipping")]
-        public bool? RequiresShipping { get; set; }
+        public bool RequiresShipping { get; set; }
 
         /// <summary>
         /// The sku of the product
