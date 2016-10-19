@@ -107,7 +107,7 @@ namespace Riskified.SDK.Model
         /// An object containing information about the payment.
         /// </summary>
         [JsonProperty(PropertyName = "payment_details")]
-        public IPaymentDetails PaymentDetails { get; set; }
+        public IPaymentDetails[] PaymentDetails { get; set; }
 
         /// <summary>
         /// The mailing address associated with the payment method.
@@ -119,7 +119,7 @@ namespace Riskified.SDK.Model
         /// The mailing address to where the order will be shipped.
         /// </summary>
         [JsonProperty(PropertyName = "shipping_address")]
-        public AddressInformation ShippingAddress { get; set; }
+        public AddressInformation[] ShippingAddress { get; set; }
 
         /// <summary>
         /// Applicable only for Merchants from the travel industry.

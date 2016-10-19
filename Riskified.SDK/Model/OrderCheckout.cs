@@ -34,7 +34,10 @@ namespace Riskified.SDK.Model
             
             if (PaymentDetails != null)
             {
-                PaymentDetails.Validate(validationType);
+                foreach (var payment in PaymentDetails)
+                {
+                    payment.Validate(validationType);
+                }
             }
 
             if(NoChargeAmount != null)
@@ -50,7 +53,10 @@ namespace Riskified.SDK.Model
                 }
                 else if(ShippingAddress != null)
                 {
-                    ShippingAddress.Validate(validationType);
+                    foreach (var shipping in ShippingAddress)
+                    {
+                        shipping.Validate(validationType);
+                    }
                 }
             }
             else
@@ -61,7 +67,10 @@ namespace Riskified.SDK.Model
                 }
                 if(ShippingAddress != null)
                 {
-                    ShippingAddress.Validate(validationType);
+                    foreach (var shipping in ShippingAddress)
+                    {
+                        shipping.Validate(validationType);
+                    }
                 }
             }
 

@@ -183,9 +183,20 @@ namespace Riskified.SDK.Sample
 
                             break;
                         case "w":
-                            var time = DateTime.Now - TimeSpan.FromDays(30);
+                            Console.Write("Days back to poll: ");
+                            int daysBack = short.Parse(Console.ReadLine());
+                            var time = DateTime.Now - TimeSpan.FromDays(daysBack);
                             Console.WriteLine("Polling for decisions starting at: {0}", time.ToString());
-                            res = gateway.Decisions(sinceDateTime: time, limit: 20, offset: 40, status: new string[] { "approved" });
+                            res = new List<OrderNotification>();
+                            bool moreRes = true;
+                            ushort offset = 0;
+                            ushort limit = 40;
+                            while(moreRes)
+                            {
+                                var currentRes = gateway.Decisions(sinceDateTime: time, limit: limit, offset: offset, status: new string[] { "approved" });
+                                res.AddRange(currentRes);
+                                moreRes = currentRes.Count() == limit;
+                            }
                             break;
                     }
 
@@ -229,6 +240,7 @@ namespace Riskified.SDK.Sample
                                                           "\nStatus at Riskified: " + res.Status +
                                                           "\nOrder ID received:" + res.Id +
                                                           "\nDescription: " + res.Description +
+                                                          "\nUpdated At: " + res.UpdatedAt +
                                                           "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
         }
 
@@ -299,7 +311,7 @@ namespace Riskified.SDK.Sample
             payments.AuthorizationError = authorizationError;
 
             var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString());
-            orderCheckoutDenied.PaymentDetails = payments;
+            orderCheckoutDenied.PaymentDetails = new[] { payments };
 
             return orderCheckoutDenied;
 
@@ -494,9 +506,9 @@ namespace Riskified.SDK.Sample
                 merchantOrderId: orderNum.ToString(),
                 email: "tester@exampler.com",
                 customer: customer,
-                paymentDetails: payments,
+                paymentDetails: new[] { payments },
                 billingAddress: billing,
-                shippingAddress: shipping,
+                shippingAddress: new[] { shipping },
                 lineItems: items,
                 shippingLines: lines,
                 gateway: "authorize_net",
@@ -587,9 +599,9 @@ namespace Riskified.SDK.Sample
                 merchantOrderId: orderNum.ToString(),
                 email: "tester@exampler.com",
                 customer: customer,
-                paymentDetails: payments,
+                paymentDetails: new[] { payments },
                 billingAddress: billing,
-                shippingAddress: shipping,
+                shippingAddress: new[] { shipping },
                 lineItems: items,
                 shippingLines: lines,
                 gateway: "authorize_net",

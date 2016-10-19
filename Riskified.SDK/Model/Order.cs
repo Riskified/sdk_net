@@ -14,9 +14,9 @@ namespace Riskified.SDK.Model
         /// <param name="merchantOrderId">The unique id of the order at the merchant systems</param>
         /// <param name="email">The email used for contact in the order</param>
         /// <param name="customer">The customer information</param>
-        /// <param name="paymentDetails">The payment details</param>
+        /// <param name="paymentDetails">Array of payment details</param>
         /// <param name="billingAddress">Billing address</param>
-        /// <param name="shippingAddress">Shipping address</param>
+        /// <param name="shippingAddress">Array of shipping addresses</param>
         /// <param name="lineItems">An array of all products in the order</param>
         /// <param name="shippingLines">An array of all shipping details for the order</param>
         /// <param name="gateway">The payment gateway that was used</param>
@@ -40,7 +40,7 @@ namespace Riskified.SDK.Model
                      string email,
                      Customer customer,
                      AddressInformation billingAddress,
-                     AddressInformation shippingAddress,
+                     AddressInformation[] shippingAddress,
                      LineItem[] lineItems,
                      ShippingLine[] shippingLines,
                      string gateway,
@@ -50,7 +50,7 @@ namespace Riskified.SDK.Model
                      DateTime? createdAt,
                      DateTime updatedAt,
                      Passenger[] passengers = null,
-                     IPaymentDetails paymentDetails = null,
+                     IPaymentDetails[] paymentDetails = null,
                      DiscountCode[] discountCodes = null,
                      double? totalDiscounts = null,
                      string cartToken = null,
@@ -131,7 +131,10 @@ namespace Riskified.SDK.Model
             }
             if (PaymentDetails != null)
             {
-                PaymentDetails.Validate(validationType);
+                foreach (var payment in PaymentDetails)
+                {
+                    payment.Validate(validationType);
+                }
             }
             else
             {
@@ -151,7 +154,10 @@ namespace Riskified.SDK.Model
                 }
                 else
                 {
-                    ShippingAddress.Validate(validationType);
+                    foreach (var shipping in ShippingAddress)
+                    {
+                        shipping.Validate(validationType);
+                    }
                 }
             }
             else
@@ -159,7 +165,10 @@ namespace Riskified.SDK.Model
                 InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
                 BillingAddress.Validate(validationType);
                 InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
-                ShippingAddress.Validate(validationType);
+                foreach (var shipping in ShippingAddress)
+                {
+                    shipping.Validate(validationType);
+                }
             }
 
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
