@@ -1,11 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model
 {
@@ -20,7 +16,7 @@ namespace Riskified.SDK.Model
         /// <summary>
         /// Validates the objects fields content
         /// </summary>
-        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <param name="validationType">Validation level of the model</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public override void Validate(Validations validationType = Validations.Weak)
         {
