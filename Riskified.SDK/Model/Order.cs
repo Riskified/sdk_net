@@ -70,7 +70,8 @@ namespace Riskified.SDK.Model
                      string referringSite = null,
                      string note = null,
                      string name = null,
-                     string orderType = null)
+                     string orderType = null,
+                     SubmissionReason? submissionReason = null)
             : base(merchantOrderId)
         {
             LineItems = lineItems;
@@ -108,6 +109,7 @@ namespace Riskified.SDK.Model
             ReferringSite = referringSite;
             Note = note;
             OrderType = orderType;
+            SubmissionReason = submissionReason;
 
             // This field is added for gift card group purchase
             GroupFounderOrderID = groupFounderOrderID;
@@ -196,6 +198,9 @@ namespace Riskified.SDK.Model
         /// </summary>
         [JsonProperty(PropertyName = "checkout_id")]
         public string CheckoutId { get; set; }
+
+        [JsonProperty(PropertyName = "submission_reason")]
+        public SubmissionReason? SubmissionReason { get; set; }
 
     }
 
