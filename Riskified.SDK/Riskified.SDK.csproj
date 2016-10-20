@@ -76,6 +76,7 @@
     <Compile Include="Model\OrderElements\Seller.cs" />
     <Compile Include="Model\OrderElements\SocialDetails.cs" />
     <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />
+    <Compile Include="Model\OrderElements\SubmissionReason.cs" />
     <Compile Include="Model\OrderElements\TransportMethodType.cs" />
     <Compile Include="Model\OrderFulfillment.cs" />
     <Compile Include="Model\OrderNotification.cs" />
