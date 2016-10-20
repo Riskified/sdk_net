@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Utils;
 
@@ -25,6 +27,7 @@ namespace Riskified.SDK.Model
         /// <param name="totalPrice">The sum of all the prices of all the items in the order, taxes and discounts included</param>
         /// <param name="createdAt">The date and time when the order was created</param>
         /// <param name="updatedAt">The date and time when the order was last modified</param>
+        /// <param name="passengers">Passengers included in the order - used for Travel industry merchants</param>
         /// <param name="discountCodes">An array of objects, each one containing information about an item in the order (optional)</param>
         /// <param name="totalDiscounts">The total amount of the discounts on the Order (optional)</param>
         /// <param name="cartToken">Unique identifier for a particular cart or session that is attached to a particular order. The same ID should be passed in the Beacon JS (optional)</param>
@@ -34,8 +37,9 @@ namespace Riskified.SDK.Model
         /// <param name="fulfillmentStatus">The fulfillment status of the order</param>
         /// <param name="source">The source of the order</param>
         /// <param name="noChargeDetails">No charge sums - including all payments made for this order in giftcards, cash, checks or other non chargebackable payment methods</param>
-        /// <param name="ClientDetails">Technical information regarding the customer's browsing session</param>
+        /// <param name="clientDetails">Technical information regarding the customer's browsing session</param>
         /// <param name="chargeFreePaymentDetails">Payment sums made using non-chargebackable methods and should be omitted from the Chargeback gurantee sum and Riskified fee</param>
+        /// <param name="submissionReason">The reason for submitting this order for review</param>
         public Order(string merchantOrderId,
                      string email,
                      Customer customer,
@@ -208,7 +212,7 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "checkout_id")]
         public string CheckoutId { get; set; }
 
-        [JsonProperty(PropertyName = "submission_reason")]
+        [JsonProperty(PropertyName = "submission_reason"), JsonConverter(typeof(StringEnumConverter))]
         public SubmissionReason? SubmissionReason { get; set; }
 
     }
