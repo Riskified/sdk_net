@@ -30,7 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -49,9 +52,11 @@
     <Compile Include="Model\ChargebackElements\ChargebackDetails.cs" />
     <Compile Include="Model\ChargebackElements\DisputeDetails.cs" />
     <Compile Include="Model\OrderChargeback.cs" />
+    <Compile Include="Model\OrderElements\AccommodationLineItem.cs" />
     <Compile Include="Model\OrderElements\ChargeFreePaymentDetails.cs" />
     <Compile Include="Model\OrderElements\ClientDetails.cs" />
     <Compile Include="Model\OrderElements\DeliveredToType.cs" />
+    <Compile Include="Model\OrderElements\EventTicketLineItem.cs" />
     <Compile Include="Model\OrderElements\ExternalStatusType.cs" />
     <Compile Include="Model\IJsonSerializable.cs" />
     <Compile Include="Model\Internal\OrderCheckoutWrapper.cs" />
@@ -65,15 +70,19 @@
     <Compile Include="Model\OrderDecision.cs" />
     <Compile Include="Model\OrderElements\DecisionDetails.cs" />
     <Compile Include="Model\OrderElements\FulfillmentDetails.cs" />
+    <Compile Include="Model\OrderElements\DigitalLineItem.cs" />
     <Compile Include="Model\OrderElements\IPaymentDetails.cs" />
     <Compile Include="Model\OrderElements\NoChargeDetails.cs" />
     <Compile Include="Model\OrderElements\Passenger.cs" />
     <Compile Include="Model\OrderElements\PaypalPaymentDetails.cs" />
+    <Compile Include="Model\OrderElements\ProductType.cs" />
     <Compile Include="Model\OrderElements\Recipient.cs" />
     <Compile Include="Model\OrderElements\Seller.cs" />
     <Compile Include="Model\OrderElements\SocialDetails.cs" />
     <Compile Include="Model\OrderElements\FulfillmentStatusCode.cs" />
+    <Compile Include="Model\OrderElements\SubmissionReason.cs" />
     <Compile Include="Model\OrderElements\TransportMethodType.cs" />
+    <Compile Include="Model\OrderElements\TravelTicketLineItem.cs" />
     <Compile Include="Model\OrderFulfillment.cs" />
     <Compile Include="Model\OrderNotification.cs" />
     <Compile Include="Model\OrderElements\BasicAddress.cs" />
