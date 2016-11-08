@@ -324,7 +324,7 @@ namespace Riskified.SDK.Sample
                                             fulfillmentId: "123",
                                             createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local),
                                             status: FulfillmentStatusCode.Success,
-                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1, true) },
+                                            lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                             trackingCompany: "TestCompany")
                                     };
 
@@ -428,65 +428,60 @@ namespace Riskified.SDK.Sample
 
 			var items = new[]
 			{
-				new LineItem(
-                    title: "Bag", 
-                    price: 55.44, 
+                new LineItem(title: "Bag", price: 55.44, quantityPurchased: 1, productId: "48484", sku: "1272727",
+                    deliveredTo: DeliveredToType.StorePickup,
+                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3,
+                    seller: new Seller(customer: customer, correspondence: 1, priceNegotiated: true, startingPrice: 120)),
+                // Events Tickets Product (aplicaible for event industry merchants)
+                new EventTicketLineItem(
+                    title: "Concert",
+                    price: 123,
                     quantityPurchased: 1,
-                    productId: "48484", 
-                    sku: "1272727",
-                    requiresShipping: true,
-                    deliveredTo: DeliveredToType.StorePickup, 
-                    delivered_at:new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local),
-                    category: "Accessories",
-                    subCategory: "Bags",
-                    brand: "Hershel"),
-				new LineItem(
-                    title: "Monster", 
-                    price: 22.3, 
-                    quantityPurchased: 3, 
-                    requiresShipping: true,
-                    seller: new Seller(customer: customer,correspondence: 1, priceNegotiated: true, startingPrice: 120)),
-				// Events Tickets Industry 
-				new LineItem(
-                    title: "Concert", 
-                    price: 123, 
-                    quantityPurchased: 1, 
-                    requiresShipping: false,
-					category: "Singers", 
-					subCategory: "Rock", 
-					eventName: "Bon Jovy", 
-					eventSectionName: "Section", 
-					eventCountry: "USA", 
-					eventCountryCode: "US",
-					latitude: 0,
-					longitude: 0),
-				// Digital Goods (giftcard) industry
-				new LineItem(
-                    title: "Concert", 
-					price: 123, 
-					quantityPurchased: 1, 
-					requiresShipping: false,
-					sender_name: "John", 
-					display_name: "JohnJohn", 
-					photo_uploaded: true, 
-					photo_url: "http://my_pic_url", 
-					greeting_photo_url: "http://my_greeting_pic_url", 
-					message: "Happy Birthday",
-					greeting_message: "Happy Birthday from John",
-					card_type: "regular",
-					card_sub_type: "birthday",
-					sender_email: "new_email@bb.com",
-					recipient: recipient),
-				// Travel Tickets (Travel) industry
-				new LineItem(
-                    title: "Concert", 
-					price: 123, 
-					quantityPurchased: 1, 
-					requiresShipping: false,
-					departureCity: "Atlanta",
-					departureCountryCode: "US",
+                    category: "Singers",
+                    subCategory: "Rock",
+                    eventName: "Bon Jovy",
+                    eventSectionName: "Section",
+                    eventCountry: "USA",
+                    eventCountryCode: "US",
+                    latitude: 0,
+                    longitude: 0),
+                // Giftcard Product (appliciable for giftcard industry merchants)
+                new DigitalLineItem(
+                    title: "Concert",
+                    price: 123,
+                    quantityPurchased: 1,
+                    senderName: "John",
+                    displayName: "JohnJohn",
+                    photoUploaded: true,
+                    photoUrl: "http://my_pic_url",
+                    greetingPhotoUrl: "http://my_greeting_pic_url",
+                    message: "Happy Birthday",
+                    greetingMessage: "Happy Birthday from John",
+                    cardType: "regular",
+                    cardSubType: "birthday",
+                    senderEmail: "new_email@bb.com",
+                    recipient: recipient), 
+                // Travel ticket product (appliciable for travel industry merchants)
+                new TravelTicketLineItem(title: "Concert",
+                    price: 123,
+                    quantityPurchased: 1,
+                    departureCity: "ashdod",
+                    departureCountryCode: "IL",
 					transportMethod: TransportMethodType.Plane),
-			};
+                // Accomodation reservation product (appliciable for travel industry merchants)
+                new AccommodationLineItem(
+                    title: "Hotel Arcadia - Standard Room", 
+                    price: 476, 
+                    quantityPurchased: 1, 
+                    productId: "123", 
+                    city: "London",
+                    countryCode: "GB",
+                    rating: "5",
+                    numberOfGuests: 2,
+                    cancellationPolicy: "Not appliciable",
+                    accommodationType: "Hotel")
+            };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
