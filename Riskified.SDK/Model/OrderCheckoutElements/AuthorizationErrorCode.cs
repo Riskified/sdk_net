@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 
 namespace Riskified.SDK.Model.OrderCheckoutElements
@@ -34,6 +28,8 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [EnumMember(Value = "call_issuer")]
         CallIssuer,
         [EnumMember(Value = "pick_up_card")]
-        PickUpCard
+        PickUpCard,
+        [EnumMember(Value = "risk_system_declined")]
+        RiskSystemDeclined
     }
 }

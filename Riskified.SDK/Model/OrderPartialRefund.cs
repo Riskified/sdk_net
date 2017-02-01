@@ -15,6 +15,11 @@ namespace Riskified.SDK.Model
             Refunds = partialRefunds;
         }
 
+        public OrderPartialRefund(string merchantOrderId, PartialRefundDetails[] partialRefunds) : base(merchantOrderId)
+        {
+            Refunds = partialRefunds;
+        }
+
         public override void Validate(Validations validationType = Validations.Weak)
         {
             base.Validate(validationType);

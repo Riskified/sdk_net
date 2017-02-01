@@ -17,6 +17,12 @@ namespace Riskified.SDK.Model
             this.Fulfillments = fulfillments;
         }
 
+        public OrderFulfillment(string merchantOrderId, FulfillmentDetails[] fulfillments)
+            : base(merchantOrderId)
+        {
+            this.Fulfillments = fulfillments;
+        }
+
         public override void Validate(Validations validationType = Validations.Weak)
         {
             base.Validate(validationType);

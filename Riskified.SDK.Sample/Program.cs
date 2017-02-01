@@ -4,7 +4,7 @@ namespace Riskified.SDK.Sample
 {
     static class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             #region logger setup [Optional]
 
@@ -15,15 +15,19 @@ namespace Riskified.SDK.Sample
 
             #endregion
 
+            # region run all api endpoints
+            if (args.Length > 0 && args[0] == "run_all")
+                return OrderTransmissionExample.runAll();
+            #endregion
 
             # region notification example
-            
+
             NotificationServerExample.ReceiveNotificationsExample();
 
             #endregion
 
             #region orders example
-            
+
             OrderTransmissionExample.SendOrdersToRiskifiedExample();
 
             #endregion
@@ -31,6 +35,8 @@ namespace Riskified.SDK.Sample
 
             // make sure to shut down the notifications server when done
             NotificationServerExample.StopNotificationServer();
+
+            return 0;
             
         }
     }

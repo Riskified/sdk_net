@@ -174,6 +174,11 @@ namespace Riskified.SDK.Orders
             return SendOrder(orderDecision, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/decision"));
         }
 
+        public OrderNotification Chargeback(OrderChargeback orderChargeback)
+        {
+            return SendOrder(orderChargeback, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/chargeback"));
+        }
+
         /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"

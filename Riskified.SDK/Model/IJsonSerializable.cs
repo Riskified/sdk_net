@@ -1,4 +1,5 @@
-﻿using Riskified.SDK.Utils;
+﻿using Riskified.SDK.Exceptions;
+using Riskified.SDK.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Riskified.SDK.Model
         /// <summary>
         /// Validates the objects fields content
         /// </summary>
-        /// <param name="isWeak">Should use weak validations or strong</param>
+        /// <param name="validationType">The level of validation to apply on the object properties</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         void Validate(Validations validationType = Validations.Weak);
     }
