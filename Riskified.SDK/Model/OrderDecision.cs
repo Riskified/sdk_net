@@ -13,6 +13,12 @@ namespace Riskified.SDK.Model
             this.Decision = decision;
         }
 
+        public OrderDecision(string merchantOrderId, DecisionDetails decision)
+            : base(merchantOrderId)
+        {
+            this.Decision = decision;
+        }
+
         /// <summary>
         /// Validates the objects fields content
         /// </summary>
