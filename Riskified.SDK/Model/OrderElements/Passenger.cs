@@ -51,7 +51,7 @@ namespace Riskified.SDK.Model.OrderElements
         public string Lastname { get; set; }
 
         [JsonProperty(PropertyName = "date_of_birth")]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         [JsonProperty(PropertyName = "nationality_code")]
         public string nationalityCode { get; set; }
