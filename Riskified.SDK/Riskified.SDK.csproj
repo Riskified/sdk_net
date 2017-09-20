@@ -55,6 +55,7 @@
     <Compile Include="Model\OrderElements\AccommodationLineItem.cs" />
     <Compile Include="Model\OrderElements\ChargeFreePaymentDetails.cs" />
     <Compile Include="Model\OrderElements\ClientDetails.cs" />
+    <Compile Include="Model\OrderElements\Custom.cs" />
     <Compile Include="Model\OrderElements\DeliveredToType.cs" />
     <Compile Include="Model\OrderElements\EventTicketLineItem.cs" />
     <Compile Include="Model\OrderElements\ExternalStatusType.cs" />
