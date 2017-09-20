@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Riskified.SDK.Model.OrderElements;
 
 namespace Riskified.SDK.Model.Internal
 {
@@ -12,6 +13,9 @@ namespace Riskified.SDK.Model.Internal
 
         [JsonProperty(PropertyName = "description", Required = Required.Default)]
         public string Description { get; set; }
+        
+        [JsonProperty(PropertyName = "custom", Required = Required.Default)]
+        public Custom Custom { get; set; }
 
     }
 }
