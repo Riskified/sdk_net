@@ -177,5 +177,9 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "order_type")]
         public string OrderType { get; set; }
+        
+        [JsonProperty(PropertyName = "custom")]
+        public Custom Custom { get; set; } 
+
     }
 }

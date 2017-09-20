@@ -40,6 +40,7 @@ namespace Riskified.SDK.Model
         /// <param name="clientDetails">Technical information regarding the customer's browsing session</param>
         /// <param name="chargeFreePaymentDetails">Payment sums made using non-chargebackable methods and should be omitted from the Chargeback gurantee sum and Riskified fee</param>
         /// <param name="submissionReason">The reason for submitting this order for review</param>
+        /// <param name="custom">Custom data object</param>
         public Order(string merchantOrderId,
                      string email,
                      Customer customer,
@@ -75,7 +76,8 @@ namespace Riskified.SDK.Model
                      string note = null,
                      string name = null,
                      string orderType = null,
-                     SubmissionReason? submissionReason = null)
+                     SubmissionReason? submissionReason = null,
+                     Custom custom = null)
             : base(merchantOrderId)
         {
             LineItems = lineItems;
@@ -108,6 +110,7 @@ namespace Riskified.SDK.Model
             VendorName = vendorName;
             Decision = decisionDetails;
             ClientDetails = clientDetails;
+            Custom = custom;
             ChargeFreePaymentDetails = chargeFreePaymentDetails;
             Name = name;
             ReferringSite = referringSite;

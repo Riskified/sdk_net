@@ -448,6 +448,10 @@ namespace Riskified.SDK.Sample
             var clientDetails = new ClientDetails(
                 accept_language: "en-CA",
                 user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
+            
+            var custom = new Custom(
+                app_dom_id: "D2C"
+                );
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(),
@@ -473,6 +477,7 @@ namespace Riskified.SDK.Sample
                 additionalEmails: new[] { "a@a.com", "b@b.com" },
                 chargeFreePaymentDetails: chargeFreePayments,
                 clientDetails: clientDetails,
+                custom: custom,
                 groupFounderOrderID: "2222",
                 submissionReason: SubmissionReason.ManualDecision
                 );
