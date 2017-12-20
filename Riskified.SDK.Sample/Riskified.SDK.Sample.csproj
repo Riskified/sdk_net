@@ -3,6 +3,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors />
+    <Company>Riskified</Company>
+    <Copyright>Copyright © Riskified 2012-2015</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

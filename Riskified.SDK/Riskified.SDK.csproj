@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>Riskified</Company>
+    <Authors />
+    <Description>"Implementation of the Riskified API in C# (official SDK nuget release)."</Description>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
+    <Copyright>Copyright © Riskified 2012-2015</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
