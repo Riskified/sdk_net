@@ -67,7 +67,6 @@
     <Compile Include="Model\OrderCheckout.cs" />
     <Compile Include="Model\OrderCheckoutDenied.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthorizationError.cs" />
-    <Compile Include="Model\OrderCheckoutElements\AuthorizationErrorCode.cs" />
     <Compile Include="Model\OrderDecision.cs" />
     <Compile Include="Model\OrderElements\DecisionDetails.cs" />
     <Compile Include="Model\OrderElements\FulfillmentDetails.cs" />

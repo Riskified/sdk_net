@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
     public class AuthorizationError : IJsonSerializable
     {
 
-        public AuthorizationError(DateTime createdAt, AuthorizationErrorCode errorCode, string message = null)
+        public AuthorizationError(DateTime createdAt, string errorCode, string message = null)
         {
             this.CreatedAt = createdAt;
             this.ErrorCode = errorCode;
@@ -32,8 +32,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         public DateTime? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "error_code")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public AuthorizationErrorCode ErrorCode { get; set; }
+        public string ErrorCode { get; set; }
 
         [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
