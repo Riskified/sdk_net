@@ -23,8 +23,13 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 
         public void Validate(Validations validationType = Validations.Weak)
         {
-            InputValidators.ValidateObjectNotNull(ErrorCode, "Error Code");
+            InputValidators.ValidateValuedString(ErrorCode, "Error Code");
 
+            // optional fields validations
+            if (Message != null)
+            {
+                InputValidators.ValidateValuedString(Message, "Message");
+            }
         }
         
 
