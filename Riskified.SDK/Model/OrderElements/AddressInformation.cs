@@ -41,14 +41,7 @@ namespace Riskified.SDK.Model.OrderElements
         {
             base.Validate(validationType);
 
-            if (validationType == Validations.Weak)
-            {
-                if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))
-                {
-                    throw new Exceptions.OrderFieldBadFormatException("Both First name and last name are missing or empty - at least one should be specified");
-                }
-            }
-            else
+            if (validationType == Validations.All)
             {
                 InputValidators.ValidateValuedString(FirstName, "First Name");
                 InputValidators.ValidateValuedString(LastName, "Last Name");
