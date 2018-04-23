@@ -317,7 +317,8 @@ namespace Riskified.SDK.Sample
                 verifiedEmail: true,
                 createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 notes: "No additional info",
-                address: customerAddress);
+                address: customerAddress,
+                accountType: "Premium");
 
             // putting sample billing details
             var billing = new AddressInformation(
