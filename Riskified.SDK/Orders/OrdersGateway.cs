@@ -13,7 +13,7 @@ namespace Riskified.SDK.Orders
     /// </summary>
     public class OrdersGateway
     {
-        private readonly string _riskifiedBaseWebhookUrl;
+        private readonly RiskifiedEnvironment _env;
         private readonly string _authToken;
         private readonly string _shopDomain;
         private readonly Validations _validationMode;
@@ -50,7 +50,7 @@ namespace Riskified.SDK.Orders
         /// <param name="validationMode">Validation mode to use</param>
         public OrdersGateway(RiskifiedEnvironment env, string authToken, string shopDomain, Validations validationMode)
         {
-            _riskifiedBaseWebhookUrl = EnvironmentsUrls.GetEnvUrl(env);
+            _env = env;
             _authToken = authToken;
             _shopDomain = shopDomain;
             _validationMode = validationMode;
@@ -66,7 +66,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Checkout(OrderCheckout orderCheckout)
         {
-            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/checkout_create"));
+            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_env, "/api/checkout_create"));
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification CheckoutDenied(OrderCheckoutDenied orderCheckout)
         {
-            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/checkout_denied"));
+            return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_env, "/api/checkout_denied"));
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Create(Order order)
         {            
-            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/create"));
+            return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/create"));
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Update(Order order)
         {
-            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/update"));
+            return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/update"));
         }
 
         /// <summary>
@@ -118,7 +118,20 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Submit(Order order)
         {
-            return SendOrder(order, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/submit"));
+            return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/submit"));
+        }
+
+        /// <summary>
+        /// Validates the Order object fields
+        /// Send an Order to Riskified, will be synchronously reviewed based on current plan
+        /// </summary>
+        /// <param name="order">The Order to make a synchronous decision (sync plan only)</param>
+        /// <returns>The order notification result containing status, decision, description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Decide(Order order)
+        {
+            return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/decide", FlowStrategy.Sync));
         }
 
         /// <summary>
@@ -131,7 +144,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Cancel(OrderCancellation orderCancellation)
         {
-            return SendOrder(orderCancellation, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/cancel"));
+            return SendOrder(orderCancellation, HttpUtils.BuildUrl(_env, "/api/cancel"));
         }
 
         /// <summary>
@@ -144,7 +157,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification PartlyRefund(OrderPartialRefund orderPartialRefund)
         {
-            return SendOrder(orderPartialRefund, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/refund"));
+            return SendOrder(orderPartialRefund, HttpUtils.BuildUrl(_env, "/api/refund"));
         }
 
         /// <summary>
@@ -157,7 +170,7 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Fulfill(OrderFulfillment orderFulfillment)
         {
-            return SendOrder(orderFulfillment, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/fulfill"));
+            return SendOrder(orderFulfillment, HttpUtils.BuildUrl(_env, "/api/fulfill"));
         }
 
         /// <summary>
@@ -171,12 +184,12 @@ namespace Riskified.SDK.Orders
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
         public OrderNotification Decision(OrderDecision orderDecision)
         {
-            return SendOrder(orderDecision, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/decision"));
+            return SendOrder(orderDecision, HttpUtils.BuildUrl(_env, "/api/decision"));
         }
 
         public OrderNotification Chargeback(OrderChargeback orderChargeback)
         {
-            return SendOrder(orderChargeback, HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/chargeback"));
+            return SendOrder(orderChargeback, HttpUtils.BuildUrl(_env, "/api/chargeback"));
         }
 
         /// <summary>
@@ -200,7 +213,7 @@ namespace Riskified.SDK.Orders
             }
 
             Dictionary<string, string> errors = new Dictionary<string, string>();
-            var riskifiedEndpointUrl = HttpUtils.BuildUrl(_riskifiedBaseWebhookUrl, "/api/historical");
+            var riskifiedEndpointUrl = HttpUtils.BuildUrl(_env, "/api/historical");
 
             List<Order> batch = new List<Order>(batchSize);
             var enumerator = orders.GetEnumerator();

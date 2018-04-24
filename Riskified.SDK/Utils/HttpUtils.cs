@@ -293,8 +293,9 @@ namespace Riskified.SDK.Utils
             output.Close();
         }
 
-        public static Uri BuildUrl(string hostUrl, string relativePath)
+        public static Uri BuildUrl(RiskifiedEnvironment env, string relativePath, FlowStrategy flow = FlowStrategy.Default)
         {
+            var hostUrl = EnvironmentsUrls.GetEnvUrl(env, flow);
             Uri fullUrl = new Uri(new Uri(hostUrl),relativePath);
             return fullUrl;
         }
