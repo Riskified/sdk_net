@@ -12,27 +12,57 @@ namespace Riskified.SDK.Utils
         Production
     }
 
+    public enum FlowStrategy
+    {
+        Default,
+        Sync
+    }
+
     internal static class EnvironmentsUrls 
     {
-        private static readonly Dictionary<RiskifiedEnvironment, string> EnvToUrl;
+        private static readonly Dictionary<RiskifiedEnvironment, Dictionary<FlowStrategy, string>> EnvToUrl;
+
+        private static readonly Dictionary<FlowStrategy, string> DebugUrl;
+        private static readonly Dictionary<FlowStrategy, string> SandboxUrl;
+        private static readonly Dictionary<FlowStrategy, string> StagingUrl;
+        private static readonly Dictionary<FlowStrategy, string> ProductionUrl;
 
         static EnvironmentsUrls()
         {
-            EnvToUrl = new Dictionary<RiskifiedEnvironment, string>(4);
-            
-            if(!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
-                EnvToUrl.Add(RiskifiedEnvironment.Debug, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
-            EnvToUrl.Add(RiskifiedEnvironment.Sandbox, "https://sandbox.riskified.com");
-            EnvToUrl.Add(RiskifiedEnvironment.Staging, "https://s.riskified.com");
-            EnvToUrl.Add(RiskifiedEnvironment.Production, "https://wh.riskified.com");
+            EnvToUrl = new Dictionary<RiskifiedEnvironment, Dictionary<FlowStrategy, string>>(4);
+
+            DebugUrl = new Dictionary<FlowStrategy, string>(2);
+            SandboxUrl = new Dictionary<FlowStrategy, string>(2);
+            StagingUrl = new Dictionary<FlowStrategy, string>(2);
+            ProductionUrl = new Dictionary<FlowStrategy, string>(2);
+
+            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
+                DebugUrl.Add(FlowStrategy.Default, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
+                EnvToUrl.Add(RiskifiedEnvironment.Debug, DebugUrl);
+
+            SandboxUrl.Add(FlowStrategy.Default, "https://sandbox.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Sandbox, SandboxUrl);
+
+            StagingUrl.Add(FlowStrategy.Default, "https://s.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Staging, StagingUrl);
+
+            ProductionUrl.Add(FlowStrategy.Default, "https://wh.riskified.com");
+            ProductionUrl.Add(FlowStrategy.Sync, "https://wh-sync.riskified.com");
+            EnvToUrl.Add(RiskifiedEnvironment.Production, ProductionUrl);
         }
 
-        public static string GetEnvUrl(RiskifiedEnvironment env)
+        public static Dictionary<FlowStrategy, string> GetEnv(RiskifiedEnvironment env)
         {
             if (EnvToUrl.ContainsKey(env))
                 return EnvToUrl[env];
             
             throw new RiskifiedException(string.Format("Riskified environment '{0}' doesn't exist", env));
+        }
+
+        public static string GetEnvUrl(RiskifiedEnvironment env, FlowStrategy flow)
+        {
+            var CurrentEnv = GetEnv(env);
+            return CurrentEnv.ContainsKey(flow) ? CurrentEnv[flow] : CurrentEnv[FlowStrategy.Default];
         }
     }
 }

@@ -53,6 +53,7 @@ namespace Riskified.SDK.Sample
                                 "'x' for decision\n" +
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
+                                "'v' for decide (sync only)\n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
@@ -103,6 +104,15 @@ namespace Riskified.SDK.Sample
                             // sending order for submitting and analysis 
                             // it will generate a callback to the notification webhook (if defined) with a decision regarding the order
                             res = gateway.Submit(order);
+                            break;
+                        case "v":
+                            Console.WriteLine("Order Generated with merchant order number: " + orderNum);
+                            order.Id = orderNum.ToString();
+                            orderNum++;
+                            // sending order for synchronous decision
+                            // it will generate a synchronous response with the decision regarding the order
+                            // (for sync flow only)
+                            res = gateway.Decide(order);
                             break;
                         case "u":
                             Console.Write("Updated order id: ");
