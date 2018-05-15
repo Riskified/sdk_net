@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Riskified.SDK.Exceptions;
 
@@ -24,8 +27,11 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateIp(string ip)
         {
-            if (!IsInputFullMatchingRegex(ip, @"^(?<First>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Second>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Third>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Fourth>2[0-4]\d|25[0-5]|[01]?\d\d?)$"))
+            AddressFamily[] validAddresses = { AddressFamily.InterNetwork, AddressFamily.InterNetworkV6 };
+            if (!IPAddress.TryParse(ip, out IPAddress address) || !validAddresses.Contains(address.AddressFamily))
+            {
                 throw new OrderFieldBadFormatException(string.Format("IP field invalid. Was \"{0}\"", ip));
+            }
         }
 
         public static void ValidateCountryOrProvinceCode(string locationCode)

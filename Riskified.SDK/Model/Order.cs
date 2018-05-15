@@ -162,6 +162,11 @@ namespace Riskified.SDK.Model
                 {
                     ShippingAddress.Validate(validationType);
                 }
+
+                if (CustomerBrowserIp != null)
+                {
+                    InputValidators.ValidateIp(CustomerBrowserIp);
+                }
             }
             else
             {
@@ -169,12 +174,12 @@ namespace Riskified.SDK.Model
                 BillingAddress.Validate(validationType);
                 InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
                 ShippingAddress.Validate(validationType);
+                InputValidators.ValidateIp(CustomerBrowserIp);
             }
 
             InputValidators.ValidateObjectNotNull(Customer, "Customer");
             Customer.Validate(validationType);
             InputValidators.ValidateEmail(Email);
-            InputValidators.ValidateIp(CustomerBrowserIp);
             InputValidators.ValidateCurrency(Currency);
             InputValidators.ValidateZeroOrPositiveValue(TotalPrice.Value, "Total Price");
             InputValidators.ValidateValuedString(Gateway, "Gateway");
