@@ -54,6 +54,8 @@ namespace Riskified.SDK.Sample
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
+                                "'l' for eligible for Deco payment \n" +
+                                "'o' for opt-in to Deco payment \n" +
                                 "'q' to quit";
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
@@ -188,6 +190,20 @@ namespace Riskified.SDK.Sample
                             string chargebackOrderId = Console.ReadLine();
                             OrderChargeback orderChargeback = GenerateOrderChargeback(chargebackOrderId);
                             res = gateway.Chargeback(orderChargeback);
+
+                            break;
+                        case "l":
+                            Console.Write("Check Deco eligibility on id: ");
+                            string eligibleOrderId = Console.ReadLine();
+                            OrderIdOnly eligibleOrderIdOnly = GenerateOrderIdOnly(eligibleOrderId);
+                            res = gateway.Eligible(eligibleOrderIdOnly);
+
+                            break;
+                        case "o":
+                            Console.Write("Opt-in to Deco payment on id: ");
+                            string optInOrderId = Console.ReadLine();
+                            OrderIdOnly optInOrderIdOnly = GenerateOrderIdOnly(optInOrderId);
+                            res = gateway.OptIn(optInOrderIdOnly);
 
                             break;
                     }
@@ -577,6 +593,11 @@ namespace Riskified.SDK.Sample
                 discountCodes: discountCodes);
 
             return order;
+        }
+
+        private static OrderIdOnly GenerateOrderIdOnly(string orderNum)
+        {
+            return new OrderIdOnly(orderNum);
         }
 
         private static OrderChargeback GenerateOrderChargeback(string orderNum)
