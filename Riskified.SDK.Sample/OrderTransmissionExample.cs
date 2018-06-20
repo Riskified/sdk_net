@@ -59,6 +59,8 @@ namespace Riskified.SDK.Sample
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
                                 "'account' for account actions menu\n" +
+                                "'l' for eligible for Deco payment \n" +
+                                "'o' for opt-in to Deco payment \n" +
                                 "'q' to quit";
             const string accountActionsMenu = "Account Action Commands:\n" +
                                 "'li' for login(account)\n" +
@@ -260,6 +262,20 @@ namespace Riskified.SDK.Sample
 
                             accRes = gateway.CustomerReachOut(customerReachOut);
                             break;
+                        case "l":
+                            Console.Write("Check Deco eligibility on id: ");
+                            string eligibleOrderId = Console.ReadLine();
+                            OrderIdOnly eligibleOrderIdOnly = GenerateOrderIdOnly(eligibleOrderId);
+                            res = gateway.Eligible(eligibleOrderIdOnly);
+
+                            break;
+                        case "o":
+                            Console.Write("Opt-in to Deco payment on id: ");
+                            string optInOrderId = Console.ReadLine();
+                            OrderIdOnly optInOrderIdOnly = GenerateOrderIdOnly(optInOrderId);
+                            res = gateway.OptIn(optInOrderIdOnly);
+
+                            break;
                     }
 
 
@@ -390,11 +406,15 @@ namespace Riskified.SDK.Sample
                             creditCardBin: "124580",
                             creditCardCompany: "Visa",
                             creditCardNumber: "XXXX-XXXX-XXXX-4242",
-                            creditCardToken: "2233445566778899");
-            payments.AuthorizationError = authorizationError;
+                            creditCardToken: "2233445566778899")
+            {
+                AuthorizationError = authorizationError
+            };
 
-            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString());
-            orderCheckoutDenied.PaymentDetails = payments;
+            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString())
+            {
+                PaymentDetails = payments
+            };
 
             return orderCheckoutDenied;
 
@@ -402,7 +422,7 @@ namespace Riskified.SDK.Sample
 
         private static OrderFulfillment GenerateFulfillment(int fulfillOrderId)
         {
-            FulfillmentDetails[] fulfillmentList = new FulfillmentDetails[] {
+            FulfillmentDetails[] fulfillmentList = {
                                         new FulfillmentDetails(
                                             fulfillmentId: "123",
                                             createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local),
@@ -698,6 +718,12 @@ namespace Riskified.SDK.Sample
             return order;
         }
 
+        private static OrderIdOnly GenerateOrderIdOnly(string orderNum)
+        {
+            return new OrderIdOnly(orderNum);
+        }
+
+
         private static ClientDetails GenerateClientDetails()
         {
             return new ClientDetails("en-CA", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
@@ -816,7 +842,7 @@ namespace Riskified.SDK.Sample
         }
 
         #region Run all endpoints
-        public static int runAll()
+        public static int RunAll()
         {
             try
             {

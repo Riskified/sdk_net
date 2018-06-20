@@ -176,6 +176,32 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
+        /// Check Eligibility for Deco payment
+        /// After checkout, inquiry if order is eligible for Deco
+        /// </summary>
+        /// <param name="orderIdOnly">Order (with ID of checkout) to check the orders eligibility for Deco payment</param>
+        /// <returns>The order notification result containing status, decision, description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Eligible(OrderIdOnly orderIdOnly)
+        {
+            return SendOrder(orderIdOnly, HttpUtils.BuildUrl(_env, "/api/eligible", FlowStrategy.Deco));
+        }
+
+        /// <summary>
+        /// Opt-in to Deco payment
+        /// After checkout and eligibility check, opt-in to Deco payment
+        /// </summary>
+        /// <param name="orderIdOnly">Order (with ID of checkout) to opt eligible order in to Deco payment</param>
+        /// <returns>The order notification result containing status, decision, description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification OptIn(OrderIdOnly orderIdOnly)
+        {
+            return SendOrder(orderIdOnly, HttpUtils.BuildUrl(_env, "/api/opt_in", FlowStrategy.Deco));
+        }
+
+        /// <summary>
         /// Validates the cancellation data
         /// Sends a cancellation message for a specific order (id should already exist) to Riskified server for status and charge fees update
         /// </summary>

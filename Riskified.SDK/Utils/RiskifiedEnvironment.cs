@@ -16,7 +16,8 @@ namespace Riskified.SDK.Utils
     {
         Default,
         Sync,
-        Account
+        Account,
+        Deco
     }
 
     internal static class EnvironmentsUrls 
@@ -32,10 +33,10 @@ namespace Riskified.SDK.Utils
         {
             EnvToUrl = new Dictionary<RiskifiedEnvironment, Dictionary<FlowStrategy, string>>(4);
 
-            DebugUrl = new Dictionary<FlowStrategy, string>(2);
-            SandboxUrl = new Dictionary<FlowStrategy, string>(2);
+            DebugUrl = new Dictionary<FlowStrategy, string>(1);
+            SandboxUrl = new Dictionary<FlowStrategy, string>(3);
             StagingUrl = new Dictionary<FlowStrategy, string>(2);
-            ProductionUrl = new Dictionary<FlowStrategy, string>(3);
+            ProductionUrl = new Dictionary<FlowStrategy, string>(4);
 
             if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
                 DebugUrl.Add(FlowStrategy.Default, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
@@ -43,6 +44,7 @@ namespace Riskified.SDK.Utils
 
             SandboxUrl.Add(FlowStrategy.Default, "https://sandbox.riskified.com");
             SandboxUrl.Add(FlowStrategy.Account, "https://api-sandbox.riskified.com");
+            SandboxUrl.Add(FlowStrategy.Deco, "https://sandboxw.decopayments.com");
             EnvToUrl.Add(RiskifiedEnvironment.Sandbox, SandboxUrl);
 
             StagingUrl.Add(FlowStrategy.Default, "https://s.riskified.com");
@@ -51,6 +53,7 @@ namespace Riskified.SDK.Utils
             ProductionUrl.Add(FlowStrategy.Default, "https://wh.riskified.com");
             ProductionUrl.Add(FlowStrategy.Sync, "https://wh-sync.riskified.com");
             ProductionUrl.Add(FlowStrategy.Account, "https://api.riskified.com");
+            ProductionUrl.Add(FlowStrategy.Deco, "https://w.decopayments.com");
             EnvToUrl.Add(RiskifiedEnvironment.Production, ProductionUrl);
         }
 
