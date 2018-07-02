@@ -3,6 +3,7 @@ using System.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
+using Riskified.SDK.Model.AccountActionElements;
 using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
 
@@ -132,6 +133,46 @@ namespace Riskified.SDK.Orders
         public OrderNotification Decide(Order order)
         {
             return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/decide", FlowStrategy.Sync));
+        }
+
+        public OrderNotification Login(Login login)
+        {
+            return SendAccountAction(login, HttpUtils.BuildUrl(_env, "/customers/login", FlowStrategy.Account));
+        }
+
+        public OrderNotification CustomerCreate(CustomerCreate customerCreate)
+        {
+            return SendAccountAction(customerCreate, HttpUtils.BuildUrl(_env, "/customers/customer_create", FlowStrategy.Account));
+        }
+
+        public OrderNotification CustomerUpdate(CustomerUpdate customerUpdate)
+        {
+            return SendAccountAction(customerUpdate, HttpUtils.BuildUrl(_env, "/customers/customer_update", FlowStrategy.Account));
+        }
+
+        public OrderNotification Logout(Logout logout)
+        {
+            return SendAccountAction(logout, HttpUtils.BuildUrl(_env, "/customers/logout", FlowStrategy.Account));
+        }
+
+        public OrderNotification ResetPasswordRequest(ResetPasswordRequest resetPasswordRequest)
+        {
+            return SendAccountAction(resetPasswordRequest, HttpUtils.BuildUrl(_env, "/customers/reset_password", FlowStrategy.Account));
+        }
+
+        public OrderNotification WishlistChanges(WishlistChanges wishlistChanges)
+        {
+            return SendAccountAction(wishlistChanges, HttpUtils.BuildUrl(_env, "/customers/wishlist", FlowStrategy.Account));
+        }
+
+        public OrderNotification Redeem(Redeem redeem)
+        {
+            return SendAccountAction(redeem, HttpUtils.BuildUrl(_env, "/customers/redeem", FlowStrategy.Account));
+        }
+
+        public OrderNotification CustomerReachOut(CustomerReachOut customerReachOut)
+        {
+            return SendAccountAction(customerReachOut, HttpUtils.BuildUrl(_env, "/customers/contact", FlowStrategy.Account));
         }
 
         /// <summary>
@@ -280,6 +321,13 @@ namespace Riskified.SDK.Orders
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return new OrderNotification(transactionResult);
             
+        }
+
+        private OrderNotification SendAccountAction(AbstractAccountAction accountAction, Uri riskifiedEndpointUrl)
+        {
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain);
+            return new OrderNotification(transactionResult);
+
         }
 
         /// <summary>

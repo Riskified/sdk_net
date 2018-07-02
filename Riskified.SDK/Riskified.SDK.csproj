@@ -112,9 +112,32 @@
     <Compile Include="Orders\OrdersGateway.cs" />
     <Compile Include="Utils\RiskifiedEnvironment.cs" />
     <Compile Include="Utils\Validations.cs" />
+    <Compile Include="Model\AccountActionElements\AbstractAccountAction.cs" />
+    <Compile Include="Model\OrderElements\SessionDetails.cs" />
+    <Compile Include="Model\OrderElements\LoginStatus.cs" />
+    <Compile Include="Model\AccountActionElements\Login.cs" />
+    <Compile Include="Model\OrderElements\LoginStatusType.cs" />
+    <Compile Include="Model\OrderElements\FailureReason.cs" />
+    <Compile Include="Model\OrderElements\SessionSource.cs" />
+    <Compile Include="Model\OrderElements\ContactMethod.cs" />
+    <Compile Include="Model\OrderElements\ContactMethodType.cs" />
+    <Compile Include="Model\OrderElements\SocialType.cs" />
+    <Compile Include="Model\AccountActionElements\BaseCustomerAction.cs" />
+    <Compile Include="Model\AccountActionElements\CustomerUpdate.cs" />
+    <Compile Include="Model\AccountActionElements\Logout.cs" />
+    <Compile Include="Model\AccountActionElements\ResetPasswordRequest.cs" />
+    <Compile Include="Model\AccountActionElements\WishlistChanges.cs" />
+    <Compile Include="Model\OrderElements\WishlistAction.cs" />
+    <Compile Include="Model\AccountActionElements\Redeem.cs" />
+    <Compile Include="Model\OrderElements\RedeemType.cs" />
+    <Compile Include="Model\AccountActionElements\CustomerReachOut.cs" />
+    <Compile Include="Model\AccountActionElements\CustomerCreate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\AccountActionElements\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
