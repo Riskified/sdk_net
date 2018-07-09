@@ -88,7 +88,6 @@ namespace Riskified.SDK.Utils
                 throw new OrderFieldBadFormatException(string.Format("{0} date value must have a valid logical date (not default value).", fieldName));
         }
 
-        
         public static void ValidateCurrency(string currency)
         {
             if (string.IsNullOrEmpty(currency) || currency.Length != 3 || !IsInputFullMatchingRegex(currency,"^[A-Za-z]{3}$"))
@@ -99,7 +98,6 @@ namespace Riskified.SDK.Utils
         {
             if(!IsInputFullMatchingRegex(creditCardNumber,@"^[Xx\-0-9]*[0-9]{4}$"))
                 throw new OrderFieldBadFormatException("Credit card number should end with 4 digits, with preceeding sequence of digits and symbols of 'X','x',-'");
-
         }
     }
 }
