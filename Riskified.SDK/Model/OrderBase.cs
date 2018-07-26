@@ -140,7 +140,7 @@ namespace Riskified.SDK.Model
         public string FulfillmentStatus { get; set; }
 
         [JsonProperty(PropertyName = "source")]
-        public string Source { get; set; }
+        public Source Source { get; set; }
 
         [JsonProperty(PropertyName = "nocharge_amount")]
         public NoChargeDetails NoChargeAmount { get; set; }

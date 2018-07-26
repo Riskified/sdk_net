@@ -479,8 +479,8 @@ namespace Riskified.SDK.Sample
                 totalPrice: 100.60,
                 createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                source: Source.Web,
                 discountCodes: discountCodes,
-                source: "web",
                 noChargeDetails: noChargeAmount,
                 decisionDetails: decisionDetails,
                 vendorId: "2",
@@ -574,6 +574,7 @@ namespace Riskified.SDK.Sample
                 totalPrice: 100.60,
                 createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                source: Source.MobileWeb,
                 discountCodes: discountCodes);
 
             return order;

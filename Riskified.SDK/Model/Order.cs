@@ -54,6 +54,7 @@ namespace Riskified.SDK.Model
                      double totalPrice,
                      DateTime? createdAt,
                      DateTime updatedAt,
+                     Source source,
                      Passenger[] passengers = null,
                      IPaymentDetails paymentDetails = null,
                      DiscountCode[] discountCodes = null,
@@ -63,7 +64,6 @@ namespace Riskified.SDK.Model
                      DateTime? closedAt = null,
                      string financialStatus = null,
                      string fulfillmentStatus = null,
-                     string source = null,
                      NoChargeDetails noChargeDetails = null,
                      string[] additionalEmails = null,
                      string vendorId = null,
@@ -92,6 +92,7 @@ namespace Riskified.SDK.Model
             Gateway = gateway;
             CreatedAt = createdAt;
             UpdatedAt = updatedAt;
+            Source = source;
 
             // optional fields
             Passengers = passengers;
@@ -103,7 +104,6 @@ namespace Riskified.SDK.Model
             ClosedAt = closedAt;
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;
-            Source = source;
             NoChargeAmount = noChargeDetails;
             AdditionalEmails = additionalEmails;
             VendorId = vendorId;
