@@ -32,19 +32,19 @@ namespace Riskified.SDK.Model
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "chargebackDetails")]
+        [JsonProperty(PropertyName = "chargeback_details")]
         public ChargebackDetails Chargeback { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "fulfillmentDetails")]
+        [JsonProperty(PropertyName = "fulfillment_details")]
         public FulfillmentDetails Fulfillment { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "disputeDetails")]
+        [JsonProperty(PropertyName = "dispute_details")]
         public DisputeDetails Dispute { get; set; }
 
     }
