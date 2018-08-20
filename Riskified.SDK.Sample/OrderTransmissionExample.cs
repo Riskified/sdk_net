@@ -58,7 +58,10 @@ namespace Riskified.SDK.Sample
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
-                                "'li' for login (account)\n" +
+                                "'account' for account actions menu\n" +
+                                "'q' to quit";
+            const string accountActionsMenu = "Account Action Commands:\n" +
+                                "'li' for login(account)\n" +
                                 "'cc' for customer create (account)\n" +
                                 "'cu' for customer update (account)\n" +
                                 "'lo' for logout (account)\n" +
@@ -66,7 +69,9 @@ namespace Riskified.SDK.Sample
                                 "'wl' for wishlist (account)\n" +
                                 "'re' for redeem (account)\n" +
                                 "'co' for contact (account)\n" +
+                                "'menu' for main menu\n" +
                                 "'q' to quit";
+
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
 
@@ -80,8 +85,13 @@ namespace Riskified.SDK.Sample
                 try
                 {
                     OrderNotification res = null;
+                    AccountActionNotification accRes = null;
                     switch (commandStr)
                     {
+                        case "menu":
+                            break;
+                        case "account":
+                            break;
                         case "p":
                             Console.WriteLine("Order checkout Generated with merchant order number: " + orderNum);
                             var orderCheckout = GenerateOrderCheckout(orderNum.ToString());
@@ -206,49 +216,49 @@ namespace Riskified.SDK.Sample
                             Console.Write("Login account action");
                             Login login = GenerateLogin(idString);
 
-                            res = gateway.Login(login);
+                            accRes = gateway.Login(login);
                             break;
                         case "cc":
                             Console.Write("Customer Create account action");
                             CustomerCreate customerCreate = GenerateCustomerCreate(idString);
 
-                            res = gateway.CustomerCreate(customerCreate);
+                            accRes = gateway.CustomerCreate(customerCreate);
                             break;
                         case "cu":
                             Console.Write("Customer Update account action");
                             CustomerUpdate customerUpdate = GenerateCustomerUpdate(idString);
 
-                            res = gateway.CustomerUpdate(customerUpdate);
+                            accRes = gateway.CustomerUpdate(customerUpdate);
                             break;
                         case "lo":
                             Console.Write("Logout account action");
                             Logout logout = GenerateLogout(idString);
 
-                            res = gateway.Logout(logout);
+                            accRes = gateway.Logout(logout);
                             break;
                         case "pw":
                             Console.Write("ResetPasswordRequest account action");
                             ResetPasswordRequest resetPasswordRequest = GenerateResetPasswordRequest(idString);
 
-                            res = gateway.ResetPasswordRequest(resetPasswordRequest);
+                            accRes = gateway.ResetPasswordRequest(resetPasswordRequest);
                             break;
                         case "wl":
                             Console.Write("WishlistChanges account action");
                             WishlistChanges wishlistChanges = GenerateWishlistChanges(idString);
 
-                            res = gateway.WishlistChanges(wishlistChanges);
+                            accRes = gateway.WishlistChanges(wishlistChanges);
                             break;
                         case "re":
                             Console.Write("Redeem account action");
                             Redeem redeem = GenerateRedeem(idString);
 
-                            res = gateway.Redeem(redeem);
+                            accRes = gateway.Redeem(redeem);
                             break;
                         case "co":
                             Console.Write("Customer Reach-Out account action");
                             CustomerReachOut customerReachOut = GenerateCustomerReachOut(idString);
 
-                            res = gateway.CustomerReachOut(customerReachOut);
+                            accRes = gateway.CustomerReachOut(customerReachOut);
                             break;
                     }
 
@@ -260,6 +270,11 @@ namespace Riskified.SDK.Sample
                                               "\nOrder ID received:" + res.Id +
                                               "\nDescription: " + res.Description +
                                               "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
+                    }
+                    if (accRes != null)
+                    {
+                        Console.WriteLine("\n\nAccount Action sent successfully:" +
+                                          "\nDecision: " + accRes.Decision);
                     }
                 }
                 catch (OrderFieldBadFormatException e)
@@ -274,7 +289,12 @@ namespace Riskified.SDK.Sample
 
                 // ask for next action to perform
                 Console.WriteLine();
-                Console.WriteLine(menu);
+                if (commandStr.Equals("account")) {
+                    Console.WriteLine(accountActionsMenu);
+                }
+                else {
+                    Console.WriteLine(menu);
+                }
                 commandStr = Console.ReadLine();
             }
 
@@ -779,7 +799,8 @@ namespace Riskified.SDK.Sample
             {
                 Brand = "Apple",
                 ProductId = "632910392",
-                ProductType = ProductType.Physical
+                ProductType = ProductType.Physical,
+                Category = "Electronics"
             };
 
             return new WishlistChanges(idString, WishlistAction.Add, GenerateClientDetails(), GenerateSessionDetails(), lineItem);

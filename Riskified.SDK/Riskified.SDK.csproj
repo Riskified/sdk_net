@@ -132,6 +132,7 @@
     <Compile Include="Model\OrderElements\RedeemType.cs" />
     <Compile Include="Model\AccountActionElements\CustomerReachOut.cs" />
     <Compile Include="Model\AccountActionElements\CustomerCreate.cs" />
+    <Compile Include="Model\AccountActionElements\AccountActionNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
