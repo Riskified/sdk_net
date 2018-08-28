@@ -6,6 +6,7 @@ using Riskified.SDK.Model;
 using Riskified.SDK.Model.ChargebackElements;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Model.RefundElements;
+using Riskified.SDK.Model.AccountActionElements;
 using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
@@ -27,6 +28,9 @@ namespace Riskified.SDK.Sample
             // we need to send the order with a new order number in order to create it on riskified
             var rand = new Random();
             int orderNum = rand.Next(1000, 200000);
+
+            // Make orderNum a string to use as customer id
+            string idString = $"customerId_{orderNum.ToString()}";
 
             #endregion
 
@@ -54,7 +58,20 @@ namespace Riskified.SDK.Sample
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
+                                "'account' for account actions menu\n" +
                                 "'q' to quit";
+            const string accountActionsMenu = "Account Action Commands:\n" +
+                                "'li' for login(account)\n" +
+                                "'cc' for customer create (account)\n" +
+                                "'cu' for customer update (account)\n" +
+                                "'lo' for logout (account)\n" +
+                                "'pw' for password reset (account)\n" +
+                                "'wl' for wishlist (account)\n" +
+                                "'re' for redeem (account)\n" +
+                                "'co' for contact (account)\n" +
+                                "'menu' for main menu\n" +
+                                "'q' to quit";
+
             Console.WriteLine(menu);
             string commandStr = Console.ReadLine();
 
@@ -68,8 +85,13 @@ namespace Riskified.SDK.Sample
                 try
                 {
                     OrderNotification res = null;
+                    AccountActionNotification accRes = null;
                     switch (commandStr)
                     {
+                        case "menu":
+                            break;
+                        case "account":
+                            break;
                         case "p":
                             Console.WriteLine("Order checkout Generated with merchant order number: " + orderNum);
                             var orderCheckout = GenerateOrderCheckout(orderNum.ToString());
@@ -190,6 +212,54 @@ namespace Riskified.SDK.Sample
                             res = gateway.Chargeback(orderChargeback);
 
                             break;
+                        case "li":
+                            Console.Write("Login account action");
+                            Login login = GenerateLogin(idString);
+
+                            accRes = gateway.Login(login);
+                            break;
+                        case "cc":
+                            Console.Write("Customer Create account action");
+                            CustomerCreate customerCreate = GenerateCustomerCreate(idString);
+
+                            accRes = gateway.CustomerCreate(customerCreate);
+                            break;
+                        case "cu":
+                            Console.Write("Customer Update account action");
+                            CustomerUpdate customerUpdate = GenerateCustomerUpdate(idString);
+
+                            accRes = gateway.CustomerUpdate(customerUpdate);
+                            break;
+                        case "lo":
+                            Console.Write("Logout account action");
+                            Logout logout = GenerateLogout(idString);
+
+                            accRes = gateway.Logout(logout);
+                            break;
+                        case "pw":
+                            Console.Write("ResetPasswordRequest account action");
+                            ResetPasswordRequest resetPasswordRequest = GenerateResetPasswordRequest(idString);
+
+                            accRes = gateway.ResetPasswordRequest(resetPasswordRequest);
+                            break;
+                        case "wl":
+                            Console.Write("WishlistChanges account action");
+                            WishlistChanges wishlistChanges = GenerateWishlistChanges(idString);
+
+                            accRes = gateway.WishlistChanges(wishlistChanges);
+                            break;
+                        case "re":
+                            Console.Write("Redeem account action");
+                            Redeem redeem = GenerateRedeem(idString);
+
+                            accRes = gateway.Redeem(redeem);
+                            break;
+                        case "co":
+                            Console.Write("Customer Reach-Out account action");
+                            CustomerReachOut customerReachOut = GenerateCustomerReachOut(idString);
+
+                            accRes = gateway.CustomerReachOut(customerReachOut);
+                            break;
                     }
 
 
@@ -200,6 +270,11 @@ namespace Riskified.SDK.Sample
                                               "\nOrder ID received:" + res.Id +
                                               "\nDescription: " + res.Description +
                                               "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
+                    }
+                    if (accRes != null)
+                    {
+                        Console.WriteLine("\n\nAccount Action sent successfully:" +
+                                          "\nDecision: " + accRes.Decision);
                     }
                 }
                 catch (OrderFieldBadFormatException e)
@@ -214,11 +289,55 @@ namespace Riskified.SDK.Sample
 
                 // ask for next action to perform
                 Console.WriteLine();
-                Console.WriteLine(menu);
+                if (commandStr.Equals("account")) {
+                    Console.WriteLine(accountActionsMenu);
+                }
+                else {
+                    Console.WriteLine(menu);
+                }
                 commandStr = Console.ReadLine();
             }
 
             #endregion
+
+        }
+
+        private static OrderChargeback GenerateOrderChargeback(string orderNum)
+        {
+            var chargebackDetails = new ChargebackDetails(id: "id1234",
+                                charegbackAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                chargebackCurrency: "USD",
+                                chargebackAmount: (float)50.5,
+                                reasonCode: "4863",
+                                reasonDesc: "Transaction not recognised",
+                                type: "cb",
+                                mid: "t_123",
+                                creditCardCompany: "visa",
+                                respondBy: new DateTime(2016, 9, 1),
+                                arn: "a123456789012bc3de45678901f23a45",
+                                feeAmount: 20,
+                                feeCurrency: "USD",
+                                cardIssuer: "Wells Fargo Bank",
+                                gateway: "braintree",
+                                cardholder: "John Smith",
+                                message: "Cardholder disputes quality/ mischaracterization of service/merchandise. Supply detailed refute of these claims, along with any applicable/supporting doc");
+
+            var fulfillmentDetails = new FulfillmentDetails(
+                                             fulfillmentId: "123",
+                                             createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                             status: FulfillmentStatusCode.Success,
+                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
+                                             trackingCompany: "TestCompany");
+
+            var disputeDetails = new DisputeDetails(
+                                        disputeType: "first_dispute",
+                                        caseId: "a1234",
+                                        status: "pending",
+                                        issuerPocPhoneNumber: "+1-877-111-1111",
+                                        disputedAt: new DateTime(2016, 9, 15),
+                                        expectedResolutionDate: new DateTime(2016, 11, 1));
+
+            return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
 
         }
 
@@ -579,43 +698,121 @@ namespace Riskified.SDK.Sample
             return order;
         }
 
-        private static OrderChargeback GenerateOrderChargeback(string orderNum)
+        private static ClientDetails GenerateClientDetails()
         {
-            var chargebackDetails = new ChargebackDetails(id: "id1234",
-                                charegbackAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
-                                chargebackCurrency: "USD",
-                                chargebackAmount: (float)50.5,
-                                reasonCode: "4863",
-                                reasonDesc: "Transaction not recognised",
-                                type: "cb",
-                                mid: "t_123",
-                                creditCardCompany: "visa",
-                                respondBy: new DateTime(2016, 9, 1),
-                                arn: "a123456789012bc3de45678901f23a45",
-                                feeAmount: 20,
-                                feeCurrency: "USD",
-                                cardIssuer: "Wells Fargo Bank",
-                                gateway: "braintree",
-                                cardholder: "John Smith",
-                                message: "Cardholder disputes quality/ mischaracterization of service/merchandise. Supply detailed refute of these claims, along with any applicable/supporting doc");
+            return new ClientDetails("en-CA", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)");
+        }
 
-            var fulfillmentDetails = new FulfillmentDetails(
-                                             fulfillmentId: "123",
-                                             createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
-                                             status: FulfillmentStatusCode.Success,
-                                             lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
-                                             trackingCompany: "TestCompany");
+        private static SessionDetails GenerateSessionDetails()
+        {
+            return new SessionDetails(DateTime.Now, "68778783ad298f1c80c3bafcddeea02f", "111.111.111.111", SessionSource.DesktopWeb);
+        }
 
-            var disputeDetails = new DisputeDetails(
-                                        disputeType: "first_dispute",
-                                        caseId: "a1234",
-                                        status: "pending",
-                                        issuerPocPhoneNumber: "+1-877-111-1111",
-                                        disputedAt:  new DateTime(2016, 9, 15),
-                                        expectedResolutionDate: new DateTime(2016, 11, 1));
+        private static Customer GenerateCustomer(string idString)
+        {
+            return new Customer("Bob", "Norman", idString)
+            {
+                CreatedAt = DateTime.Now,
+                VerifiedEmail = true,
+                Email = "bob.norman@hostmail.com"
+            };
+        }
 
-            return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
+        private static CreditCardPaymentDetails GenerateCreditCardPaymentDetails()
+        {
+            return new CreditCardPaymentDetails("Y", "M", "123456", "Visa", "4242")
+            {
+                AuthorizationError = new AuthorizationError(DateTime.Now, "card_declined", "insufficient funds")
+            };
+        }
 
+        private static AddressInformation GenerateAddressInformation()
+        {
+            return new AddressInformation("Bob", "Norman", "Chestnut Street 92", "Louisville", "United States", "US", "555-625-1199")
+            {
+                FullName = "Bob Norman",
+                Province = "Kentucky",
+                ProvinceCode = "KY",
+                ZipCode = "40202"
+            };
+        }
+
+        private static Login GenerateLogin(string idString)
+        {
+            var loginStatus = new LoginStatus(LoginStatusType.Success);
+            var clientDetails = GenerateClientDetails();
+            var sessionDetails = GenerateSessionDetails();
+
+            return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails);
+        }
+
+        private static CustomerCreate GenerateCustomerCreate(string idString)
+        {
+            var addresses = new[] {
+                GenerateAddressInformation()
+            };
+
+            return new CustomerCreate(idString, GenerateClientDetails(), GenerateSessionDetails(), GenerateCustomer(idString))
+            {
+                PaymentDetails = new[] {
+                    GenerateCreditCardPaymentDetails()
+                },
+                BillingAddress = addresses,
+                ShippingAddress = addresses
+            };
+        }
+
+        private static CustomerUpdate GenerateCustomerUpdate(string idString)
+        {
+            var addresses = new[] {
+                GenerateAddressInformation()
+            };
+
+            return new CustomerUpdate(idString, false, GenerateClientDetails(), GenerateSessionDetails(), GenerateCustomer(idString))
+            {
+                PaymentDetails = new[] {
+                    GenerateCreditCardPaymentDetails()
+                },
+                BillingAddress = addresses,
+                ShippingAddress = addresses
+            };
+        }
+
+        private static Logout GenerateLogout(string idString)
+        {
+            return new Logout(idString, GenerateClientDetails(), GenerateSessionDetails());
+        }
+
+        private static ResetPasswordRequest GenerateResetPasswordRequest(string idString)
+        {
+            return new ResetPasswordRequest(idString, GenerateClientDetails(), GenerateSessionDetails());
+        }
+
+        private static Redeem GenerateRedeem(string idString)
+        {
+            return new Redeem(idString, RedeemType.GiftCard, GenerateClientDetails(), GenerateSessionDetails());
+        }
+
+        private static WishlistChanges GenerateWishlistChanges(string idString)
+        {
+            var lineItem = new LineItem("IPod Nano - 8gb - green", 199, 1)
+            {
+                Brand = "Apple",
+                ProductId = "632910392",
+                ProductType = ProductType.Physical,
+                Category = "Electronics"
+            };
+
+            return new WishlistChanges(idString, WishlistAction.Add, GenerateClientDetails(), GenerateSessionDetails(), lineItem);
+        }
+
+        private static CustomerReachOut GenerateCustomerReachOut(string idString)
+        {
+            ContactMethod contactMethod = new ContactMethod(ContactMethodType.Email)
+            {
+                Email = "moo@gmail.com"
+            };
+            return new CustomerReachOut(idString, contactMethod);
         }
 
         #region Run all endpoints

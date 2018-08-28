@@ -3,6 +3,7 @@ using System.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
+using Riskified.SDK.Model.AccountActionElements;
 using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
 
@@ -132,6 +133,46 @@ namespace Riskified.SDK.Orders
         public OrderNotification Decide(Order order)
         {
             return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/decide", FlowStrategy.Sync));
+        }
+
+        public AccountActionNotification Login(Login login)
+        {
+            return SendAccountAction(login, HttpUtils.BuildUrl(_env, "/customers/login", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerCreate(CustomerCreate customerCreate)
+        {
+            return SendAccountAction(customerCreate, HttpUtils.BuildUrl(_env, "/customers/customer_create", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerUpdate(CustomerUpdate customerUpdate)
+        {
+            return SendAccountAction(customerUpdate, HttpUtils.BuildUrl(_env, "/customers/customer_update", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification Logout(Logout logout)
+        {
+            return SendAccountAction(logout, HttpUtils.BuildUrl(_env, "/customers/logout", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification ResetPasswordRequest(ResetPasswordRequest resetPasswordRequest)
+        {
+            return SendAccountAction(resetPasswordRequest, HttpUtils.BuildUrl(_env, "/customers/reset_password", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification WishlistChanges(WishlistChanges wishlistChanges)
+        {
+            return SendAccountAction(wishlistChanges, HttpUtils.BuildUrl(_env, "/customers/wishlist", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification Redeem(Redeem redeem)
+        {
+            return SendAccountAction(redeem, HttpUtils.BuildUrl(_env, "/customers/redeem", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerReachOut(CustomerReachOut customerReachOut)
+        {
+            return SendAccountAction(customerReachOut, HttpUtils.BuildUrl(_env, "/customers/contact", FlowStrategy.Account));
         }
 
         /// <summary>
@@ -280,6 +321,12 @@ namespace Riskified.SDK.Orders
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return new OrderNotification(transactionResult);
             
+        }
+
+        private AccountActionNotification SendAccountAction(AbstractAccountAction accountAction, Uri riskifiedEndpointUrl)
+        {
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<AccountActionNotification, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain);
+            return transactionResult;
         }
 
         /// <summary>
