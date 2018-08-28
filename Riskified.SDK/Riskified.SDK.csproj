@@ -112,6 +112,7 @@
     <Compile Include="Orders\OrdersGateway.cs" />
     <Compile Include="Utils\RiskifiedEnvironment.cs" />
     <Compile Include="Utils\Validations.cs" />
+    <Compile Include="Model\OrderElements\BankWirePaymentDetails.cs" />
     <Compile Include="Model\AccountActionElements\AbstractAccountAction.cs" />
     <Compile Include="Model\OrderElements\SessionDetails.cs" />
     <Compile Include="Model\OrderElements\LoginStatus.cs" />
