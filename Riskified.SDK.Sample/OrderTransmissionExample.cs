@@ -58,8 +58,11 @@ namespace Riskified.SDK.Sample
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
+                                "'l' for eligible for Deco payment \n" +
+                                "'o' for opt-in to Deco payment \n" +
                                 "'account' for account actions menu\n" +
                                 "'q' to quit";
+
             const string accountActionsMenu = "Account Action Commands:\n" +
                                 "'li' for login(account)\n" +
                                 "'cc' for customer create (account)\n" +
@@ -89,7 +92,6 @@ namespace Riskified.SDK.Sample
                     switch (commandStr)
                     {
                         case "menu":
-                            break;
                         case "account":
                             break;
                         case "p":
@@ -212,6 +214,22 @@ namespace Riskified.SDK.Sample
                             res = gateway.Chargeback(orderChargeback);
 
                             break;
+
+                        case "l":
+                            Console.Write("Check Deco eligibility on id: ");
+                            string eligibleOrderId = Console.ReadLine();
+                            OrderIdOnly eligibleOrderIdOnly = GenerateOrderIdOnly(eligibleOrderId);
+                            res = gateway.Eligible(eligibleOrderIdOnly);
+
+                            break;
+                        case "o":
+                            Console.Write("Opt-in to Deco payment on id: ");
+                            string optInOrderId = Console.ReadLine();
+                            OrderIdOnly optInOrderIdOnly = GenerateOrderIdOnly(optInOrderId);
+                            res = gateway.OptIn(optInOrderIdOnly);
+
+                            break;
+
                         case "li":
                             Console.Write("Login account action");
                             Login login = GenerateLogin(idString);
@@ -352,6 +370,42 @@ namespace Riskified.SDK.Sample
         {
             var orderCheckout = new OrderCheckout(orderNum);
 
+            var address = new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling");
+
+            var payments = new CreditCardPaymentDetails(
+                avsResultCode: "Y",
+                cvvResultCode: "n",
+                creditCardBin: "124580",
+                creditCardCompany: "Visa",
+                creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                creditCardToken: "2233445566778899"
+            );
+
+            var lines = new[]
+            {
+                new ShippingLine(price: 22.22,title: "Mail")
+            };
+
+            // This is an example for client details section
+            var clientDetails = new ClientDetails(
+                accept_language: "en-CA",
+                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            );
+
+
             // Fill optional fields
             var customer = new Customer(
                 firstName: "John",
@@ -369,9 +423,24 @@ namespace Riskified.SDK.Sample
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
-            orderCheckout.Customer = customer;
-            orderCheckout.LineItems = items;
+            var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
+            orderCheckout.Email = "tester@exampler.com";
+            orderCheckout.Currency = "USD";
+            orderCheckout.UpdatedAt = DateTime.Now; // make sure to initialize DateTime with the correct timezone
+            orderCheckout.Gateway = "authorize_net";
+            orderCheckout.CustomerBrowserIp = "165.12.1.1";
+            orderCheckout.TotalPrice = 100.60;
+            orderCheckout.CartToken = "a68778783ad298f1c80c3bafcddeea02f";
+            orderCheckout.ReferringSite = "nba.com";
+            orderCheckout.LineItems = items;
+            orderCheckout.DiscountCodes = discountCodes;
+            orderCheckout.ShippingLines = lines;
+            orderCheckout.PaymentDetails = payments;
+            orderCheckout.Customer = customer;
+            orderCheckout.BillingAddress = address;
+            orderCheckout.ShippingAddress = address;
+            orderCheckout.ClientDetails = clientDetails;
 
             return orderCheckout;
 
@@ -390,11 +459,15 @@ namespace Riskified.SDK.Sample
                             creditCardBin: "124580",
                             creditCardCompany: "Visa",
                             creditCardNumber: "XXXX-XXXX-XXXX-4242",
-                            creditCardToken: "2233445566778899");
-            payments.AuthorizationError = authorizationError;
+                            creditCardToken: "2233445566778899")
+            {
+                AuthorizationError = authorizationError
+            };
 
-            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString());
-            orderCheckoutDenied.PaymentDetails = payments;
+            var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString())
+            {
+                PaymentDetails = payments
+            };
 
             return orderCheckoutDenied;
 
@@ -402,7 +475,7 @@ namespace Riskified.SDK.Sample
 
         private static OrderFulfillment GenerateFulfillment(int fulfillOrderId)
         {
-            FulfillmentDetails[] fulfillmentList = new FulfillmentDetails[] {
+            FulfillmentDetails[] fulfillmentList = {
                                         new FulfillmentDetails(
                                             fulfillmentId: "123",
                                             createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local),
@@ -696,6 +769,11 @@ namespace Riskified.SDK.Sample
                 discountCodes: discountCodes);
 
             return order;
+        }
+
+        private static OrderIdOnly GenerateOrderIdOnly(string orderNum)
+        {
+            return new OrderIdOnly(orderNum);
         }
 
         private static ClientDetails GenerateClientDetails()

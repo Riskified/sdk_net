@@ -134,6 +134,7 @@
     <Compile Include="Model\AccountActionElements\CustomerReachOut.cs" />
     <Compile Include="Model\AccountActionElements\CustomerCreate.cs" />
     <Compile Include="Model\AccountActionElements\AccountActionNotification.cs" />
+    <Compile Include="Model\OrderIdOnly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
