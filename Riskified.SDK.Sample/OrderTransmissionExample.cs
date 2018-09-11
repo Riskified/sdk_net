@@ -58,10 +58,11 @@ namespace Riskified.SDK.Sample
                                 "'h' for historical sending\n" +
                                 "'y' for chargeback submission\n" +
                                 "'v' for decide (sync only)\n" +
-                                "'account' for account actions menu\n" +
                                 "'l' for eligible for Deco payment \n" +
                                 "'o' for opt-in to Deco payment \n" +
+                                "'account' for account actions menu\n" +
                                 "'q' to quit";
+
             const string accountActionsMenu = "Account Action Commands:\n" +
                                 "'li' for login(account)\n" +
                                 "'cc' for customer create (account)\n" +
@@ -214,6 +215,22 @@ namespace Riskified.SDK.Sample
                             res = gateway.Chargeback(orderChargeback);
 
                             break;
+
+                        case "l":
+                            Console.Write("Check Deco eligibility on id: ");
+                            string eligibleOrderId = Console.ReadLine();
+                            OrderIdOnly eligibleOrderIdOnly = GenerateOrderIdOnly(eligibleOrderId);
+                            res = gateway.Eligible(eligibleOrderIdOnly);
+
+                            break;
+                        case "o":
+                            Console.Write("Opt-in to Deco payment on id: ");
+                            string optInOrderId = Console.ReadLine();
+                            OrderIdOnly optInOrderIdOnly = GenerateOrderIdOnly(optInOrderId);
+                            res = gateway.OptIn(optInOrderIdOnly);
+
+                            break;
+
                         case "li":
                             Console.Write("Login account action");
                             Login login = GenerateLogin(idString);
@@ -261,20 +278,6 @@ namespace Riskified.SDK.Sample
                             CustomerReachOut customerReachOut = GenerateCustomerReachOut(idString);
 
                             accRes = gateway.CustomerReachOut(customerReachOut);
-                            break;
-                        case "l":
-                            Console.Write("Check Deco eligibility on id: ");
-                            string eligibleOrderId = Console.ReadLine();
-                            OrderIdOnly eligibleOrderIdOnly = GenerateOrderIdOnly(eligibleOrderId);
-                            res = gateway.Eligible(eligibleOrderIdOnly);
-
-                            break;
-                        case "o":
-                            Console.Write("Opt-in to Deco payment on id: ");
-                            string optInOrderId = Console.ReadLine();
-                            OrderIdOnly optInOrderIdOnly = GenerateOrderIdOnly(optInOrderId);
-                            res = gateway.OptIn(optInOrderIdOnly);
-
                             break;
                     }
 
@@ -773,7 +776,6 @@ namespace Riskified.SDK.Sample
         {
             return new OrderIdOnly(orderNum);
         }
-
 
         private static ClientDetails GenerateClientDetails()
         {
