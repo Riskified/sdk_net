@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using Riskified.SDK.Exceptions;
 
@@ -24,8 +27,11 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateIp(string ip)
         {
-            if (!IsInputFullMatchingRegex(ip, @"^(?<First>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Second>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Third>2[0-4]\d|25[0-5]|[01]?\d\d?)\.(?<Fourth>2[0-4]\d|25[0-5]|[01]?\d\d?)$"))
+            AddressFamily[] validAddresses = { AddressFamily.InterNetwork, AddressFamily.InterNetworkV6 };
+            if (!IPAddress.TryParse(ip, out IPAddress address) || !validAddresses.Contains(address.AddressFamily))
+            {
                 throw new OrderFieldBadFormatException(string.Format("IP field invalid. Was \"{0}\"", ip));
+            }
         }
 
         public static void ValidateCountryOrProvinceCode(string locationCode)
@@ -88,7 +94,6 @@ namespace Riskified.SDK.Utils
                 throw new OrderFieldBadFormatException(string.Format("{0} date value must have a valid logical date (not default value).", fieldName));
         }
 
-        
         public static void ValidateCurrency(string currency)
         {
             if (string.IsNullOrEmpty(currency) || currency.Length != 3 || !IsInputFullMatchingRegex(currency,"^[A-Za-z]{3}$"))
@@ -99,7 +104,6 @@ namespace Riskified.SDK.Utils
         {
             if(!IsInputFullMatchingRegex(creditCardNumber,@"^[Xx\-0-9]*[0-9]{4}$"))
                 throw new OrderFieldBadFormatException("Credit card number should end with 4 digits, with preceeding sequence of digits and symbols of 'X','x',-'");
-
         }
     }
 }

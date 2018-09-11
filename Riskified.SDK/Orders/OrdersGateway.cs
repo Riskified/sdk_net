@@ -3,6 +3,7 @@ using System.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
+using Riskified.SDK.Model.AccountActionElements;
 using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
 
@@ -132,6 +133,72 @@ namespace Riskified.SDK.Orders
         public OrderNotification Decide(Order order)
         {
             return SendOrder(order, HttpUtils.BuildUrl(_env, "/api/decide", FlowStrategy.Sync));
+        }
+
+        public AccountActionNotification Login(Login login)
+        {
+            return SendAccountAction(login, HttpUtils.BuildUrl(_env, "/customers/login", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerCreate(CustomerCreate customerCreate)
+        {
+            return SendAccountAction(customerCreate, HttpUtils.BuildUrl(_env, "/customers/customer_create", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerUpdate(CustomerUpdate customerUpdate)
+        {
+            return SendAccountAction(customerUpdate, HttpUtils.BuildUrl(_env, "/customers/customer_update", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification Logout(Logout logout)
+        {
+            return SendAccountAction(logout, HttpUtils.BuildUrl(_env, "/customers/logout", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification ResetPasswordRequest(ResetPasswordRequest resetPasswordRequest)
+        {
+            return SendAccountAction(resetPasswordRequest, HttpUtils.BuildUrl(_env, "/customers/reset_password", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification WishlistChanges(WishlistChanges wishlistChanges)
+        {
+            return SendAccountAction(wishlistChanges, HttpUtils.BuildUrl(_env, "/customers/wishlist", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification Redeem(Redeem redeem)
+        {
+            return SendAccountAction(redeem, HttpUtils.BuildUrl(_env, "/customers/redeem", FlowStrategy.Account));
+        }
+
+        public AccountActionNotification CustomerReachOut(CustomerReachOut customerReachOut)
+        {
+            return SendAccountAction(customerReachOut, HttpUtils.BuildUrl(_env, "/customers/contact", FlowStrategy.Account));
+        }
+
+        /// <summary>
+        /// Check Eligibility for Deco payment
+        /// After checkout, inquiry if order is eligible for Deco
+        /// </summary>
+        /// <param name="orderIdOnly">Order (with ID of checkout) to check the orders eligibility for Deco payment</param>
+        /// <returns>The order notification result containing status, decision, description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification Eligible(OrderIdOnly orderIdOnly)
+        {
+            return SendOrder(orderIdOnly, HttpUtils.BuildUrl(_env, "/api/eligible", FlowStrategy.Deco));
+        }
+
+        /// <summary>
+        /// Opt-in to Deco payment
+        /// After checkout and eligibility check, opt-in to Deco payment
+        /// </summary>
+        /// <param name="orderIdOnly">Order (with ID of checkout) to opt eligible order in to Deco payment</param>
+        /// <returns>The order notification result containing status, decision, description and sent order id in case of successful transfer</returns>
+        /// <exception cref="OrderFieldBadFormatException">On bad format of the order (missing fields data or invalid data)</exception>
+        /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
+        public OrderNotification OptIn(OrderIdOnly orderIdOnly)
+        {
+            return SendOrder(orderIdOnly, HttpUtils.BuildUrl(_env, "/api/opt_in", FlowStrategy.Deco));
         }
 
         /// <summary>
@@ -280,6 +347,12 @@ namespace Riskified.SDK.Orders
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return new OrderNotification(transactionResult);
             
+        }
+
+        private AccountActionNotification SendAccountAction(AbstractAccountAction accountAction, Uri riskifiedEndpointUrl)
+        {
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<AccountActionNotification, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain);
+            return transactionResult;
         }
 
         /// <summary>

@@ -21,7 +21,6 @@ namespace Riskified.SDK.Model
 
         public virtual void Validate(Validations validationType = Validations.Weak)
         {
-            
             InputValidators.ValidateValuedString(Id, "Merchant Order ID");
         }
 
