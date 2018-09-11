@@ -92,7 +92,6 @@ namespace Riskified.SDK.Sample
                     switch (commandStr)
                     {
                         case "menu":
-                            break;
                         case "account":
                             break;
                         case "p":
