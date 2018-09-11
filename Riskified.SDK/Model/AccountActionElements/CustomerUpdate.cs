@@ -6,7 +6,7 @@ namespace Riskified.SDK.Model.AccountActionElements
     public class CustomerUpdate : BaseCustomerAction
     {
         public CustomerUpdate(string customerId, bool? passwordChanged, ClientDetails clientDetails, SessionDetails sessionDetails, Customer customer) :
-            base(customerId, clientDetails, sessionDetails, customer)
+        base(customerId, clientDetails, sessionDetails, customer)
         {
             PasswordChanged = passwordChanged;
         }

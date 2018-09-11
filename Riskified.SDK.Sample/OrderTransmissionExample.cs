@@ -895,7 +895,7 @@ namespace Riskified.SDK.Sample
         }
 
         #region Run all endpoints
-        public static int RunAll()
+        public static int runAll()
         {
             try
             {

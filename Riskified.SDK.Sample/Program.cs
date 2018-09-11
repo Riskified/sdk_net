@@ -17,7 +17,7 @@ namespace Riskified.SDK.Sample
 
             # region run all api endpoints
             if (args.Length > 0 && args[0] == "run_all")
-                return OrderTransmissionExample.RunAll();
+                return OrderTransmissionExample.runAll();
             #endregion
 
             # region notification example
