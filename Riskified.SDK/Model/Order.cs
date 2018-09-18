@@ -55,7 +55,7 @@ namespace Riskified.SDK.Model
                      DateTime? createdAt,
                      DateTime updatedAt,
                      Passenger[] passengers = null,
-                     IPaymentDetails paymentDetails = null,
+                     IPaymentDetails[] paymentDetails = null,
                      DiscountCode[] discountCodes = null,
                      double? totalDiscounts = null,
                      string cartToken = null,
@@ -138,9 +138,9 @@ namespace Riskified.SDK.Model
             {
                 throw new Exceptions.OrderFieldBadFormatException("Both PaymentDetails and NoChargeDetails are missing - at least one should be specified");
             }
-            if (PaymentDetails != null)
+            if (PaymentDetails != null && PaymentDetails.Length > 0)
             {
-                PaymentDetails.Validate(validationType);
+                PaymentDetails.ToList().ForEach(item => item.Validate(validationType));
             }
             else
             {

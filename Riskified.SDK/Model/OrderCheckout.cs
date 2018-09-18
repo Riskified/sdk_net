@@ -37,9 +37,9 @@ namespace Riskified.SDK.Model
                 ShippingLines.ToList().ForEach(item => item.Validate(validationType));
             }
             
-            if (PaymentDetails != null)
+            if (PaymentDetails != null && PaymentDetails.Length > 0)
             {
-                PaymentDetails.Validate(validationType);
+                PaymentDetails.ToList().ForEach(item => item.Validate(validationType));
             }
 
             if(NoChargeAmount != null)
