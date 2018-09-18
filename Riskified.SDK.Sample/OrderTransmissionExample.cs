@@ -385,14 +385,16 @@ namespace Riskified.SDK.Sample
                 company: "IBM",
                 fullName: "Ben Philip Rolling");
 
-            var payments = new CreditCardPaymentDetails(
-                avsResultCode: "Y",
-                cvvResultCode: "n",
-                creditCardBin: "124580",
-                creditCardCompany: "Visa",
-                creditCardNumber: "XXXX-XXXX-XXXX-4242",
-                creditCardToken: "2233445566778899"
-            );
+            var payments = new[] {
+                new CreditCardPaymentDetails(
+                    avsResultCode: "Y",
+                    cvvResultCode: "n",
+                    creditCardBin: "124580",
+                    creditCardCompany: "Visa",
+                    creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                    creditCardToken: "2233445566778899"
+                )
+            };
 
             var lines = new[]
             {
@@ -453,15 +455,18 @@ namespace Riskified.SDK.Sample
                                     errorCode: "Card Declined",
                                     message: "Card was Declined.");
 
-            var payments = new CreditCardPaymentDetails(
-                            avsResultCode: "Y",
-                            cvvResultCode: "n",
-                            creditCardBin: "124580",
-                            creditCardCompany: "Visa",
-                            creditCardNumber: "XXXX-XXXX-XXXX-4242",
-                            creditCardToken: "2233445566778899")
-            {
-                AuthorizationError = authorizationError
+            var payments = new[] {
+                new CreditCardPaymentDetails(
+                    avsResultCode: "Y",
+                    cvvResultCode: "n",
+                    creditCardBin: "124580",
+                    creditCardCompany: "Visa",
+                    creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                    creditCardToken: "2233445566778899"
+                )
+                {
+                    AuthorizationError = authorizationError
+                }
             };
 
             var orderCheckoutDenied = new OrderCheckoutDenied(orderNum.ToString())
@@ -549,13 +554,16 @@ namespace Riskified.SDK.Sample
                 provinceCode: "NJ",
                 province: "New Jersey");
 
-            var payments = new CreditCardPaymentDetails(
-                avsResultCode: "Y",
-                cvvResultCode: "n",
-                creditCardBin: "124580",
-                creditCardCompany: "Visa",
-                creditCardNumber: "XXXX-XXXX-XXXX-4242",
-                creditCardToken: "2233445566778899");
+            var payments = new[] {
+                new CreditCardPaymentDetails(
+                    avsResultCode: "Y",
+                    cvvResultCode: "n",
+                    creditCardBin: "124580",
+                    creditCardCompany: "Visa",
+                    creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                    creditCardToken: "2233445566778899"
+                )
+            };
 
             var noChargeAmount = new NoChargeDetails(
                 refundId: "123444",
@@ -728,14 +736,17 @@ namespace Riskified.SDK.Sample
                 provinceCode: "NJ",
                 province: "New Jersey");
 
-            var payments = new PaypalPaymentDetails(
-                paymentStatus: "Authorized",
-                authorizationId: "AFSDF332432SDF45DS5FD",
-                payerEmail: "payer@gmail.com",
-                payerStatus: "Verified",
-                payerAddressStatus: "Unverified",
-                protectionEligibility: "Partly Eligibile",
-                pendingReason: "Review");
+            var payments = new[] {
+                new PaypalPaymentDetails(
+                    paymentStatus: "Authorized",
+                    authorizationId: "AFSDF332432SDF45DS5FD",
+                    payerEmail: "payer@gmail.com",
+                    payerStatus: "Verified",
+                    payerAddressStatus: "Unverified",
+                    protectionEligibility: "Partly Eligibile",
+                    pendingReason: "Review"
+                )
+            };
 
             var lines = new[]
             {
@@ -796,11 +807,13 @@ namespace Riskified.SDK.Sample
             };
         }
 
-        private static CreditCardPaymentDetails GenerateCreditCardPaymentDetails()
+        private static IPaymentDetails[] GenerateCreditCardPaymentDetails()
         {
-            return new CreditCardPaymentDetails("Y", "M", "123456", "Visa", "4242")
-            {
-                AuthorizationError = new AuthorizationError(DateTime.Now, "card_declined", "insufficient funds")
+            return new[] {
+                new CreditCardPaymentDetails("Y", "M", "123456", "Visa", "4242")
+                {
+                    AuthorizationError = new AuthorizationError(DateTime.Now, "card_declined", "insufficient funds")
+                }
             };
         }
 
@@ -832,9 +845,7 @@ namespace Riskified.SDK.Sample
 
             return new CustomerCreate(idString, GenerateClientDetails(), GenerateSessionDetails(), GenerateCustomer(idString))
             {
-                PaymentDetails = new[] {
-                    GenerateCreditCardPaymentDetails()
-                },
+                PaymentDetails = GenerateCreditCardPaymentDetails(),
                 BillingAddress = addresses,
                 ShippingAddress = addresses
             };
@@ -848,9 +859,7 @@ namespace Riskified.SDK.Sample
 
             return new CustomerUpdate(idString, false, GenerateClientDetails(), GenerateSessionDetails(), GenerateCustomer(idString))
             {
-                PaymentDetails = new[] {
-                    GenerateCreditCardPaymentDetails()
-                },
+                PaymentDetails = GenerateCreditCardPaymentDetails(),
                 BillingAddress = addresses,
                 ShippingAddress = addresses
             };

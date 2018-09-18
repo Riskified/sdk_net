@@ -107,7 +107,7 @@ namespace Riskified.SDK.Model
         /// An object containing information about the payment.
         /// </summary>
         [JsonProperty(PropertyName = "payment_details")]
-        public IPaymentDetails PaymentDetails { get; set; }
+        public IPaymentDetails[] PaymentDetails { get; set; }
 
         /// <summary>
         /// The mailing address associated with the payment method.
