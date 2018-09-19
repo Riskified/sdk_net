@@ -680,7 +680,7 @@ namespace Riskified.SDK.Sample
                 createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes,
-                source: "web",
+                source: OrderSource.Web,
                 noChargeDetails: noChargeAmount,
                 decisionDetails: decisionDetails,
                 vendorId: "2",
@@ -771,6 +771,7 @@ namespace Riskified.SDK.Sample
                 shippingAddress: shipping,
                 lineItems: items,
                 shippingLines: lines,
+                source: OrderSource.MobileWeb,
                 gateway: "authorize_net",
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD",

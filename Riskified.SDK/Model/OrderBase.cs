@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Model.OrderElements;
 using System;
 using System.Collections.Generic;
@@ -140,7 +141,8 @@ namespace Riskified.SDK.Model
         public string FulfillmentStatus { get; set; }
 
         [JsonProperty(PropertyName = "source")]
-        public string Source { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public OrderSource Source { get; set; }
 
         [JsonProperty(PropertyName = "nocharge_amount")]
         public NoChargeDetails NoChargeAmount { get; set; }
