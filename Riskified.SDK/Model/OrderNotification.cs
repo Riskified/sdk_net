@@ -1,4 +1,4 @@
-﻿using Riskified.SDK.Model.Internal;
+using Riskified.SDK.Model.Internal;
 using Riskified.SDK.Model.OrderElements;
 
 namespace Riskified.SDK.Model
@@ -9,8 +9,10 @@ namespace Riskified.SDK.Model
         {
             Id = notificationInfo.Order.Id;
             Status = notificationInfo.Order.Status;
+            OldStatus = notificationInfo.Order.OldStatus;
             Description = notificationInfo.Order.Description;
             Custom = notificationInfo.Order.Custom;
+            Category = notificationInfo.Order.Category;
             Warnings = notificationInfo.Warnings;
         }
 
@@ -18,15 +20,19 @@ namespace Riskified.SDK.Model
         {
             Id = notificationInfo.Order.Id;
             Status = notificationInfo.Order.Status;
+            OldStatus = notificationInfo.Order.OldStatus;
             Description = notificationInfo.Order.Description;
             Custom = notificationInfo.Order.Custom;
+            Category = notificationInfo.Order.Category;
             Warnings = notificationInfo.Warnings;
         }
 
         public string Id { get; private set; }
         public string Status { get; private set; }
+        public string OldStatus { get; private set; }
         public string Description { get; private set; }
         public Custom Custom { get; private set; }
+        public string Category { get; private set; }
         public string[] Warnings { get; private set; }
     }
 }
