@@ -23,5 +23,8 @@ namespace Riskified.SDK.Model.Internal
         [JsonProperty(PropertyName = "category", Required = Required.Default)]
         public string Category { get; set; }
 
+        [JsonProperty(PropertyName = "decision_code", Required = Required.Default)]
+        public string DecisionCode { get; set; }
+
     }
 }
