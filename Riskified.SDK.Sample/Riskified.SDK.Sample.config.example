@@ -4,10 +4,9 @@
     <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.5.1" />
   </startup>
   <appSettings>
-    <add key="NotificationsWebhookUrl" value="[http/https]://[your url here]:[your port here]/[your webhook path]/"/>
-    <add key="MerchantDomain" value="[your shop domain as registered to riskified]"/>
-    <add key="MerchantAuthenticationToken" value="[Your authentication token string]"/>
-    <add key="RiskifiedEnvironment" value="[Debug/Sandbox/Production]"/>
-    <add key="DebugRiskifiedHostUrl" value="[RiskifiedDebugUrl - remove this setting]"/>
+   <add key="NotificationsWebhookUrl" value="http://localhost:3000/"/>
+    <add key="MerchantDomain" value="richstestsite.com"/>
+    <add key="MerchantAuthenticationToken" value="45553711e5d9ff7de1e529c71d14egee"/>
+    <add key="RiskifiedEnvironment" value="Sandbox"/>
   </appSettings>
 </configuration>
