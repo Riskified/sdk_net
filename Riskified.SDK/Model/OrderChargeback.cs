@@ -38,7 +38,7 @@ namespace Riskified.SDK.Model
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "fulfillment_details")]
+        [JsonProperty(PropertyName = "fulfillment")]
         public FulfillmentDetails Fulfillment { get; set; }
 
         /// <summary>
