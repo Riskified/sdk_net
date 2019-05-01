@@ -421,13 +421,13 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727", registryType: RegistryType.Other),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
-            orderCheckout.Email = "tester@exampler.com";
+            orderCheckout.Email = "test@example.com";
             orderCheckout.Currency = "USD";
             orderCheckout.UpdatedAt = DateTime.Now; // make sure to initialize DateTime with the correct timezone
             orderCheckout.Gateway = "authorize_net";
@@ -593,7 +593,7 @@ namespace Riskified.SDK.Sample
             {
                 new LineItem(title: "Bag", price: 55.44, quantityPurchased: 1, productId: "48484", sku: "1272727",
                     deliveredTo: DeliveredToType.StorePickup,
-                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
+                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local), registryType: RegistryType.Wedding),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3,
                     seller: new Seller(customer: customer, correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Product (aplicaible for event industry merchants)
@@ -666,7 +666,7 @@ namespace Riskified.SDK.Sample
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(),
-                email: "tester@exampler.com",
+                email: "test@example.com",
                 customer: customer,
                 paymentDetails: payments,
                 billingAddress: billing,
@@ -756,7 +756,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727", registryType: RegistryType.Baby),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
@@ -764,7 +764,7 @@ namespace Riskified.SDK.Sample
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(),
-                email: "tester@exampler.com",
+                email: "test@example.com",
                 customer: customer,
                 paymentDetails: payments,
                 billingAddress: billing,
