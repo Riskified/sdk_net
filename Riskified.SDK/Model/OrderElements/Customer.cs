@@ -20,7 +20,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null)
+        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTime? createdAt = null, string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null, int? linkedAccounts = null)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -35,6 +35,7 @@ namespace Riskified.SDK.Model.OrderElements
             Social = social;
             Address = address;
             AccountType = accountType;
+            LinkedAccounts = linkedAccounts;
         }
 
         /// <summary>
@@ -115,6 +116,9 @@ namespace Riskified.SDK.Model.OrderElements
         
         [JsonProperty(PropertyName = "account_type")]
         public string AccountType { get; set; }
+
+        [JsonProperty(PropertyName = "linked_accounts")]
+        public int? LinkedAccounts { get; set; }
 
     }
 }
