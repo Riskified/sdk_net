@@ -603,10 +603,8 @@ namespace Riskified.SDK.Sample
                     quantityPurchased: 1,
                     category: "Singers",
                     subCategory: "Rock",
-                    eventName: "Bon Jovy",
-                    eventSectionName: "Section",
-                    eventCountry: "USA",
-                    eventCountryCode: "US",
+                    section: "Section",
+                    countryCode: "US",
                     latitude: 0,
                     longitude: 0),
                 // Giftcard Product (appliciable for giftcard industry merchants)
