@@ -601,6 +601,8 @@ namespace Riskified.SDK.Sample
                     title: "Concert",
                     price: 123,
                     quantityPurchased: 1,
+                    eventDate: new DateTime(2019, 7, 12, 11, 40, 00, DateTimeKind.Local),
+                    city: "New York", 
                     category: "Singers",
                     subCategory: "Rock",
                     section: "Section",
