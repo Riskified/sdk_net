@@ -690,7 +690,7 @@ namespace Riskified.SDK.Sample
                 clientDetails: clientDetails,
                 custom: custom,
                 groupFounderOrderID: "2222",
-                submissionReason: SubmissionReason.ManualDecision
+                submissionReason: "Manual Decision"
                 );
 
             return order;
