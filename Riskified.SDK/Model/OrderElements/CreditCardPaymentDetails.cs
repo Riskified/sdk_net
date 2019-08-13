@@ -5,6 +5,11 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
+
+    public enum _type
+    {
+        credit_card, paypal
+    }
     public class CreditCardPaymentDetails : IPaymentDetails
     {
         /// <summary>
@@ -15,6 +20,16 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardBin">The issuer identiﬁcation number (IIN), formerly known as bank identiﬁcation number (BIN) ] of the customer's credit card. This is made up of the ﬁrst few digits of the credit card number</param>
         /// <param name="creditCardCompany">The name of the company who issued the customer's credit card</param>
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
+        /// <param name="id"></param>
+        /// <param name="gateway"></param>
+        /// <param name="mid"></param>
+        /// <param name="acquirerBin"></param>
+        /// <param name="_type"></param>
+        /// <param name="authentication_result"></param>
+
+
+
+
         public CreditCardPaymentDetails(string avsResultCode, 
                                         string cvvResultCode, 
                                         string creditCardBin, 
@@ -68,9 +83,32 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorization_error")]
         public AuthorizationError AuthorizationError { get; set; }
-        
+
+        [JsonProperty(PropertyName = "authentication_result")]
+        public AuthenticationResult AuthenticationResult { get; set; }
+
         [JsonProperty(PropertyName = "cardholder_name")]
         public string CardholderName { get; set; }
+
+        [JsonProperty(PropertyName = "id")]
+        public string id { get; set; }
+
+        [JsonProperty(PropertyName = "gateway")]
+        public string gateway { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_bin")]
+        public string acquirerBin { get; set; }
+
+        [JsonProperty(PropertyName = "mid")]
+        public string mid  { get; set; }
+
+        [JsonProperty(PropertyName = "_type")]
+        public string _type { get; set; }
+
+
+
+    
+
     }
 
 }
