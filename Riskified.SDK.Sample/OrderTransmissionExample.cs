@@ -363,6 +363,9 @@ namespace Riskified.SDK.Sample
         {
             // make sure to initialize DateTime with the correct timezone
             OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
+            // add payment details from the gateway in pre-auth flow 
+            var paymentDetails = new[] { new CreditCardPaymentDetails(null, null, null, null, null, "016225891") };
+            orderDecision.PaymentDetails = paymentDetails; 
             return orderDecision;
         }
 
