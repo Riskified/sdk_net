@@ -7,13 +7,13 @@ namespace Riskified.SDK.Model
 {
     public class OrderDecision : AbstractOrder
     {
-        public OrderDecision(int merchantOrderId, DecisionDetails decision)
+        public OrderDecision(int merchantOrderId, DecisionDetails decision, IPaymentDetails[] paymentDetails = null)
             : base(merchantOrderId)
         {
             this.Decision = decision;
         }
 
-        public OrderDecision(string merchantOrderId, DecisionDetails decision)
+        public OrderDecision(string merchantOrderId, DecisionDetails decision, IPaymentDetails[] paymentDetails = null)
             : base(merchantOrderId)
         {
             this.Decision = decision;
@@ -36,5 +36,8 @@ namespace Riskified.SDK.Model
         /// </summary>
         [JsonProperty(PropertyName = "decision")]
         public DecisionDetails Decision { get; set; }
+
+        [JsonProperty(PropertyName = "payment_details")]
+        public IPaymentDetails[] PaymentDetails { get; set; }
     }
 }
