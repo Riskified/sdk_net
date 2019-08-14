@@ -76,7 +76,7 @@ namespace Riskified.SDK.Model
                      string note = null,
                      string name = null,
                      string orderType = null,
-                     SubmissionReason? submissionReason = null,
+                     string submissionReason = null,
                      Custom custom = null)
             : base(merchantOrderId)
         {
@@ -211,8 +211,8 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "checkout_id")]
         public string CheckoutId { get; set; }
 
-        [JsonProperty(PropertyName = "submission_reason"), JsonConverter(typeof(StringEnumConverter))]
-        public SubmissionReason? SubmissionReason { get; set; }
+        [JsonProperty(PropertyName = "submission_reason")]
+        public string SubmissionReason { get; set; }
 
     }
 
