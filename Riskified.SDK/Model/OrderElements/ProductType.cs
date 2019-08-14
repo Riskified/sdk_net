@@ -22,6 +22,8 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "travel")]
         TravelTicket,
         [EnumMember(Value = "accommodation")]
-        Accommodation
+        Accommodation,
+        [EnumMember(Value = "ride")]
+        RideTicket
     }
 }
