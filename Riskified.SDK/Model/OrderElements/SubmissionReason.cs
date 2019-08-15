@@ -1,5 +1,7 @@
 ﻿using System.Runtime.Serialization;
 
+// This class has been deprecated to support more flexibility with submission reason values. 
+
 namespace Riskified.SDK.Model.OrderElements
 {
     public enum SubmissionReason

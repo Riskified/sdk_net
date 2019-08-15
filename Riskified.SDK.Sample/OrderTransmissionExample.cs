@@ -363,6 +363,9 @@ namespace Riskified.SDK.Sample
         {
             // make sure to initialize DateTime with the correct timezone
             OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
+            // add payment details from the gateway in pre-auth flow 
+            var paymentDetails = new[] { new CreditCardPaymentDetails(null, null, null, null, null, "016225891") };
+            orderDecision.PaymentDetails = paymentDetails; 
             return orderDecision;
         }
 
@@ -632,7 +635,7 @@ namespace Riskified.SDK.Sample
                     departureCity: "ashdod",
                     departureCountryCode: "IL",
                     transportMethod: TransportMethodType.Plane), 
-                // Accomodation reservation product (appliciable for travel industry merchants)
+                // Accommodation reservation product (appliciable for travel industry merchants)
                 new AccommodationLineItem(
                     title: "Hotel Arcadia - Standard Room", 
                     price: 476, 
@@ -643,7 +646,30 @@ namespace Riskified.SDK.Sample
                     rating: "5",
                     numberOfGuests: 2,
                     cancellationPolicy: "Not appliciable",
-                    accommodationType: "Hotel")
+                    accommodationType: "Hotel"),
+                    // Ride Ticket Product 
+                new RideTicketLineItem(
+                    title: "Ride to JFK airport",
+                    price: 74,
+                    quantityPurchased: 1,
+                    pickupAddress: shipping, 
+                    dropoffAddress: billing, 
+                    pickupDate: new DateTime(2019, 8, 1, 12, 1, 1, DateTimeKind.Local),
+                    pickupLatitude: 0,
+                    pickupLongitude: 0,
+                    dropoffLatitude: 1, 
+                    dropoffLongitude: 1, 
+                    routeIndex: 1, 
+                    legIndex: 1,
+                    transportMethod: "Taxi",
+                    priceBy: "fixed",
+                    vehicleClass: "executive",
+                    carrierName: "Best darn taxi company in the world!",
+                    driverId: "15EGT701",
+                    meetNGreet: "Whenever you meet me, please greet me.",
+                    cancellationPolicy: "24 hours in advance",
+                    authorizedPayments: 74
+                )
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
@@ -690,7 +716,7 @@ namespace Riskified.SDK.Sample
                 clientDetails: clientDetails,
                 custom: custom,
                 groupFounderOrderID: "2222",
-                submissionReason: SubmissionReason.ManualDecision
+                submissionReason: "Manual Decision"
                 );
 
             return order;
