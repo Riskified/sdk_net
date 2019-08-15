@@ -136,6 +136,7 @@
     <Compile Include="Model\AccountActionElements\AccountActionNotification.cs" />
     <Compile Include="Model\OrderIdOnly.cs" />
     <Compile Include="Model\OrderElements\RegistryType.cs" />
+    <Compile Include="Model\OrderElements\RideTicketLineItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
