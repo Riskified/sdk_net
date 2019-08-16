@@ -20,15 +20,6 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardBin">The issuer identiﬁcation number (IIN), formerly known as bank identiﬁcation number (BIN) ] of the customer's credit card. This is made up of the ﬁrst few digits of the credit card number</param>
         /// <param name="creditCardCompany">The name of the company who issued the customer's credit card</param>
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
-        /// <param name="id"></param>
-        /// <param name="gateway"></param>
-        /// <param name="mid"></param>
-        /// <param name="acquirerBin"></param>
-        /// <param name="_type"></param>
-        /// <param name="authentication_result"></param>
-
-
-
 
         public CreditCardPaymentDetails(string avsResultCode, 
                                         string cvvResultCode, 
@@ -104,10 +95,6 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "_type")]
         public string _type { get; set; }
-
-
-
-    
 
     }
 
