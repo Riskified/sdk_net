@@ -7,6 +7,11 @@ namespace Riskified.SDK.Model.OrderElements
 {
     public class CreditCardPaymentDetails : IPaymentDetails
     {
+        public enum _type
+        {
+            credit_card, paypal
+        }
+
         /// <summary>
         /// The payment information for the order
         /// </summary>
@@ -77,6 +82,25 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorization_id")]
         public string AuthorizationId { get; set; }
+
+        [JsonProperty(PropertyName = "id")]
+        public string id { get; set; }
+
+        [JsonProperty(PropertyName = "gateway")]
+        public string Gateway { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_bin")]
+        public string AcquirerBin { get; set; }
+
+        [JsonProperty(PropertyName = "mid")]
+        public string Mid { get; set; }
+
+        [JsonProperty(PropertyName = "_type")]
+        public _type Type { get; set; }
+
+        [JsonProperty(PropertyName = "authentication_result")]
+        public AuthenticationResult AuthenticationResult { get; set; }
+
     }
 
 }

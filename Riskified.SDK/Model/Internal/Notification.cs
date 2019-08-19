@@ -29,5 +29,11 @@ namespace Riskified.SDK.Model.Internal
         [JsonProperty(PropertyName = "decision_code", Required = Required.Default)]
         public string DecisionCode { get; set; }
 
+        [JsonProperty(PropertyName = "score", Required = Required.Default)]
+        public int Score { get; set; }
+
+        [JsonProperty(PropertyName = "authentication_type", Required = Required.Default)]
+        public AuthenticationType AuthenticationType { get; set; }
+
     }
 }
