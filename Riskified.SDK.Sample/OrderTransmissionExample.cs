@@ -102,6 +102,15 @@ namespace Riskified.SDK.Sample
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.Checkout(orderCheckout);
                             break;
+                        case "a":
+                            Console.WriteLine("Order Advise Generated with merchant order number: " + orderNum);
+                            var orderAdviseCheckout = GenerateAdviseOrderCheckout(orderNum.ToString());
+                            orderAdviseCheckout.Id = orderNum.ToString();
+
+                            // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
+                            res = gateway.Advise(orderAdviseCheckout);
+                            break;
+
                         case "e":
                             Console.WriteLine("Order checkout Generated.");
                             var orderCheckoutDenied = GenerateOrderCheckoutDenied(orderNum);
@@ -498,6 +507,94 @@ namespace Riskified.SDK.Sample
 
             return orderFulfillment;
         }
+
+
+
+        private static OrderCheckout GenerateAdviseOrderCheckout(string orderNum)
+        {
+            var orderCheckout = new OrderCheckout(orderNum);
+
+            var address = new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling");
+            AuthenticationResult ar = new AuthenticationResult("05");
+
+
+            var payments = new[] {
+                new CreditCardPaymentDetails(
+                    avsResultCode: "Y",
+                    cvvResultCode: "n",
+                    creditCardBin: "124580",
+                    creditCardCompany: "Visa",
+                    creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                    creditCardToken: "2233445566778899"
+                ) {AuthenticationResult = ar}
+
+            };
+
+            var lines = new[]
+            {
+                new ShippingLine(price: 22.22,title: "Mail")
+            };
+
+            // This is an example for client details section
+            var clientDetails = new ClientDetails(
+                accept_language: "en-CA",
+                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            );
+
+
+            // Fill optional fields
+            var customer = new Customer(
+                firstName: "John",
+                lastName: "Doe",
+                id: "405050606",
+                ordersCount: 4,
+                email: "test@example.com",
+                verifiedEmail: true,
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
+                notes: "No additional info");
+
+            var items = new[]
+            {
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+            };
+
+            var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
+
+            orderCheckout.Email = "tester@exampler.com";
+            orderCheckout.Currency = "USD";
+            orderCheckout.UpdatedAt = DateTime.Now; // make sure to initialize DateTime with the correct timezone
+            orderCheckout.Gateway = "authorize_net";
+            orderCheckout.CustomerBrowserIp = "165.12.1.1";
+            orderCheckout.TotalPrice = 100.60;
+            orderCheckout.CartToken = "a68778783ad298f1c80c3bafcddeea02f";
+            orderCheckout.ReferringSite = "nba.com";
+            orderCheckout.LineItems = items;
+            orderCheckout.DiscountCodes = discountCodes;
+            orderCheckout.ShippingLines = lines;
+            orderCheckout.PaymentDetails = payments;
+            orderCheckout.Customer = customer;
+            orderCheckout.BillingAddress = address;
+            orderCheckout.ShippingAddress = address;
+            orderCheckout.ClientDetails = clientDetails;
+
+            return orderCheckout;
+
+        }
+
 
         /// <summary>
         /// Generates a new order object
