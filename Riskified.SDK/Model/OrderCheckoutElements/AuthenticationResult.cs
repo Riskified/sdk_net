@@ -42,6 +42,9 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [JsonProperty(PropertyName = "created_at")]
         public DateTime? CreatedAt { get; set; }
 
+        [JsonProperty(PropertyName = "liability_shift")]
+        public bool LiabilityShift { get; set; }
+
         [JsonProperty(PropertyName = "cavv")]
         public string cavv { get; set; }
 
