@@ -26,12 +26,10 @@ namespace Riskified.SDK.Model.OrderElements
             DeliveredToType? deliveredTo = null,
             DateTime? deliveredAt = null,
             // event ticket specific
-            string eventName = null,
-            string eventSectionName = null,
+            string section = null,
             DateTime? eventDate = null,
-            string eventCity = null,
-            string eventCountry = null,
-            string eventCountryCode = null,
+            string city = null,
+            string countryCode = null,
             float? latitude = null,
             float? longitude = null
             ) : base(
@@ -41,11 +39,10 @@ namespace Riskified.SDK.Model.OrderElements
                 category: category, subCategory: subCategory, brand: brand,
                 productType: OrderElements.ProductType.EventTicket)
         {
-            EventName = eventName;
-            EventSectionName = eventSectionName;
+            Section = section;
             EventDate = eventDate;
-            EventCountryCode = eventCountryCode;
-            EventCity = eventCity;
+            CountryCode = countryCode;
+            City = city;
             Latitude = latitude;
             Longitude = longitude;
         }
@@ -55,29 +52,24 @@ namespace Riskified.SDK.Model.OrderElements
             base.Validate(validationType);
         }
 
-        /// <summary>
-        /// The event name.
-        /// </summary>
-        [JsonProperty(PropertyName = "event_name")]
-        public string EventName { get; set; }
 
         /// <summary>
         /// The event section name.
         /// </summary>
-        [JsonProperty(PropertyName = "event_section_name")]
-        public string EventSectionName { get; set; }
+        [JsonProperty(PropertyName = "section")]
+        public string Section { get; set; }
 
         /// <summary>
         /// The country code where the event is taking place.
         /// </summary>
-        [JsonProperty(PropertyName = "event_country_code")]
-        public string EventCountryCode { get; set; }
+        [JsonProperty(PropertyName = "country_code")]
+        public string CountryCode { get; set; }
 
         /// <summary>
         /// The city where the event is taking place.
         /// </summary>
-        [JsonProperty(PropertyName = "event_city")]
-        public string EventCity { get; set; }
+        [JsonProperty(PropertyName = "city")]
+        public string City { get; set; }
 
         /// <summary>
         /// The event date.
