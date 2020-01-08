@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Riskified.SDK.Model.OrderElements;
 
@@ -15,6 +16,9 @@ namespace Riskified.SDK.Model.AccountActionElements
 
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
+
+        [JsonProperty(PropertyName = "customer_created_at")]
+        public DateTime? CustomerCreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "login_status")]
         public LoginStatus LoginStatus { get; set; }
