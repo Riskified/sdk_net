@@ -957,7 +957,12 @@ namespace Riskified.SDK.Sample
             var clientDetails = GenerateClientDetails();
             var sessionDetails = GenerateSessionDetails();
 
-            return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails);
+            return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails)
+            {
+                LoginAtCheckout = true,
+                SocialLoginType = SocialType.Facebook,
+                CustomerCreatedAt = DateTime.Now 
+            };
         }
 
         private static CustomerCreate GenerateCustomerCreate(string idString)
