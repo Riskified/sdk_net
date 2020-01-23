@@ -1000,7 +1000,7 @@ namespace Riskified.SDK.Sample
 
         private static ResetPasswordRequest GenerateResetPasswordRequest(string idString)
         {
-            return new ResetPasswordRequest(idString, GenerateClientDetails(), GenerateSessionDetails());
+            return new ResetPasswordRequest(idString, StatusType.Success, ReasonType.UserRequested, "great@customer.email.com", GenerateClientDetails(), GenerateSessionDetails());
         }
 
         private static Redeem GenerateRedeem(string idString)
