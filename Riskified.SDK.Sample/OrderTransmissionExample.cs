@@ -917,7 +917,10 @@ namespace Riskified.SDK.Sample
 
         private static SessionDetails GenerateSessionDetails()
         {
-            return new SessionDetails(DateTime.Now, "68778783ad298f1c80c3bafcddeea02f", "111.111.111.111", SessionSource.DesktopWeb);
+            return new SessionDetails(DateTime.Now, "68778783ad298f1c80c3bafcddeea02f", "111.111.111.111", SessionSource.DesktopWeb)
+            {
+                DeviceId = "01234567-89ABCDEF-01234567-89ABCDEF"
+            };
         }
 
         private static Customer GenerateCustomer(string idString)

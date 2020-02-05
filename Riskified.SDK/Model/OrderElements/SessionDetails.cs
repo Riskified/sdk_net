@@ -27,6 +27,9 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonConverter(typeof(StringEnumConverter))]
         public SessionSource Source { get; set; }
 
+        [JsonProperty(PropertyName = "device_id")]
+        public string DeviceId { get; set; }
+
         [JsonProperty(PropertyName = "referring_site")]
         public string ReferringSite { get; set; }
     }
