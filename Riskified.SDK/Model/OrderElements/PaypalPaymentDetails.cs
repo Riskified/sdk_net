@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -69,5 +70,11 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthenticationResult AuthenticationResult { get; set; }
 
+        [JsonProperty(PropertyName = "_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PaymentDetailsType Type
+        {
+            get { return PaymentDetailsType.paypal; }
+        }
     }
 }

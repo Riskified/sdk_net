@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -7,10 +8,6 @@ namespace Riskified.SDK.Model.OrderElements
 {
     public class CreditCardPaymentDetails : IPaymentDetails
     {
-        public enum _type
-        {
-            credit_card, paypal
-        }
 
         /// <summary>
         /// The payment information for the order
@@ -96,7 +93,11 @@ namespace Riskified.SDK.Model.OrderElements
         public string Mid { get; set; }
 
         [JsonProperty(PropertyName = "_type")]
-        public _type Type { get; set; }
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PaymentDetailsType Type 
+        {
+            get { return PaymentDetailsType.credit_card; }
+        }
 
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthenticationResult AuthenticationResult { get; set; }
