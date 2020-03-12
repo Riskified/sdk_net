@@ -139,6 +139,8 @@
     <Compile Include="Model\OrderElements\RideTicketLineItem.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthenticationType.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthenticationResult.cs" />
+    <Compile Include="Model\OrderElements\StatusType.cs" />
+    <Compile Include="Model\OrderElements\ReasonType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
