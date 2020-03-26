@@ -59,6 +59,7 @@ namespace Riskified.SDK.Model
                      DiscountCode[] discountCodes = null,
                      double? totalDiscounts = null,
                      string cartToken = null,
+                     string deviceId = null,
                      double? totalPriceUsd = null,
                      DateTime? closedAt = null,
                      string financialStatus = null,
@@ -100,6 +101,7 @@ namespace Riskified.SDK.Model
             TotalPriceUsd = totalPriceUsd;
             TotalDiscounts = totalDiscounts;
             CartToken = cartToken;
+            DeviceId = deviceId;
             ClosedAt = closedAt;
             FinancialStatus = financialStatus;
             FulfillmentStatus = fulfillmentStatus;

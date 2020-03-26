@@ -28,6 +28,9 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "cart_token")]
         public string CartToken { get; set; }
 
+        [JsonProperty(PropertyName = "device_id")]
+        public string DeviceId { get; set; }
+
         /// <summary>
         /// The date and time when the order was closed.
         /// </summary>

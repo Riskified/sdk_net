@@ -13,6 +13,8 @@ namespace Riskified.SDK.Model.OrderElements
         Twitter,
         [EnumMember(Value = "yahoo")]
         Yahoo,
+        [EnumMember(Value = "amazon")]
+        Amazon,
         [EnumMember(Value = "other")]
         Other
     }
