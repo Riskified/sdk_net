@@ -796,6 +796,8 @@ namespace Riskified.SDK.Sample
                 shippingAddress: shipping,
                 lineItems: items,
                 shippingLines: lines,
+                cartToken: "68778783ad298f1c80c3bafcddeea02f",
+                deviceId: "01234567-89ABCDEF-01234567-89ABCDEF",
                 gateway: "authorize_net",
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD",
@@ -963,7 +965,7 @@ namespace Riskified.SDK.Sample
             return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails)
             {
                 LoginAtCheckout = true,
-                SocialLoginType = SocialType.Facebook,
+                SocialLoginType = SocialType.Amazon,
                 CustomerCreatedAt = DateTime.Now 
             };
         }
