@@ -69,6 +69,7 @@ namespace Riskified.SDK.Model
                      string[] additionalEmails = null,
                      string vendorId = null,
                      string vendorName = null,
+                     string vendorIntegrationType = null,
                      DecisionDetails decisionDetails = null,
                      ClientDetails clientDetails = null,
                      ChargeFreePaymentDetails chargeFreePaymentDetails = null,
@@ -110,6 +111,7 @@ namespace Riskified.SDK.Model
             AdditionalEmails = additionalEmails;
             VendorId = vendorId;
             VendorName = vendorName;
+            VendorIntegrationType = vendorIntegrationType;
             Decision = decisionDetails;
             ClientDetails = clientDetails;
             Custom = custom;
