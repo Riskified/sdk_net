@@ -154,6 +154,9 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "vendor_name")]
         public string VendorName { get; set; }
 
+        [JsonProperty(PropertyName = "vendor_integration_type")]
+        public string VendorIntegrationType { get; set; }
+
         [JsonProperty(PropertyName = "decision")]
         public DecisionDetails Decision { get; set; }
 
