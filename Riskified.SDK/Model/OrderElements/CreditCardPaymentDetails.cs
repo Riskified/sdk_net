@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -27,7 +28,9 @@ namespace Riskified.SDK.Model.OrderElements
                                         string creditCardCompany, 
                                         string creditCardNumber, 
                                         string authorizationId = null,
-                                        string creditCardToken = null)
+                                        string creditCardToken = null, 
+                                        DateTime? storedPaymentCreatedAt = null,
+                                        DateTime? storedPaymentUpdatedAt = null)
         {
             AvsResultCode = avsResultCode;
             CvvResultCode = cvvResultCode;
@@ -36,6 +39,8 @@ namespace Riskified.SDK.Model.OrderElements
             CreditCardNumber = creditCardNumber;
             AuthorizationId = authorizationId;
             CreditCardToken = creditCardToken;
+            StoredPaymentCreatedAt = storedPaymentCreatedAt;
+            StoredPaymentUpdatedAt = storedPaymentUpdatedAt; 
         }
 
         /// <summary>
@@ -100,6 +105,12 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthenticationResult AuthenticationResult { get; set; }
+
+        [JsonProperty(PropertyName = "stored_payment_created_at")]
+        public DateTime? StoredPaymentCreatedAt { get; set; }
+
+        [JsonProperty(PropertyName = "stored_payment_updated_at")]
+        public DateTime? StoredPaymentUpdatedAt { get; set; }
 
     }
 
