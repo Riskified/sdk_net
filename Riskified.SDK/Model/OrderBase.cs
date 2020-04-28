@@ -35,13 +35,13 @@ namespace Riskified.SDK.Model
         /// The date and time when the order was closed.
         /// </summary>
         [JsonProperty(PropertyName = "closed_at")]
-        public DateTime? ClosedAt { get; set; }
+        public DateTimeOffset? ClosedAt { get; set; }
 
         /// <summary>
         /// The date and time when the order was first created.
         /// </summary>
         [JsonProperty(PropertyName = "created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         /// <summary>
         /// The three letter code (ISO 4217) for the currency used for the payment.
@@ -80,7 +80,7 @@ namespace Riskified.SDK.Model
         /// The date and time when the order was last modified.
         /// </summary>
         [JsonProperty(PropertyName = "updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         /// <summary>
         /// The IP address of the browser used by the customer when placing the order.

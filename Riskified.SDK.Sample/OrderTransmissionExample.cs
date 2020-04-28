@@ -332,7 +332,7 @@ namespace Riskified.SDK.Sample
         private static OrderChargeback GenerateOrderChargeback(string orderNum)
         {
             var chargebackDetails = new ChargebackDetails(id: "id1234",
-                                charegbackAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                charegbackAt: new DateTime(2018, 12, 8, 14, 12, 12),
                                 chargebackCurrency: "USD",
                                 chargebackAmount: (float)50.5,
                                 reasonCode: "4863",
@@ -351,7 +351,7 @@ namespace Riskified.SDK.Sample
 
             var fulfillmentDetails = new FulfillmentDetails(
                                              fulfillmentId: "123",
-                                             createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                             createdAt: new DateTimeOffset(2018, 12, 8, 14, 12, 12, new TimeSpan(-7, 0, 0)),
                                              status: FulfillmentStatusCode.Success,
                                              lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                              trackingCompany: "TestCompany");
@@ -362,7 +362,7 @@ namespace Riskified.SDK.Sample
                                         status: "pending",
                                         issuerPocPhoneNumber: "+1-877-111-1111",
                                         disputedAt: new DateTime(2016, 9, 15),
-                                        expectedResolutionDate: new DateTime(2016, 11, 1));
+                                        expectedResolutionDate: new DateTime(2016, 11, 1, 0, 0, 0, DateTimeKind.Local));
 
             return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
 
@@ -622,7 +622,12 @@ namespace Riskified.SDK.Sample
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
-                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
+                createdAt: new DateTimeOffset(2013, 12, 8, 14, 12, 12, new TimeSpan(-6, 0, 0)),
+                updatedAt: new DateTimeOffset(DateTime.Now),
+                verifiedEmailAt: new DateTimeOffset(new DateTime(2020, 2, 28), new TimeSpan(-8, 0, 0)),
+                verifiedPhone: true, 
+                verifiedPhoneAt: new DateTime(2019, 8, 28, 12, 0, 0),
+                firstPurchaseAt: new DateTime(2013, 6, 18, 0, 0, 0, DateTimeKind.Local),
                 notes: "No additional info",
                 address: customerAddress,
                 accountType: "Premium");
@@ -802,7 +807,7 @@ namespace Riskified.SDK.Sample
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD",
                 totalPrice: 100.60,
-                createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                createdAt: new DateTime(2020, 4, 18, 12, 0, 0, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes,
                 source: "web",

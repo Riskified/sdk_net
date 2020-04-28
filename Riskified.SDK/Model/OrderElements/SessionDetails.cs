@@ -6,7 +6,7 @@ namespace Riskified.SDK.Model.OrderElements
 {
     public class SessionDetails
     {
-        public SessionDetails(DateTime? createdAt, string cartToken, string browserIp, SessionSource source)
+        public SessionDetails(DateTimeOffset? createdAt, string cartToken, string browserIp, SessionSource source)
         {
             CreatedAt = createdAt;
             CartToken = cartToken;
@@ -15,7 +15,7 @@ namespace Riskified.SDK.Model.OrderElements
         }
 
         [JsonProperty(PropertyName = "created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "cart_token")]
         public string CartToken { get; set; }
