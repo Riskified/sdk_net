@@ -16,7 +16,7 @@ namespace Riskified.SDK.Model
         /// "fraud": The order was fraudulent.
         /// "inventory": Items in the order were not in inventory.
         /// "other": The order was cancelled for a reason not in the list above. </param>
-        public OrderCancellation(int merchantOrderId, DateTime cancelledAt, string cancelReason) : base(merchantOrderId)
+        public OrderCancellation(int merchantOrderId, DateTimeOffset? cancelledAt, string cancelReason) : base(merchantOrderId)
         {
             CancelledAt = cancelledAt;
             CancelReason = cancelReason;
@@ -32,7 +32,7 @@ namespace Riskified.SDK.Model
         /// "fraud": The order was fraudulent.
         /// "inventory": Items in the order were not in inventory.
         /// "other": The order was cancelled for a reason not in the list above. </param>
-        public OrderCancellation(string merchantOrderId, DateTime cancelledAt, string cancelReason) : base(merchantOrderId)
+        public OrderCancellation(string merchantOrderId, DateTimeOffset? cancelledAt, string cancelReason) : base(merchantOrderId)
         {
             CancelledAt = cancelledAt;
             CancelReason = cancelReason;
@@ -50,6 +50,6 @@ namespace Riskified.SDK.Model
         public string CancelReason { get; set; }
 
         [JsonProperty(PropertyName = "cancelled_at")]
-        public DateTime? CancelledAt { get; set; }
+        public DateTimeOffset? CancelledAt { get; set; }
     }
 }

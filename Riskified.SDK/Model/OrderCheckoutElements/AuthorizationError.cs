@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
     public class AuthorizationError : IJsonSerializable
     {
 
-        public AuthorizationError(DateTime createdAt, string errorCode, string message = null)
+        public AuthorizationError(DateTimeOffset? createdAt, string errorCode, string message = null)
         {
             this.CreatedAt = createdAt;
             this.ErrorCode = errorCode;
@@ -24,6 +24,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(ErrorCode, "Error Code");
+            InputValidators.ValidateDateNotDefault(CreatedAt.Value, "Created At");
 
             // optional fields validations
             if (Message != null)
@@ -34,7 +35,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         
 
         [JsonProperty(PropertyName = "created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [JsonProperty(PropertyName = "error_code")]
         public string ErrorCode { get; set; }

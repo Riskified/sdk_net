@@ -88,9 +88,9 @@ namespace Riskified.SDK.Utils
                 throw new OrderFieldBadFormatException(string.Format("{0} can't be null.", fieldName));
         }
 
-        public static void ValidateDateNotDefault(DateTime date, string fieldName)
+        public static void ValidateDateNotDefault(DateTimeOffset? date, string fieldName)
         {
-            if(date.Equals(DateTime.MinValue) || date.Equals(DateTime.MaxValue))
+            if(date.Equals(DateTimeOffset.MinValue) || date.Equals(DateTimeOffset.MaxValue))
                 throw new OrderFieldBadFormatException(string.Format("{0} date value must have a valid logical date (not default value).", fieldName));
         }
 

@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.OrderElements
     public class FulfillmentDetails : IJsonSerializable
     {
 
-        public FulfillmentDetails(string fulfillmentId, DateTime createdAt, FulfillmentStatusCode status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
+        public FulfillmentDetails(string fulfillmentId, DateTimeOffset? createdAt, FulfillmentStatusCode status, LineItem[] lineItems = null, string trackingCompany = null, string trackingNumbers = null,
             string trackingUrls = null, string message = null, string receipt = null)
         {
             this.FulfillmentId = fulfillmentId;
@@ -54,7 +54,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// When the order was fulfilled.
         /// </summary>
         [JsonProperty(PropertyName = "created_at")]
-        public DateTime? CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         /// <summary>
         /// The fulfillment status, Valid values are: success, cancelled, error, failure.

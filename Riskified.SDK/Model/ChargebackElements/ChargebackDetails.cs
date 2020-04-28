@@ -12,7 +12,7 @@ namespace Riskified.SDK.Model.ChargebackElements
     public class ChargebackDetails : IJsonSerializable
     {
         public ChargebackDetails(string id = null,
-                                 DateTime? charegbackAt = null, 
+                                 DateTimeOffset? charegbackAt = null, 
                                  string chargebackCurrency = null, 
                                  float? chargebackAmount = null,
                                  string reasonCode = null,
@@ -21,7 +21,7 @@ namespace Riskified.SDK.Model.ChargebackElements
                                  string mid = null,
                                  string arn = null,
                                  string creditCardCompany = null,
-                                 DateTime? respondBy = null,
+                                 DateTimeOffset? respondBy = null,
                                  float? feeAmount = null,
                                  string feeCurrency = null,
                                  string cardIssuer = null,
@@ -62,7 +62,7 @@ namespace Riskified.SDK.Model.ChargebackElements
         /// The chargeback date, as recieved from the acquirer.
         /// </summary>
         [JsonProperty(PropertyName = "chargeback_at")]
-        public DateTime? ChargebackAt { get; set; }
+        public DateTimeOffset? ChargebackAt { get; set; }
 
         /// <summary>
         /// The chargeback currency, ISO 4217.
@@ -120,7 +120,7 @@ namespace Riskified.SDK.Model.ChargebackElements
         /// Last date to challenge CHB
         /// </summary>
         [JsonProperty(PropertyName = "respond_by")]
-        public DateTime? RespondBy { get; set; }
+        public DateTimeOffset? RespondBy { get; set; }
 
         /// <summary>
         /// The chargeback fee amount

@@ -14,8 +14,8 @@ namespace Riskified.SDK.Model.ChargebackElements
 
         public DisputeDetails(string caseId = null,
                               string status = null,
-                              DateTime? disputedAt = null,
-                              DateTime? expectedResolutionDate = null,
+                              DateTimeOffset? disputedAt = null,
+                              DateTimeOffset? expectedResolutionDate = null,
                               string disputeType = null,
                               string issuerPocPhoneNumber = null)
         {
@@ -53,13 +53,13 @@ namespace Riskified.SDK.Model.ChargebackElements
         /// When was the dispute sent
         /// </summary>
         [JsonProperty(PropertyName = "disputed_at")]
-        public DateTime? DisputedAt { get; set; }
+        public DateTimeOffset? DisputedAt { get; set; }
 
         /// <summary>
         /// When should we expect a decision from the issuer (60-75 days usually)
         /// </summary>
         [JsonProperty(PropertyName = "expected_resolution_date")]
-        public DateTime? ExpectedResolutionDate { get; set; }
+        public DateTimeOffset? ExpectedResolutionDate { get; set; }
 
         /// <summary>
         /// One of the following:
