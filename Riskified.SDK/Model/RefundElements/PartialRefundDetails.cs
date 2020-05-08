@@ -16,13 +16,14 @@ namespace Riskified.SDK.Model.RefundElements
         /// <param name="currency">The currency of the refund amount</param>
         /// <param name="reason">The reason for the partial refund</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public PartialRefundDetails(string refundId,DateTimeOffset? refundedAt, double amount, string currency, string reason)
+        public PartialRefundDetails(string refundId,DateTimeOffset? refundedAt, double amount, string currency, string reason, string sku = null)
         {
             RefundId = refundId;
             RefundedAt = refundedAt;
             Amount = amount;
             Currency = currency;
             Reason = reason;
+            Sku = sku;
         }
 
         public void Validate(Validations validationType = Validations.Weak)
@@ -48,5 +49,8 @@ namespace Riskified.SDK.Model.RefundElements
 
         [JsonProperty(PropertyName = "reason")]
         public string Reason { get; set; }
+
+        [JsonProperty(PropertyName = "sku")]
+        public string Sku { get; set; }
     }
 }

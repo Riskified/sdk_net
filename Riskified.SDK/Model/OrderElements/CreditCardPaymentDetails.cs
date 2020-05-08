@@ -30,7 +30,8 @@ namespace Riskified.SDK.Model.OrderElements
                                         string authorizationId = null,
                                         string creditCardToken = null, 
                                         DateTimeOffset? storedPaymentCreatedAt = null,
-                                        DateTimeOffset? storedPaymentUpdatedAt = null)
+                                        DateTimeOffset? storedPaymentUpdatedAt = null,
+                                        int? installments = null)
         {
             AvsResultCode = avsResultCode;
             CvvResultCode = cvvResultCode;
@@ -40,7 +41,8 @@ namespace Riskified.SDK.Model.OrderElements
             AuthorizationId = authorizationId;
             CreditCardToken = creditCardToken;
             StoredPaymentCreatedAt = storedPaymentCreatedAt;
-            StoredPaymentUpdatedAt = storedPaymentUpdatedAt; 
+            StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
+            Installments = installments;  
         }
 
         /// <summary>
@@ -111,6 +113,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "stored_payment_updated_at")]
         public DateTimeOffset? StoredPaymentUpdatedAt { get; set; }
+
+        [JsonProperty(PropertyName = "installments")]
+        public int? Installments { get; set; }
 
     }
 
