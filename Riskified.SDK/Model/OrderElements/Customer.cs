@@ -20,7 +20,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTimeOffset? verifiedEmailAt = null, bool? verifiedPhone = null, DateTimeOffset? verifiedPhoneAt = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null,  string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null, int? linkedAccounts = null, DateTimeOffset? firstPurchaseAt = null)
+        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTimeOffset? verifiedEmailAt = null, bool? verifiedPhone = null, DateTimeOffset? verifiedPhoneAt = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null,  string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null, int? linkedAccounts = null, DateTimeOffset? firstPurchaseAt = null, string documentId = null, string documentType = null)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -40,7 +40,10 @@ namespace Riskified.SDK.Model.OrderElements
             Address = address;
             AccountType = accountType;
             LinkedAccounts = linkedAccounts;
-            FirstPurchaseAt = firstPurchaseAt; 
+            FirstPurchaseAt = firstPurchaseAt;
+            DocumentId = documentId;
+            DocumentType = documentType;
+             
         }
 
         /// <summary>
@@ -155,6 +158,12 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "first_purchase_at")]
         public DateTimeOffset? FirstPurchaseAt { get; set; }
+
+        [JsonProperty(PropertyName = "document_type")]
+        public string DocumentType { get; set; }
+
+        [JsonProperty(PropertyName = "document_id")]
+        public string DocumentId { get; set; }
 
     }
 }
