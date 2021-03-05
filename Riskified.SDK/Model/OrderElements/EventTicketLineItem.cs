@@ -25,6 +25,7 @@ namespace Riskified.SDK.Model.OrderElements
             Seller seller = null,
             DeliveredToType? deliveredTo = null,
             DateTime? deliveredAt = null,
+            Policy policy = null, 
             // event ticket specific
             string section = null,
             DateTime? eventDate = null,
@@ -37,7 +38,7 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.EventTicket)
+                productType: OrderElements.ProductType.EventTicket, policy: policy)
         {
             Section = section;
             EventDate = eventDate;

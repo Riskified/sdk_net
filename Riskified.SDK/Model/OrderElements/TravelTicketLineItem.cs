@@ -26,6 +26,7 @@ namespace Riskified.SDK.Model.OrderElements
             Seller seller = null,
             DeliveredToType? deliveredTo = null,
             DateTime? deliveredAt = null,
+            Policy policy = null,
             // travel ticket specific
             string legId = null,
             string departurePortCode = null,
@@ -47,7 +48,7 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.TravelTicket)
+                productType: OrderElements.ProductType.TravelTicket, policy: policy)
         {
             LegId = legId;
             DeparturePortCode = departurePortCode;
