@@ -3,16 +3,11 @@ using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    public class Policy : IJsonSerializable
+    public class Policy
     {
         public Policy(bool? evaluate)
         {
             Evaluate = evaluate;
-        }
-
-        public void Validate(Utils.Validations validationType = Validations.Weak)
-        {
-            return;
         }
 
         [JsonProperty(PropertyName = "evaluate")]

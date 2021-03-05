@@ -25,6 +25,7 @@ namespace Riskified.SDK.Model.OrderElements
             Seller seller = null,
             DeliveredToType? deliveredTo = null,
             DateTime? deliveredAt = null,
+            Policy policy = null,
             
             // giftcard specific
             string senderName = null,
@@ -43,7 +44,7 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.Digital)
+                productType: OrderElements.ProductType.Digital, policy: policy)
         {
             SenderName = senderName;
             DisplayName = displayName;

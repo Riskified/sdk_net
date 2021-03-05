@@ -26,6 +26,7 @@ namespace Riskified.SDK.Model.OrderElements
             Seller seller = null,
             DeliveredToType? deliveredTo = null,
             DateTime? deliveredAt = null,
+            Policy policy = null, 
             // ride item specific
             DateTime? pickupDate = null,
             float? pickupLatitude = null,
@@ -52,7 +53,7 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.RideTicket)
+                productType: OrderElements.ProductType.RideTicket, policy: policy)
         {
             PickupDate = pickupDate;
             PickupLatitude = pickupLatitude;
