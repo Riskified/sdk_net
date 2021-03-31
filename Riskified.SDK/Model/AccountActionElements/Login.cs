@@ -29,5 +29,11 @@ namespace Riskified.SDK.Model.AccountActionElements
         [JsonProperty(PropertyName = "social_login_type")]
         [JsonConverter(typeof(StringEnumConverter))]
         public SocialType? SocialLoginType { get; set; }
+
+        [JsonProperty(PropertyName = "challenge_redirect_url")]
+        public string ChallengeRedirectUrl { get; set; }
+
+        [JsonProperty(PropertyName = "account_recovery_url")]
+        public string AccountRecoveryUrl { get; set; }
     }
 }
