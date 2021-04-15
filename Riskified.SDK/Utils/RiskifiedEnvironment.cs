@@ -35,9 +35,10 @@ namespace Riskified.SDK.Utils
             SandboxUrl = new Dictionary<FlowStrategy, string>(3);
             ProductionUrl = new Dictionary<FlowStrategy, string>(4);
 
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
-                DebugUrl.Add(FlowStrategy.Default, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
-                EnvToUrl.Add(RiskifiedEnvironment.Debug, DebugUrl);
+            if (!string.IsNullOrEmpty(System.Environment.GetEnvironmentVariable("DebugRiskifiedHostUrl")))
+                DebugUrl.Add(FlowStrategy.Default, System.Environment.GetEnvironmentVariable("DebugRiskifiedHostUrl"));
+
+            EnvToUrl.Add(RiskifiedEnvironment.Debug, DebugUrl);
 
             SandboxUrl.Add(FlowStrategy.Default, "https://sandbox.riskified.com");
             SandboxUrl.Add(FlowStrategy.Account, "https://api-sandbox.riskified.com");
