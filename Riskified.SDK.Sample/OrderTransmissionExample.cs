@@ -383,19 +383,23 @@ namespace Riskified.SDK.Sample
             var orderCheckout = new OrderCheckout(orderNum);
 
             var address = new AddressInformation(
-                firstName: "Ben",
-                lastName: "Rolling",
-                address1: "27 5th avenue",
-                city: "Manhattan",
-                country: "United States",
-                countryCode: "US",
-                phone: "5554321234",
-                address2: "Appartment 5",
-                zipCode: "54545",
-                province: "New York",
-                provinceCode: "NY",
-                company: "IBM",
-                fullName: "Ben Philip Rolling");
+             firstName: "Ben",
+             lastName: "Rolling",
+             address1: "27 5th avenue",
+             city: "Manhattan",
+             country: "United States",
+             countryCode: "US",
+             phone: "5554321234",
+             address2: "Appartment 5",
+             zipCode: "54545",
+             province: "New York",
+             provinceCode: "NY",
+             company: "IBM",
+             fullName: "Ben Philip Rolling");
+
+            var shippingAddress = new[] {
+                address
+            };
 
             var payments = new[] {
                 new CreditCardPaymentDetails(
@@ -453,7 +457,7 @@ namespace Riskified.SDK.Sample
             orderCheckout.PaymentDetails = payments;
             orderCheckout.Customer = customer;
             orderCheckout.BillingAddress = address;
-            orderCheckout.ShippingAddress = address;
+            orderCheckout.ShippingAddress = shippingAddress;
             orderCheckout.ClientDetails = clientDetails;
 
             return orderCheckout;
@@ -515,19 +519,25 @@ namespace Riskified.SDK.Sample
             var orderCheckout = new OrderCheckout(orderNum);
 
             var address = new AddressInformation(
-                firstName: "Ben",
-                lastName: "Rolling",
-                address1: "27 5th avenue",
-                city: "Manhattan",
-                country: "United States",
-                countryCode: "US",
-                phone: "5554321234",
-                address2: "Appartment 5",
-                zipCode: "54545",
-                province: "New York",
-                provinceCode: "NY",
-                company: "IBM",
-                fullName: "Ben Philip Rolling");
+            firstName: "Ben",
+            lastName: "Rolling",
+            address1: "27 5th avenue",
+            city: "Manhattan",
+            country: "United States",
+            countryCode: "US",
+            phone: "5554321234",
+            address2: "Appartment 5",
+            zipCode: "54545",
+            province: "New York",
+            provinceCode: "NY",
+            company: "IBM",
+            fullName: "Ben Philip Rolling");
+
+            var shippingAddress = new[] {
+                address
+            };
+
+
             AuthenticationResult ar = new AuthenticationResult("05");
 
 
@@ -588,7 +598,7 @@ namespace Riskified.SDK.Sample
             orderCheckout.PaymentDetails = payments;
             orderCheckout.Customer = customer;
             orderCheckout.BillingAddress = address;
-            orderCheckout.ShippingAddress = address;
+            orderCheckout.ShippingAddress = shippingAddress;
             orderCheckout.ClientDetails = clientDetails;
 
             return orderCheckout;
@@ -648,7 +658,8 @@ namespace Riskified.SDK.Sample
                 company: "IBM",
                 fullName: "Ben Philip Rolling");
 
-            var shipping = new AddressInformation(
+            var pickup = 
+                new AddressInformation(
                 firstName: "Luke",
                 lastName: "Rolling",
                 address1: "4 Bermingham street",
@@ -658,6 +669,23 @@ namespace Riskified.SDK.Sample
                 phone: "55546665",
                 provinceCode: "NJ",
                 province: "New Jersey");
+
+            var shipping = new[] {
+                new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling")
+            };
 
             var payments = new[] {
                 new CreditCardPaymentDetails(
@@ -754,7 +782,7 @@ namespace Riskified.SDK.Sample
                     title: "Ride to JFK airport",
                     price: 74,
                     quantityPurchased: 1,
-                    pickupAddress: shipping, 
+                    pickupAddress: pickup, 
                     dropoffAddress: billing, 
                     pickupDate: new DateTime(2019, 8, 1, 12, 1, 1, DateTimeKind.Local),
                     pickupLatitude: 0,
@@ -855,7 +883,8 @@ namespace Riskified.SDK.Sample
                 company: "IBM",
                 fullName: "Ben Philip Rolling");
 
-            var shipping = new AddressInformation(
+            var shipping = new[] {
+                new AddressInformation(
                 firstName: "Luke",
                 lastName: "Rolling",
                 address1: "4 Bermingham street",
@@ -864,7 +893,8 @@ namespace Riskified.SDK.Sample
                 countryCode: "US",
                 phone: "55546665",
                 provinceCode: "NJ",
-                province: "New Jersey");
+                province: "New Jersey")
+            };
 
             var payments = new[] {
                 new PaypalPaymentDetails(

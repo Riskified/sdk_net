@@ -122,7 +122,7 @@ namespace Riskified.SDK.Model
         /// The mailing address to where the order will be shipped.
         /// </summary>
         [JsonProperty(PropertyName = "shipping_address")]
-        public AddressInformation ShippingAddress { get; set; }
+        public AddressInformation[] ShippingAddress { get; set; }
 
         /// <summary>
         /// Applicable only for Merchants from the travel industry.
