@@ -20,7 +20,7 @@ namespace Riskified.SDK.Utils
     internal static class HttpUtils
     {
         private const string ShopDomainHeaderName = "X-RISKIFIED-SHOP-DOMAIN";
-        private const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
+        internal const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
         private const int ServerApiVersion = 2;
 
         private static readonly string AssemblyVersion;
@@ -233,7 +233,7 @@ namespace Riskified.SDK.Utils
         /// <returns>An object of type T containing data parsed from the request</returns>
         /// <exception cref="RiskifiedAuthenticationException">On missing/bad HMAC signature that doesn't match the given auth token</exception>
         /// <exception cref="RiskifiedTransactionException">On parsing error from string into the relevant object of type T</exception>
-        public static T ParsePostRequestToObject<T>(HttpListenerRequest request,string authToken) where T : class
+        internal static T ParsePostRequestToObject<T>(HttpListenerRequest request,string authToken) where T : class
         {
             if (!request.HasEntityBody)
             {
@@ -243,20 +243,31 @@ namespace Riskified.SDK.Utils
             T obj = JsonStringToObject<T>(postData);
             return obj;
         }
+        
+        internal static T ParsePostRequestComponentsToObject<T>(string hmacHeader, string requestBody, string authToken) where T : class
+        {
+            if (!AuthorizeContent(hmacHeader, requestBody, authToken))
+            {
+                throw new RiskifiedAuthenticationException("Request HMAC signature was either missing or incorrect");
+            }
+            return JsonStringToObject<T>(requestBody);
+        }
 
         private static string AuthorizeAndExtractContent(HttpListenerRequest request, string authToken)
         {
             if (!string.IsNullOrEmpty(request.Headers[HmacHeaderName]))
             {
-                Stream s = request.InputStream;
-                string postData = ExtractStreamData(s);
-                if (string.Equals(request.Headers[HmacHeaderName], CalcHmac(postData, authToken), StringComparison.Ordinal))
+                var s = request.InputStream;
+                var postData = ExtractStreamData(s);
+                if (AuthorizeContent(request.Headers[HmacHeaderName], postData, authToken))
                 {
                     return postData;
                 }
             }
             throw new RiskifiedAuthenticationException("Request HMAC signature was either missing or incorrect");
         }
+
+        private static bool AuthorizeContent(string expectedSignature, string postData, string authToken) => string.Equals(expectedSignature, CalcHmac(postData, authToken), StringComparison.Ordinal);
 
         private static string ExtractStreamData(Stream stream)
         {
