@@ -31,7 +31,9 @@ namespace Riskified.SDK.Model.OrderElements
                                         string creditCardToken = null, 
                                         DateTimeOffset? storedPaymentCreatedAt = null,
                                         DateTimeOffset? storedPaymentUpdatedAt = null,
-                                        int? installments = null)
+                                        int? installments = null,
+                                        string acquirerRegion = null,
+                                        string creditCardCountry = null)
         {
             AvsResultCode = avsResultCode;
             CvvResultCode = cvvResultCode;
@@ -42,7 +44,9 @@ namespace Riskified.SDK.Model.OrderElements
             CreditCardToken = creditCardToken;
             StoredPaymentCreatedAt = storedPaymentCreatedAt;
             StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
-            Installments = installments;  
+            Installments = installments;
+            AcquirerRegion = acquirerRegion;
+            CreditCardCountry = creditCardCountry;
         }
 
         /// <summary>
@@ -61,6 +65,16 @@ namespace Riskified.SDK.Model.OrderElements
             
             InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
             InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
+
+            if (AcquirerRegion != null && (AcquirerRegion != "EU" && AcquirerRegion != "NONEU"))
+            {
+                throw new OrderFieldBadFormatException("Acquirer Region must be either EU or NONEU.");
+            }
+
+            if (CreditCardCountry != null) 
+            {
+                InputValidators.ValidateCountryOrProvinceCode(CreditCardCountry);
+            }
         }
 
         [JsonProperty(PropertyName = "avs_result_code")]
@@ -116,6 +130,12 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "installments")]
         public int? Installments { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_region")]
+        public string AcquirerRegion { get; set; }
+
+        [JsonProperty(PropertyName = "credit_card_country")]
+        public string CreditCardCountry { get; set; }
 
     }
 
