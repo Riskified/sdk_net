@@ -21,6 +21,7 @@ namespace Riskified.SDK.Utils
     {
         private const string ShopDomainHeaderName = "X-RISKIFIED-SHOP-DOMAIN";
         private const string HmacHeaderName = "X-RISKIFIED-HMAC-SHA256";
+        private const string VersionHeaderName = "Version";
         private const int ServerApiVersion = 2;
 
         private static readonly string AssemblyVersion;
@@ -170,6 +171,7 @@ namespace Riskified.SDK.Utils
             string hashCode = CalcHmac(body, authToken);
             headers.Add(HmacHeaderName, hashCode);
             headers.Add(ShopDomainHeaderName, shopDomain);
+            headers.Add(VersionHeaderName, "V2");
             headers.Add("Accept-Encoding", "gzip,deflate,sdch");
         }
 

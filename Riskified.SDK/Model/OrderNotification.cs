@@ -27,6 +27,8 @@ namespace Riskified.SDK.Model
             Category = notificationInfo.Order.Category;
             Warnings = notificationInfo.Warnings;
             Score = notificationInfo.Order.Score;
+            Advice = notificationInfo.Order.Advice;
+            Action = notificationInfo.Order.Action;
             AuthenticationType = notificationInfo.Order.AuthenticationType;
         }
 
@@ -40,5 +42,7 @@ namespace Riskified.SDK.Model
         public string[] Warnings { get; private set; }
         public int Score { get; set; }
         public AuthenticationType AuthenticationType { get; private set; }
+        public Advice Advice { get; private set; }
+        public string Action { get; private set; }
     }
 }
