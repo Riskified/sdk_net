@@ -1,9 +1,6 @@
 sdk_net
 =======
 
-version: 2.1.2.9
------------------
-
 An implementation of the Riskified API in C# for .NET  
 Refer to the [documentation](http://apiref.riskified.com) for more details.
 
