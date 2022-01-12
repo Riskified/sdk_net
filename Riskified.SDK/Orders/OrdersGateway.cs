@@ -70,9 +70,6 @@ namespace Riskified.SDK.Orders
             return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_env, "/api/checkout_create"));
         }
 
-        /*
-        *  Advise API to support PSD2 
-        */
         public OrderNotification Advise(OrderCheckout orderCheckout)
         {
             return SendOrderCheckout(orderCheckout, HttpUtils.BuildUrl(_env, "/api/advise"));

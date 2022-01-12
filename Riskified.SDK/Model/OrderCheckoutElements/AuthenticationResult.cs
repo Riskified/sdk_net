@@ -11,10 +11,8 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 {
     public class AuthenticationResult : IJsonSerializable
     {
-
         public enum TranStatus
         {
-
             Y, N, U, A, C, D, R, I
         }
 
@@ -49,4 +47,5 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         public string cavv { get; set; }
 
     }
+}
 }

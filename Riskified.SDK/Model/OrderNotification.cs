@@ -15,6 +15,7 @@ namespace Riskified.SDK.Model
             Category = notificationInfo.Order.Category;
             DecisionCode = notificationInfo.Order.DecisionCode;
             Warnings = notificationInfo.Warnings;
+
         }
 
         internal OrderNotification(OrderCheckoutWrapper<Notification> notificationInfo)
