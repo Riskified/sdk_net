@@ -68,5 +68,6 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthorizationError AuthorizationResult { get; set; }
+
     }
 }

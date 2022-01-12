@@ -16,19 +16,20 @@ namespace Riskified.SDK.Model.RefundElements
         /// <param name="currency">The currency of the refund amount</param>
         /// <param name="reason">The reason for the partial refund</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
-        public PartialRefundDetails(string refundId,DateTime refundedAt, double amount, string currency, string reason)
+        public PartialRefundDetails(string refundId,DateTimeOffset? refundedAt, double amount, string currency, string reason, string sku = null)
         {
             RefundId = refundId;
             RefundedAt = refundedAt;
             Amount = amount;
             Currency = currency;
             Reason = reason;
+            Sku = sku;
         }
 
         public void Validate(Validations validationType = Validations.Weak)
         {
             InputValidators.ValidateValuedString(RefundId, "Refund ID");
-            InputValidators.ValidateDateNotDefault(RefundedAt, "Refunded At");
+            InputValidators.ValidateDateNotDefault(RefundedAt.Value, "Refunded At");
             InputValidators.ValidateZeroOrPositiveValue(Amount, "Refund Amount");
             InputValidators.ValidateCurrency(Currency);
             InputValidators.ValidateValuedString(Reason, "Refund Reason");
@@ -38,7 +39,7 @@ namespace Riskified.SDK.Model.RefundElements
         public string RefundId { get; set; }
 
         [JsonProperty(PropertyName = "refunded_at")]
-        public DateTime RefundedAt { get; set; }
+        public DateTimeOffset? RefundedAt { get; set; }
 
         [JsonProperty(PropertyName = "amount")]
         public double Amount { get; set; }
@@ -48,5 +49,8 @@ namespace Riskified.SDK.Model.RefundElements
 
         [JsonProperty(PropertyName = "reason")]
         public string Reason { get; set; }
+
+        [JsonProperty(PropertyName = "sku")]
+        public string Sku { get; set; }
     }
 }

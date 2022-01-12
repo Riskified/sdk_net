@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Riskified.SDK.Model.OrderElements;
 
@@ -16,6 +17,9 @@ namespace Riskified.SDK.Model.AccountActionElements
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
+        [JsonProperty(PropertyName = "customer_created_at")]
+        public DateTime? CustomerCreatedAt { get; set; }
+
         [JsonProperty(PropertyName = "login_status")]
         public LoginStatus LoginStatus { get; set; }
 
@@ -25,5 +29,11 @@ namespace Riskified.SDK.Model.AccountActionElements
         [JsonProperty(PropertyName = "social_login_type")]
         [JsonConverter(typeof(StringEnumConverter))]
         public SocialType? SocialLoginType { get; set; }
+
+        [JsonProperty(PropertyName = "challenge_redirect_url")]
+        public string ChallengeRedirectUrl { get; set; }
+
+        [JsonProperty(PropertyName = "account_recovery_url")]
+        public string AccountRecoveryUrl { get; set; }
     }
 }

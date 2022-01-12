@@ -30,7 +30,9 @@ namespace Riskified.SDK.Model.OrderElements
             ProductType? productType = null,
             string brand = null,
             string category = null,
-            string subCategory = null)
+            string subCategory = null,
+            Policy policy = null,
+            RegistryType? registryType = null)
         {
 
             Title = title;
@@ -49,6 +51,8 @@ namespace Riskified.SDK.Model.OrderElements
             SubCategory = subCategory;
             DeliveredAt = delivered_at;
             Brand = brand;
+            Policy = policy;
+            RegistryType = registryType;
         }
 
         /// <summary>
@@ -157,5 +161,13 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "delivered_at")]
         public DateTime? DeliveredAt { get; set; }
+
+        [JsonProperty(PropertyName = "policy")]
+        public Policy Policy { get; set; }
+
+
+        [JsonProperty(PropertyName = "registry_type")]
+        [JsonConverter(typeof (StringEnumConverter))]
+        public RegistryType? RegistryType { get; set; }
     }
 }

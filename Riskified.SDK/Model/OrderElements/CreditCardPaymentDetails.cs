@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -12,6 +13,11 @@ namespace Riskified.SDK.Model.OrderElements
     }
     public class CreditCardPaymentDetails : IPaymentDetails
     {
+        public enum _type
+        {
+            credit_card, paypal
+        }
+
         /// <summary>
         /// The payment information for the order
         /// </summary>
@@ -26,14 +32,22 @@ namespace Riskified.SDK.Model.OrderElements
                                         string creditCardBin, 
                                         string creditCardCompany, 
                                         string creditCardNumber, 
-                                        string creditCardToken = null)
+                                        string authorizationId = null,
+                                        string creditCardToken = null, 
+                                        DateTimeOffset? storedPaymentCreatedAt = null,
+                                        DateTimeOffset? storedPaymentUpdatedAt = null,
+                                        int? installments = null)
         {
             AvsResultCode = avsResultCode;
             CvvResultCode = cvvResultCode;
             CreditCardBin = creditCardBin;
             CreditCardCompany = creditCardCompany;
             CreditCardNumber = creditCardNumber;
+            AuthorizationId = authorizationId;
             CreditCardToken = creditCardToken;
+            StoredPaymentCreatedAt = storedPaymentCreatedAt;
+            StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
+            Installments = installments;  
         }
 
         /// <summary>
@@ -96,8 +110,28 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "mid")]
         public string mid  { get; set; }
 
+        public string Gateway { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_bin")]
+        public string AcquirerBin { get; set; }
+
+        [JsonProperty(PropertyName = "mid")]
+        public string Mid { get; set; }
+
         [JsonProperty(PropertyName = "_type")]
-        public string _type { get; set; }
+        public _type Type { get; set; }
+
+        [JsonProperty(PropertyName = "authentication_result")]
+        public AuthenticationResult AuthenticationResult { get; set; }
+
+        [JsonProperty(PropertyName = "stored_payment_created_at")]
+        public DateTimeOffset? StoredPaymentCreatedAt { get; set; }
+
+        [JsonProperty(PropertyName = "stored_payment_updated_at")]
+        public DateTimeOffset? StoredPaymentUpdatedAt { get; set; }
+
+        [JsonProperty(PropertyName = "installments")]
+        public int? Installments { get; set; }
 
     }
 

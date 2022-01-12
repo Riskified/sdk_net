@@ -102,6 +102,15 @@ namespace Riskified.SDK.Sample
                             // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
                             res = gateway.Checkout(orderCheckout);
                             break;
+                        case "a":
+                            Console.WriteLine("Order Advise Generated with merchant order number: " + orderNum);
+                            var orderAdviseCheckout = GenerateAdviseOrderCheckout(orderNum.ToString());
+                            orderAdviseCheckout.Id = orderNum.ToString();
+
+                            // sending order checkout for creation (if new orderNum) or update (if existing orderNum)
+                            res = gateway.Advise(orderAdviseCheckout);
+                            break;
+
                         case "e":
                             Console.WriteLine("Order checkout Generated.");
                             var orderCheckoutDenied = GenerateOrderCheckoutDenied(orderNum);
@@ -323,7 +332,7 @@ namespace Riskified.SDK.Sample
         private static OrderChargeback GenerateOrderChargeback(string orderNum)
         {
             var chargebackDetails = new ChargebackDetails(id: "id1234",
-                                charegbackAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                charegbackAt: new DateTime(2018, 12, 8, 14, 12, 12),
                                 chargebackCurrency: "USD",
                                 chargebackAmount: (float)50.5,
                                 reasonCode: "4863",
@@ -342,7 +351,7 @@ namespace Riskified.SDK.Sample
 
             var fulfillmentDetails = new FulfillmentDetails(
                                              fulfillmentId: "123",
-                                             createdAt: new DateTime(2015, 12, 8, 14, 12, 12, DateTimeKind.Local),
+                                             createdAt: new DateTimeOffset(2018, 12, 8, 14, 12, 12, new TimeSpan(-7, 0, 0)),
                                              status: FulfillmentStatusCode.Success,
                                              lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                              trackingCompany: "TestCompany");
@@ -353,7 +362,7 @@ namespace Riskified.SDK.Sample
                                         status: "pending",
                                         issuerPocPhoneNumber: "+1-877-111-1111",
                                         disputedAt: new DateTime(2016, 9, 15),
-                                        expectedResolutionDate: new DateTime(2016, 11, 1));
+                                        expectedResolutionDate: new DateTime(2016, 11, 1, 0, 0, 0, DateTimeKind.Local));
 
             return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
 
@@ -363,6 +372,9 @@ namespace Riskified.SDK.Sample
         {
             // make sure to initialize DateTime with the correct timezone
             OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
+            // add payment details from the gateway in pre-auth flow 
+            var paymentDetails = new[] { new CreditCardPaymentDetails(null, null, null, null, null, "016225891") };
+            orderDecision.PaymentDetails = paymentDetails; 
             return orderDecision;
         }
 
@@ -421,13 +433,13 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727", registryType: RegistryType.Other),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
 
-            orderCheckout.Email = "tester@exampler.com";
+            orderCheckout.Email = "test@example.com";
             orderCheckout.Currency = "USD";
             orderCheckout.UpdatedAt = DateTime.Now; // make sure to initialize DateTime with the correct timezone
             orderCheckout.Gateway = "authorize_net";
@@ -496,6 +508,94 @@ namespace Riskified.SDK.Sample
             return orderFulfillment;
         }
 
+
+
+        private static OrderCheckout GenerateAdviseOrderCheckout(string orderNum)
+        {
+            var orderCheckout = new OrderCheckout(orderNum);
+
+            var address = new AddressInformation(
+                firstName: "Ben",
+                lastName: "Rolling",
+                address1: "27 5th avenue",
+                city: "Manhattan",
+                country: "United States",
+                countryCode: "US",
+                phone: "5554321234",
+                address2: "Appartment 5",
+                zipCode: "54545",
+                province: "New York",
+                provinceCode: "NY",
+                company: "IBM",
+                fullName: "Ben Philip Rolling");
+            AuthenticationResult ar = new AuthenticationResult("05");
+
+
+            var payments = new[] {
+                new CreditCardPaymentDetails(
+                    avsResultCode: "Y",
+                    cvvResultCode: "n",
+                    creditCardBin: "124580",
+                    creditCardCompany: "Visa",
+                    creditCardNumber: "XXXX-XXXX-XXXX-4242",
+                    creditCardToken: "2233445566778899"
+                ) {AuthenticationResult = ar}
+
+            };
+
+            var lines = new[]
+            {
+                new ShippingLine(price: 22.22,title: "Mail")
+            };
+
+            // This is an example for client details section
+            var clientDetails = new ClientDetails(
+                accept_language: "en-CA",
+                user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            );
+
+
+            // Fill optional fields
+            var customer = new Customer(
+                firstName: "John",
+                lastName: "Doe",
+                id: "405050606",
+                ordersCount: 4,
+                email: "test@example.com",
+                verifiedEmail: true,
+                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
+                notes: "No additional info");
+
+            var items = new[]
+            {
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484",sku: "1272727"),
+                new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
+            };
+
+            var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
+
+            orderCheckout.Email = "tester@exampler.com";
+            orderCheckout.Currency = "USD";
+            orderCheckout.UpdatedAt = DateTime.Now; // make sure to initialize DateTime with the correct timezone
+            orderCheckout.Gateway = "authorize_net";
+            orderCheckout.CustomerBrowserIp = "165.12.1.1";
+            orderCheckout.TotalPrice = 100.60;
+            orderCheckout.CartToken = "a68778783ad298f1c80c3bafcddeea02f";
+            orderCheckout.ReferringSite = "nba.com";
+            orderCheckout.LineItems = items;
+            orderCheckout.DiscountCodes = discountCodes;
+            orderCheckout.ShippingLines = lines;
+            orderCheckout.PaymentDetails = payments;
+            orderCheckout.Customer = customer;
+            orderCheckout.BillingAddress = address;
+            orderCheckout.ShippingAddress = address;
+            orderCheckout.ClientDetails = clientDetails;
+
+            return orderCheckout;
+
+        }
+
+
         /// <summary>
         /// Generates a new order object
         /// Mind that some of the fields of the order (and it's sub-objects) are optional
@@ -522,7 +622,12 @@ namespace Riskified.SDK.Sample
                 ordersCount: 4,
                 email: "test@example.com",
                 verifiedEmail: true,
-                createdAt: new DateTime(2013, 12, 8, 14, 12, 12, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
+                createdAt: new DateTimeOffset(2013, 12, 8, 14, 12, 12, new TimeSpan(-6, 0, 0)),
+                updatedAt: new DateTimeOffset(DateTime.Now),
+                verifiedEmailAt: new DateTimeOffset(new DateTime(2020, 2, 28), new TimeSpan(-8, 0, 0)),
+                verifiedPhone: true, 
+                verifiedPhoneAt: new DateTime(2019, 8, 28, 12, 0, 0),
+                firstPurchaseAt: new DateTime(2013, 6, 18, 0, 0, 0, DateTimeKind.Local),
                 notes: "No additional info",
                 address: customerAddress,
                 accountType: "Premium");
@@ -593,7 +698,7 @@ namespace Riskified.SDK.Sample
             {
                 new LineItem(title: "Bag", price: 55.44, quantityPurchased: 1, productId: "48484", sku: "1272727",
                     deliveredTo: DeliveredToType.StorePickup,
-                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local)),
+                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local), registryType: RegistryType.Wedding),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3,
                     seller: new Seller(customer: customer, correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Product (aplicaible for event industry merchants)
@@ -601,12 +706,12 @@ namespace Riskified.SDK.Sample
                     title: "Concert",
                     price: 123,
                     quantityPurchased: 1,
+                    eventDate: new DateTime(2019, 7, 12, 11, 40, 00, DateTimeKind.Local),
+                    city: "New York", 
                     category: "Singers",
                     subCategory: "Rock",
-                    eventName: "Bon Jovy",
-                    eventSectionName: "Section",
-                    eventCountry: "USA",
-                    eventCountryCode: "US",
+                    section: "Section",
+                    countryCode: "US",
                     latitude: 0,
                     longitude: 0),
                 // Giftcard Product (appliciable for giftcard industry merchants)
@@ -632,7 +737,7 @@ namespace Riskified.SDK.Sample
                     departureCity: "ashdod",
                     departureCountryCode: "IL",
                     transportMethod: TransportMethodType.Plane), 
-                // Accomodation reservation product (appliciable for travel industry merchants)
+                // Accommodation reservation product (appliciable for travel industry merchants)
                 new AccommodationLineItem(
                     title: "Hotel Arcadia - Standard Room", 
                     price: 476, 
@@ -643,7 +748,30 @@ namespace Riskified.SDK.Sample
                     rating: "5",
                     numberOfGuests: 2,
                     cancellationPolicy: "Not appliciable",
-                    accommodationType: "Hotel")
+                    accommodationType: "Hotel"),
+                    // Ride Ticket Product 
+                new RideTicketLineItem(
+                    title: "Ride to JFK airport",
+                    price: 74,
+                    quantityPurchased: 1,
+                    pickupAddress: shipping, 
+                    dropoffAddress: billing, 
+                    pickupDate: new DateTime(2019, 8, 1, 12, 1, 1, DateTimeKind.Local),
+                    pickupLatitude: 0,
+                    pickupLongitude: 0,
+                    dropoffLatitude: 1, 
+                    dropoffLongitude: 1, 
+                    routeIndex: 1, 
+                    legIndex: 1,
+                    transportMethod: "Taxi",
+                    priceBy: "fixed",
+                    vehicleClass: "executive",
+                    carrierName: "Best darn taxi company in the world!",
+                    driverId: "15EGT701",
+                    meetNGreet: "Whenever you meet me, please greet me.",
+                    cancellationPolicy: "24 hours in advance",
+                    authorizedPayments: 74
+                )
             };
 
             var discountCodes = new[] { new DiscountCode(moneyDiscountSum: 7, code: "1") };
@@ -666,18 +794,20 @@ namespace Riskified.SDK.Sample
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(),
-                email: "tester@exampler.com",
+                email: "test@example.com",
                 customer: customer,
                 paymentDetails: payments,
                 billingAddress: billing,
                 shippingAddress: shipping,
                 lineItems: items,
                 shippingLines: lines,
+                cartToken: "68778783ad298f1c80c3bafcddeea02f",
+                deviceId: "01234567-89ABCDEF-01234567-89ABCDEF",
                 gateway: "authorize_net",
                 customerBrowserIp: "165.12.1.1",
                 currency: "USD",
                 totalPrice: 100.60,
-                createdAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
+                createdAt: new DateTime(2020, 4, 18, 12, 0, 0, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes,
                 source: "web",
@@ -690,7 +820,7 @@ namespace Riskified.SDK.Sample
                 clientDetails: clientDetails,
                 custom: custom,
                 groupFounderOrderID: "2222",
-                submissionReason: SubmissionReason.ManualDecision
+                submissionReason: "Manual Decision"
                 );
 
             return order;
@@ -756,7 +886,7 @@ namespace Riskified.SDK.Sample
 
             var items = new[]
             {
-                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727"),
+                new LineItem(title: "Bag",price: 55.44,quantityPurchased: 1,productId: "48484", sku: "1272727", registryType: RegistryType.Baby),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3)
             };
 
@@ -764,7 +894,7 @@ namespace Riskified.SDK.Sample
 
             var order = new Order(
                 merchantOrderId: orderNum.ToString(),
-                email: "tester@exampler.com",
+                email: "test@example.com",
                 customer: customer,
                 paymentDetails: payments,
                 billingAddress: billing,
@@ -794,7 +924,10 @@ namespace Riskified.SDK.Sample
 
         private static SessionDetails GenerateSessionDetails()
         {
-            return new SessionDetails(DateTime.Now, "68778783ad298f1c80c3bafcddeea02f", "111.111.111.111", SessionSource.DesktopWeb);
+            return new SessionDetails(DateTime.Now, "68778783ad298f1c80c3bafcddeea02f", "111.111.111.111", SessionSource.DesktopWeb)
+            {
+                DeviceId = "01234567-89ABCDEF-01234567-89ABCDEF"
+            };
         }
 
         private static Customer GenerateCustomer(string idString)
@@ -834,7 +967,12 @@ namespace Riskified.SDK.Sample
             var clientDetails = GenerateClientDetails();
             var sessionDetails = GenerateSessionDetails();
 
-            return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails);
+            return new Login(idString, "bob.norman@hostmail.com", loginStatus, clientDetails, sessionDetails)
+            {
+                LoginAtCheckout = true,
+                SocialLoginType = SocialType.Amazon,
+                CustomerCreatedAt = DateTime.Now 
+            };
         }
 
         private static CustomerCreate GenerateCustomerCreate(string idString)

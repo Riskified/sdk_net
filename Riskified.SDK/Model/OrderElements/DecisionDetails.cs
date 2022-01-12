@@ -13,7 +13,7 @@ namespace Riskified.SDK.Model.OrderElements
     public class DecisionDetails : IJsonSerializable
     {
 
-        public DecisionDetails(ExternalStatusType externalStatus, DateTime? decidedAt, string reason = null, float? amount = null, string currency = null, string notes = null)
+        public DecisionDetails(ExternalStatusType externalStatus, DateTimeOffset? decidedAt, string reason = null, float? amount = null, string currency = null, string notes = null)
         {
             this.ExternalStatus = externalStatus;
             this.DecidedAt = decidedAt;
@@ -50,7 +50,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// The date when the order was decided.
         /// </summary>
         [JsonProperty(PropertyName = "decided_at")]
-        public DateTime? DecidedAt { get; set; }
+        public DateTimeOffset? DecidedAt { get; set; }
 
         /// <summary>
         /// A reason for the decision.

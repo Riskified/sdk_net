@@ -11,14 +11,10 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 {
     public class AuthenticationResult : IJsonSerializable
     {
-   
-
-        public enum TranStatus{ 
-
+        public enum TranStatus
+        {
             Y, N, U, A, C, D, R, I
         }
-
-
 
         public AuthenticationResult(string eci)
         {
@@ -44,8 +40,12 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [JsonProperty(PropertyName = "created_at")]
         public DateTime? CreatedAt { get; set; }
 
+        [JsonProperty(PropertyName = "liability_shift")]
+        public bool LiabilityShift { get; set; }
+
         [JsonProperty(PropertyName = "cavv")]
         public string cavv { get; set; }
 
     }
+}
 }
