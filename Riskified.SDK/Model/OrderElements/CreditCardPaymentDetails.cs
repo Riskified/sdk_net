@@ -3,6 +3,8 @@ using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
+using System.Runtime.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Riskified.SDK.Model.OrderElements
 {
@@ -13,10 +15,7 @@ namespace Riskified.SDK.Model.OrderElements
     }
     public class CreditCardPaymentDetails : IPaymentDetails
     {
-        public enum _type
-        {
-            credit_card, paypal
-        }
+       
 
         /// <summary>
         /// The payment information for the order
@@ -47,8 +46,11 @@ namespace Riskified.SDK.Model.OrderElements
             CreditCardToken = creditCardToken;
             StoredPaymentCreatedAt = storedPaymentCreatedAt;
             StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
-            Installments = installments;  
+            Installments = installments;
+            PaymentType = PaymentType.CreditCard;
         }
+
+
 
         /// <summary>
         /// Validates the objects fields content
@@ -67,6 +69,12 @@ namespace Riskified.SDK.Model.OrderElements
             InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
             InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
         }
+
+
+
+        [JsonProperty(PropertyName = "payment_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PaymentType PaymentType { get; set; }
 
         [JsonProperty(PropertyName = "avs_result_code")]
         public string AvsResultCode { get; set; }
@@ -88,9 +96,6 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorization_error")]
         public AuthorizationError AuthorizationError { get; set; }
-
-        [JsonProperty(PropertyName = "authentication_result")]
-        public AuthenticationResult AuthenticationResult { get; set; }
 
         [JsonProperty(PropertyName = "cardholder_name")]
         public string CardholderName { get; set; }
@@ -117,9 +122,6 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "mid")]
         public string Mid { get; set; }
-
-        [JsonProperty(PropertyName = "_type")]
-        public _type Type { get; set; }
 
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthenticationResult AuthenticationResult { get; set; }

@@ -8,6 +8,8 @@ namespace Riskified.SDK.Model.Internal
 {
     internal class Notification
     {
+
+
         [JsonProperty(PropertyName = "id", Required = Required.Always)]
         public string Id { get; set; }
 
@@ -25,6 +27,9 @@ namespace Riskified.SDK.Model.Internal
 
         [JsonProperty(PropertyName = "category", Required = Required.Default)]
         public string Category { get; set; }
+
+        [JsonProperty(PropertyName = "action", Required = Required.Default)]
+        public string Action { get; set; }
 
         [JsonProperty(PropertyName = "decision_code", Required = Required.Default)]
         public string DecisionCode { get; set; }

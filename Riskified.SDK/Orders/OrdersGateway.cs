@@ -378,7 +378,6 @@ namespace Riskified.SDK.Orders
             var wrappedOrder = new OrderCheckoutWrapper<AbstractOrder>(orderCheckout);
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
             return new OrderNotification(transactionResult);
-            
         }
     }
 

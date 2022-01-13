@@ -48,4 +48,4 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 
     }
 }
-}
+

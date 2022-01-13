@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -27,6 +28,7 @@ namespace Riskified.SDK.Model.OrderElements
             ProtectionEligibility = protectionEligibility;
             PaymentStatus = paymentStatus;
             PendingReason = PendingReason;
+            PaymentType = PaymentType.Paypal;
         }
 
         /// <summary>
@@ -41,6 +43,10 @@ namespace Riskified.SDK.Model.OrderElements
                 InputValidators.ValidateValuedString(PaymentStatus, "Payment Status");
             }
         }
+
+        [JsonProperty(PropertyName = "payment_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public PaymentType PaymentType { get; set; }
 
         [JsonProperty(PropertyName = "authorization_id")]
         public string AuthorizationId { get; set; }

@@ -136,7 +136,6 @@
     <Compile Include="Model\AccountActionElements\AccountActionNotification.cs" />
     <Compile Include="Model\OrderIdOnly.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthenticationResult.cs" />
-    <Compile Include="Model\OrderElements\AuthenticationType.cs" />
     <Compile Include="Model\OrderElements\RegistryType.cs" />
     <Compile Include="Model\OrderElements\RideTicketLineItem.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthenticationType.cs" />
