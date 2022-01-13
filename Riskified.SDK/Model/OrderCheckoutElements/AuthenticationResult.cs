@@ -49,4 +49,8 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         public string cavv { get; set; }
 
     }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

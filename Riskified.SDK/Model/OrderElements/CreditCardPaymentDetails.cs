@@ -91,7 +91,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorization_error")]
         public AuthorizationError AuthorizationError { get; set; }
+<<<<<<< Updated upstream
         
+=======
+
+>>>>>>> Stashed changes
         [JsonProperty(PropertyName = "cardholder_name")]
         public string CardholderName { get; set; }
 
