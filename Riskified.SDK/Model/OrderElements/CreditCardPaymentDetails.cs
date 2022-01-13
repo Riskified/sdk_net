@@ -8,6 +8,11 @@ using Newtonsoft.Json.Converters;
 
 namespace Riskified.SDK.Model.OrderElements
 {
+
+    public enum _type
+    {
+        credit_card, paypal
+    }
     public class CreditCardPaymentDetails : IPaymentDetails
     {
        
@@ -21,7 +26,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardCompany">The name of the company who issued the customer's credit card</param>
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
         /// <param name="authorizationId">Unique identifier of the payment transaction as granted by the processing gateway.</param>
-        public CreditCardPaymentDetails(string avsResultCode, 
+        public CreditCardPaymentDetails(string avsResultCode,
                                         string cvvResultCode, 
                                         string creditCardBin, 
                                         string creditCardCompany, 
@@ -91,11 +96,7 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorization_error")]
         public AuthorizationError AuthorizationError { get; set; }
-<<<<<<< Updated upstream
-        
-=======
 
->>>>>>> Stashed changes
         [JsonProperty(PropertyName = "cardholder_name")]
         public string CardholderName { get; set; }
 
@@ -106,6 +107,14 @@ namespace Riskified.SDK.Model.OrderElements
         public string id { get; set; }
 
         [JsonProperty(PropertyName = "gateway")]
+        public string gateway { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_bin")]
+        public string acquirerBin { get; set; }
+
+        [JsonProperty(PropertyName = "mid")]
+        public string mid  { get; set; }
+
         public string Gateway { get; set; }
 
         [JsonProperty(PropertyName = "acquirer_bin")]
