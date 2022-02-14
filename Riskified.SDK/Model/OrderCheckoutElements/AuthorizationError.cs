@@ -12,14 +12,15 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
     public class AuthorizationError : IJsonSerializable
     {
 
-        public AuthorizationError(DateTimeOffset? createdAt, string errorCode, string message = null, bool dropOff = false)
+        public AuthorizationError(DateTimeOffset? createdAt, string errorCode, bool dropOff, string message = null)
         {
             this.CreatedAt = createdAt;
             this.ErrorCode = errorCode;
+            this.DropOff = dropOff;
 
             // optional field
             this.Message = message;
-            this.DropOff = dropOff;
+            
         }
 
         public void Validate(Validations validationType = Validations.Weak)
