@@ -9,7 +9,7 @@ using Newtonsoft.Json.Converters;
 namespace Riskified.SDK.Model.OrderElements
 {
 
-    public enum _type
+    public enum PaymentType
     {
         credit_card, paypal
     }
@@ -47,7 +47,7 @@ namespace Riskified.SDK.Model.OrderElements
             StoredPaymentCreatedAt = storedPaymentCreatedAt;
             StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
             Installments = installments;
-            PaymentType = PaymentType.CreditCard;
+            PaymentType = PaymentType.credit_card;
         }
 
 
@@ -108,14 +108,6 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "gateway")]
         public string gateway { get; set; }
-
-        [JsonProperty(PropertyName = "acquirer_bin")]
-        public string acquirerBin { get; set; }
-
-        [JsonProperty(PropertyName = "mid")]
-        public string mid  { get; set; }
-
-        public string Gateway { get; set; }
 
         [JsonProperty(PropertyName = "acquirer_bin")]
         public string AcquirerBin { get; set; }

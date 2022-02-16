@@ -47,7 +47,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         public string cavv { get; set; }
 
         [JsonProperty(PropertyName = "three_d_challenge")]
-        public bool ThreeDChallenege { get; set; }
+        public bool ThreeDChallenge { get; set; }
 
         [JsonProperty(PropertyName = "TRA_exemption")]
         public bool TraExemption { get; set; }
