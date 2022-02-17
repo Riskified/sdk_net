@@ -16,9 +16,9 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         {
             this.CreatedAt = createdAt;
             this.ErrorCode = errorCode;
-
             // optional field
             this.Message = message;
+            
         }
 
         public void Validate(Validations validationType = Validations.Weak)
@@ -42,5 +42,8 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
 
         [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
+
+        [JsonProperty(PropertyName = "drop_off")]
+        public bool DropOff { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace Riskified.SDK.Model.OrderElements
             ProtectionEligibility = protectionEligibility;
             PaymentStatus = paymentStatus;
             PendingReason = PendingReason;
-            PaymentType = PaymentType.Paypal;
+            PaymentType = PaymentType.paypal;
         }
 
         /// <summary>
