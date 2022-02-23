@@ -8,14 +8,16 @@
       <File FileName="Riskified.SDK/Model/OrderElements/PaypalPaymentDetails.cs" />
       <File FileName="Riskified.SDK/Model/OrderCheckoutElements/AuthenticationResult.cs" />
       <File FileName="Riskified.SDK/Model/OrderCheckoutElements/AuthorizationError.cs" />
-      <File FileName=".circleci/config.yml" Line="39" Column="26" />
+      <File FileName=".circleci/config.yml" Line="39" Column="28" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Option id="ShowAllFiles" value="True" />
           <Node name="SDK_NET" expanded="True">
-            <Node name=".circleci" selected="True" />
+            <Node name=".circleci" expanded="True">
+              <Node name="config.yml" selected="True" />
+            </Node>
           </Node>
         </State>
       </Pad>
