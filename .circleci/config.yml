@@ -28,3 +28,12 @@ jobs:
           command: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
       - store_artifacts:
           path: .\bin\Release\netcoreapp2.1\win10-x64\publish\circleci-demo-windows.exe
+
+workflows:
+  build_and_deploy:
+    jobs:
+      - build:
+          filters: 
+            branches:
+              only:
+                - TIS-361
