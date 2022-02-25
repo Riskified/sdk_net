@@ -1,4 +1,4 @@
-version: 2.1
+version: 2.0
 orbs:
     hello: circleci/hello-build@0.0.5
 workflows:
