@@ -5,9 +5,8 @@ orbs:
 
 jobs:
   build:
-    executor:
-      name: "win/default"
-      shell: powershell.exe
+    executor: win/default
+    
     steps:
       - checkout
       - restore_cache:
