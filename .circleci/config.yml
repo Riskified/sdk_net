@@ -6,7 +6,7 @@ orbs:
 jobs:
   build:
     executor:
-      name: win/vs2019
+      name: win/default
       shell: powershell.exe
     steps:
       - checkout
