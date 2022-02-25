@@ -1,12 +1,10 @@
 version: 2.0
 
-orbs:
-  win: circleci/windows@2.0
 
 jobs:
   build:
-    docker:
-      - image: cimg/base:2022.02
+    machine:
+      image: ubuntu-2004:202010-01
     
     steps:
       - checkout
