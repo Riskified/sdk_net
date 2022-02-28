@@ -8,8 +8,8 @@ jobs:
     steps:
       # default shell is Powershell
       - run:
-         command: echo hello && echo world
+         command: echo hello && echo bash
          shell: bash.exe
       - run:
-         command: echo hello & echo world
+         command: echo hello & echo cmd
          shell: cmd.exe
