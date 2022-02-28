@@ -4,7 +4,7 @@ jobs:
   build: # name of your job
     machine:
       -image: win/vs2019
-      - shell: powershell.exe
+      -shell: powershell.exe
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
