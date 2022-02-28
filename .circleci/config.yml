@@ -2,8 +2,7 @@ version: 2
 
 jobs:
   build: # name of your job
-    machine:
-      -image: windows/default@2.2.0 # Windows machine image
+    machine: windows-default # Windows machine image
     
     steps:
       # default shell is Powershell
