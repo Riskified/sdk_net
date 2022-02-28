@@ -5,8 +5,7 @@ orbs:
 
 jobs:
   build:
-    executor:
-      name: win/default
+    executor: win/default
     
     steps:
       - checkout
