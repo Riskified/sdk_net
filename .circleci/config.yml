@@ -14,5 +14,4 @@ jobs:
               - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
         - run:
             name: "Install project dependencies"
-            shell: powershell.exe
             command: Write-Host 'Hello, Windows'
