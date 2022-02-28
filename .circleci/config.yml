@@ -3,14 +3,9 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      image: windows-default # Windows machine image
-    resource_class: windows.medium
+      -image: win/vs2019
+    shell: powershell.exe
     steps:
-      - checkout
-      - run: systeminfo
-      - run:
-          name: "Check docker"
-          shell: powershell.exe
-          command: |
-            docker info
-            docker run hello-world:nanoserver-1809
+      # Commands are run in a Windows virtual machine environment
+        - checkout
+        - run: Write-Host 'Hello, Windows'
