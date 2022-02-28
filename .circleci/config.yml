@@ -6,11 +6,13 @@ jobs:
       - image: windows-default # Windows machine image
     resource_class: windows.medium
     steps:
-      - checkout
-      - run: systeminfo
+      # default shell is Powershell
       - run:
-          name: "Check docker"
-          shell: powershell.exe
-          command: |
-            docker info
-            docker run hello-world:nanoserver-1809
+         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
+         shell: powershell.exe
+      - run:
+         command: echo hello && echo world
+         shell: bash.exe
+      - run:
+         command: echo hello & echo world
+         shell: cmd.exe
