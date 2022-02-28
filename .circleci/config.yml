@@ -1,15 +1,14 @@
-version: 2
+version: 2.0 # Use version 2.1 to enable Orb usage.
+
+#orbs:
+ # win: circleci/windows@2.2.0 # The Windows orb give you everything you need to start using the Windows executor.
 
 jobs:
   build: # name of your job
-    machine: windows-default # Windows machine image
-    
+    executor: machine
     steps:
-      # default shell is Powershell
-      - run: systeminfo
-      - run:
-         command: echo hello && echo bash
-         shell: bash.exe
-      - run:
-         command: echo hello & echo cmd
-         shell: cmd.exe
+      # Commands are run in a Windows virtual machine environment
+        - checkout
+        - run:
+            name: "Install project dependencies"
+            command: dotnet.exe restore
