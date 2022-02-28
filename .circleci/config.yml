@@ -11,4 +11,4 @@ jobs:
         - checkout
         - run:
             name: "Install project dependencies"
-            command: dotnet.exe restore
+            command: dotnet restore
