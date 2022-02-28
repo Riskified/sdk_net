@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   build:
-    executor: win/default
+    executor: win/vs2019
     
     steps:
       - checkout
