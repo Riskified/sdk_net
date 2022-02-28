@@ -5,8 +5,9 @@ orbs:
 
 jobs:
   build: # name of your job
-    docker:
-      -image: circleci/windows@2.2.0
+    machine:
+      image: windows-server-2019
+      shell: powershell.exe -ExecutionPolicy Bypass
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
