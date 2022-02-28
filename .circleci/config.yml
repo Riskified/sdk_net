@@ -8,8 +8,5 @@ jobs:
     
     steps:
        - checkout
-       - run: echo 'Hello, Windows'
-       - run:
-          name: "Install project dependencies"
-          command: sudo dotnet install
+       - run: Write-Host 'Hello, Windows'
            
