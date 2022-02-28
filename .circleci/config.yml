@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     machine:
-      image: win/vs2019
+      image: win/default
     
     
     steps:
