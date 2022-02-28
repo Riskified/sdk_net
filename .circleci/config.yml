@@ -7,6 +7,7 @@ jobs:
   build: # name of your job
     machine:
       -image: circleci/windows@2.2.0
+      -shell: powershell.exe
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
