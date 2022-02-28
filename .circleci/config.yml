@@ -8,5 +8,5 @@ jobs:
     steps:
        - checkout
        - run: 
-           shell: powershell.exe 
            command: Write-Host 'Hello, Windows'
+           shell: powershell.exe 
