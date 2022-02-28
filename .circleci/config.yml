@@ -3,7 +3,8 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      -image: windows-server-2019
+      image: windows-server-2019
+      shell: powershell.exe -ExecutionPolicy Bypass
 
     steps:
        - checkout
