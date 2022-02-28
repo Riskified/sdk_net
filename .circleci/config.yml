@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      -image: circleci/windows@2.2.0/vs2019
+      -image: circleci/windows@2.4.1/default
 
     steps:
        - checkout
