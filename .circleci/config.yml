@@ -6,7 +6,8 @@ orbs:
 jobs:
   build: # name of your job
     executor: machine
-      name: windows-default
+      name: win/default
+      shell: powershell.exe
 
     steps:
       - checkout
