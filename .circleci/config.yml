@@ -10,9 +10,9 @@ jobs:
        - checkout
        - run: echo 'Hello, Windows'
        - restore_cache:
-          keys:
-            - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore
+           keys:
+             - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
+       - run:
+           name: "Install project dependencies"
+           command: dotnet restore
            
