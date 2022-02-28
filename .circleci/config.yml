@@ -5,8 +5,9 @@ orbs:
 
 jobs:
   build:
-    docker:
-      - image: cimg/base:2022.02
+    machine:
+      image: windows-default # Windows machine image
+    resource_class: windows.medium
     
     steps:
       - checkout
