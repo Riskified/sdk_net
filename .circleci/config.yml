@@ -4,7 +4,7 @@ jobs:
   build: # name of your job
     machine:
       - image: windows-default # Windows machine image
-    resource_class: windows.medium
+    
     steps:
       # default shell is Powershell
       - run:
