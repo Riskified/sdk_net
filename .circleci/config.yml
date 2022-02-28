@@ -10,5 +10,5 @@ jobs:
       # Commands are run in a Windows virtual machine environment
         - checkout
         - restore_cache:
-          keys:
-            - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
+            keys:
+              - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
