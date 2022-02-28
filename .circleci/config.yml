@@ -2,11 +2,14 @@ version: 2
 
 jobs:
   build: # name of your job
-    machine:
-      -image: windows-server-2019
-      -shell: powershell.exe -ExecutionPolicy Bypass
-
+    docker:
+      -image: circleci/windows@2.2.0
+      
+    working_directory: ~/repo
     steps:
        - checkout
-       - run: Write-Host 'Hello, Windows'
+       - run: echo 'Hello, Windows'
+       - run:
+          name: "Install project dependencies"
+          command: sudo dotnet install
            
