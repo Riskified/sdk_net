@@ -7,6 +7,5 @@ jobs:
 
     steps:
        - checkout
-       - run: 
-           command: Write-Host 'Hello, Windows'
-           shell: powershell.exe 
+       - run: Write-Host 'Hello, Windows'
+           
