@@ -5,8 +5,8 @@ orbs:
 
 jobs:
   build:
-    docker:
-      - image: cimg/base:2022.02
+    executor:
+      name: win/default
     
     steps:
       - checkout
