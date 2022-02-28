@@ -21,4 +21,8 @@ jobs:
           paths:
             - C:\Users\circleci\.nuget\packages
           key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+          
+       - run:
+          name: "Run Build step"
+          command: dotnet publish -c Release -r win10-x64
            
