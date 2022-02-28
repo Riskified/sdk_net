@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      -image: win/vs2019
+      -image: circleci/windows@1.0.0/vs2019
       -shell: powershell.exe
     steps:
       # Commands are run in a Windows virtual machine environment
