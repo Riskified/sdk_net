@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     docker:
-      -image: circleci/windows@2.2.0
+      - image: circleci/windows@2.2.0
       
     working_directory: ~/repo
     steps:
