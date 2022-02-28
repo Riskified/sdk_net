@@ -7,10 +7,6 @@ jobs:
     
     steps:
       # default shell is Powershell
-      - run:
-         command: $(echo hello | Out-Host; $?) -and $(echo world | Out-Host; $?)
-         shell: powershell.exe
-      - run:
          command: echo hello && echo world
          shell: bash.exe
       - run:
