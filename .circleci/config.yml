@@ -5,13 +5,13 @@ jobs:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:5.0-focal
       
-    
+    working_directory: ~/repo
     steps:
        - checkout
        - run: echo 'Hello, Windows'
        - restore_cache:
            keys:
-             - dotnet-packages-v1-{{ checksum "Riskified.SDK.csproj" }}
+             - dotnet-packages-v1-{{ checksum "Riskified.SDK\Riskified.SDK.csproj" }}
        - run:
            name: "Install project dependencies"
            command: dotnet restore
