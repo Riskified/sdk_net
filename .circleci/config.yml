@@ -5,15 +5,12 @@ orbs:
 
 jobs:
   build: # name of your job
-    machine:
+    docker:
       -image: circleci/windows@2.2.0
-      -shell: powershell.exe
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
-        - restore_cache:
-            keys:
-              - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
+      
         - run:
             name: "Install project dependencies"
             command: Write-Host 'Hello, Windows'
