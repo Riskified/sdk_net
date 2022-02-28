@@ -6,4 +6,7 @@ orbs:
 jobs:
   build: # name of your job
     executor: machine
-      
+    steps:
+      # Commands are run in a Windows virtual machine environment
+        - checkout
+        - run: Write-Host 'Hello, Windows'
