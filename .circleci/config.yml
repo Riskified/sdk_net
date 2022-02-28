@@ -6,6 +6,7 @@ orbs:
 jobs:
   build: # name of your job
     executor: machine
+      image: windows-default
 
     steps:
       - checkout
