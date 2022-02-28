@@ -15,4 +15,4 @@ jobs:
         - run:
             name: "Install project dependencies"
             shell: powershell.exe
-            command: dotnet.exe restore
+            command: Write-Host 'Hello, Windows'
