@@ -6,7 +6,7 @@ orbs:
 jobs:
   build: # name of your job
     machine:
-      image: windows-default
+      - image: windows-default
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
