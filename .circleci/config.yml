@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      - image: windows-default/vs2019
+      -image: windows-default/vs2019
 
     steps:
       # Commands are run in a Windows virtual machine environment
