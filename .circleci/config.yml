@@ -6,7 +6,7 @@ orbs:
 jobs:
   build: # name of your job
     machine:
-      image: windows-server-2019
+      image: circleci/windows@2.2.0
       shell: powershell.exe -ExecutionPolicy Bypass
     steps:
       # Commands are run in a Windows virtual machine environment
