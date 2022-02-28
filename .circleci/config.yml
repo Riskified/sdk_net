@@ -12,3 +12,7 @@ jobs:
         - restore_cache:
             keys:
               - dotnet-packages-v1-{{ checksum "circleci-demo-windows.csproj" }}
+        - run:
+          name: "Install project dependencies"
+          shell: powershell.exe
+          command: dotnet.exe restore
