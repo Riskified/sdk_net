@@ -4,7 +4,7 @@ jobs:
   build:
     machine:
       image: windows-default # Windows machine image
-    resource_class: windows.small
+    resource_class: windows.medium
     
     steps:
       - checkout
