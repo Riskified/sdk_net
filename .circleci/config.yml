@@ -5,7 +5,8 @@ orbs:
 
 jobs:
   build:
-    executor: win/vs2019
+    docker:
+      - image: cimg/base:2022.02
     
     steps:
       - checkout
