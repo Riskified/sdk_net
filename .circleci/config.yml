@@ -6,8 +6,7 @@ orbs:
 jobs:
   build: # name of your job
     machine:
-      -image: circleci/windows@2.2
-      -shell: powershell.exe -ExecutionPolicy Bypass
+      -image: windows-default@2.2
     steps:
       # Commands are run in a Windows virtual machine environment
         - checkout
