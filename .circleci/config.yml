@@ -4,7 +4,7 @@ jobs:
   build: # name of your job
     docker:
       #- image: mcr.microsoft.com/dotnet/sdk:5.0-focal
-      - image: mcr.microsoft.com/dotnet/sdk:3.1-focal
+      - image: mcr.microsoft.com/dotnet/framework/aspnet
       
     working_directory: ~/repo
     steps:
