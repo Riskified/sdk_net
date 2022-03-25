@@ -5,7 +5,7 @@ jobs:
     docker:
       #- image: mcr.microsoft.com/dotnet/sdk:5.0-focal
       #- image: mcr.microsoft.com/dotnet/framework/sdk:windowsservercore-ltsc2016
-      - image: mcr.microsoft.com/windows/servercore:ltsc2019
+      - image: mcr.microsoft.com/dotnet/core/sdk
       
     working_directory: ~/repo
     steps:
