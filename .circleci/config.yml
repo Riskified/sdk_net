@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     docker:
-      #- image: mcr.microsoft.com/dotnet/sdk:5.0-focal
+      #-image: mcr.microsoft.com/dotnet/sdk:5.0-focal
       #- image: mcr.microsoft.com/dotnet/framework/sdk:windowsservercore-ltsc2016
       - image: mcr.microsoft.com/dotnet/core/sdk
       
