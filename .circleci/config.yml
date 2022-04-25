@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-windows:
+  build:
     machine:
       image: windows-server-2019:stable
       resource_class: windows.medium
