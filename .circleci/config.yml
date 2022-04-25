@@ -1,37 +1,11 @@
 version: 2
 
-workflows:
-  hello-world:
-    jobs:
-      - build
-
 jobs:
   build: # name of your job
-    #docker:
-      #- image: mcr.microsoft.com/dotnet/sdk
-      #- image: docker pull mcr.microsoft.com/dotnet/runtime:6.0
-      #- image: mcr.microsoft.com/dotnet/core/sdk
-     executor:
-      name: circleci/windows@2.4.0/default
-      
-    working_directory: ~/repo
+    machine:
+      image: windows-default
+    resource_class: windows.medium
     steps:
-       - checkout
-       - run: echo 'Hello, Windows'
-       - restore_cache:
-           keys:
-             - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
-             
-       - run:
-           name: "Install project dependencies"
-           command: dotnet restore
-           
-       - save_cache:
-          paths:
-            - C:\Users\circleci\.nuget\packages
-          key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
-          
-       - run:
-          name: "Run Build step"
-          command: dotnet build --configuration Release
-          #command: dotnet publish -c Release -r win10-x64
+      # Commands are run in a Windows virtual machine environment
+        - checkout
+        - run: Write-Host 'Hello, Windows'
