@@ -1,22 +1,11 @@
 version: 2
-orbs:
-  windows: circleci/windows@2.4.1
-  
-jobs:
-  build:
-    description: Build application with Release configuration
-    executor:
-      name: windows/default
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
-      - run:
-          name: "Install project dependencies"
-          command: dotnet.exe restore
-      - run:
-          name: "Build Application according to some given configuration"
-          command: dotnet.exe build --configuration Release
 
-           
+jobs:
+  build: # name of your job
+    machine:
+      image: windows-server-2019-vs2019:current # Windows machine image
+    resource_class: windows.medium
+    steps:
+      # Commands are run in a Windows virtual machine environment
+        - checkout
+        - run: Write-Host 'Hello, Windows'
