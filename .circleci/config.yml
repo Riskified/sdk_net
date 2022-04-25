@@ -1,11 +1,7 @@
 version: 2
-
 jobs:
-  build: # name of your job
+  build-windows:
     machine:
-      image: windows-server-2019-vs2019:current # Windows machine image
-    resource_class: windows.medium
-    steps:
-      - checkout
-      - run: dotnet tool install --global PowerShell
-      - run: pwsh ./<my-script>.ps1
+      image: windows-server-2019:stable
+      resource_class: windows.medium
+      shell: powershell.exe -ExecutionPolicy Bypass
