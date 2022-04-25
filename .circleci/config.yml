@@ -26,5 +26,6 @@ jobs:
           
        - run:
           name: "Run Build step"
+          command: dotnet build --configuration Release
           #command: dotnet publish -c Release -r win10-x64
-           command: dotnet build --configuration Release
+           
