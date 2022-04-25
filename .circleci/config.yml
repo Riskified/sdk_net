@@ -3,9 +3,9 @@ version: 2
 jobs:
   build: # name of your job
     docker:
-      #- image: mcr.microsoft.com/dotnet/sdk:6.0
+      - image: microsoft/dotnet:sdk
       #- image: docker pull mcr.microsoft.com/dotnet/runtime:6.0
-      - image: mcr.microsoft.com/dotnet/core/sdk
+      #- image: mcr.microsoft.com/dotnet/core/sdk
       
     working_directory: ~/repo
     steps:
