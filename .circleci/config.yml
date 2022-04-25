@@ -4,8 +4,8 @@ jobs:
   build: # name of your job
     docker:
       #-image: mcr.microsoft.com/dotnet/sdk:5.0-focal
-      - image: mcr.microsoft.com/dotnet/framework/runtime:4.8
-      #- image: mcr.microsoft.com/dotnet/core/sdk
+      #- image: mcr.microsoft.com/dotnet/framework/runtime:4.8
+      - image: mcr.microsoft.com/dotnet/core/sdk
       
     working_directory: ~/repo
     steps:
@@ -26,5 +26,5 @@ jobs:
           
        - run:
           name: "Run Build step"
-          command: dotnet publish -c Release -r win10-x64
-           
+          #command: dotnet publish -c Release -r win10-x64
+           command: dotnet build
