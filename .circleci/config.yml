@@ -6,6 +6,6 @@ jobs:
       image: windows-server-2019-vs2019:current # Windows machine image
     resource_class: windows.medium
     steps:
-      # Commands are run in a Windows virtual machine environment
-        - checkout
-        - run: Write-Host 'Hello, Windows'
+      - checkout
+      - run: dotnet tool install --global PowerShell
+      - run: pwsh ./<my-script>.ps1
