@@ -1,5 +1,10 @@
 version: 2
 
+workflows:
+  hello-world:
+    jobs:
+      - build
+
 jobs:
   build: # name of your job
     #docker:
