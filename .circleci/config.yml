@@ -3,7 +3,7 @@ version: 2
 jobs:
   build: # name of your job
     machine:
-      image: windows-server-2019-vs2019:current # Windows machine image
+      image: windows-default
     resource_class: windows.medium
     steps:
       # Commands are run in a Windows virtual machine environment
