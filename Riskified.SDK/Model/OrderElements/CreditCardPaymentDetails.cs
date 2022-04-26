@@ -8,7 +8,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-
+    [Obsolete("PaymentType not in use anymore", true)]
     public enum PaymentType
     {
         credit_card, paypal
@@ -47,7 +47,6 @@ namespace Riskified.SDK.Model.OrderElements
             StoredPaymentCreatedAt = storedPaymentCreatedAt;
             StoredPaymentUpdatedAt = storedPaymentUpdatedAt;
             Installments = installments;
-            PaymentType = PaymentType.credit_card;
         }
 
 
@@ -71,11 +70,7 @@ namespace Riskified.SDK.Model.OrderElements
         }
 
 
-
-        [JsonProperty(PropertyName = "payment_type")]
-        [JsonConverter(typeof(StringEnumConverter))]
-        public PaymentType PaymentType { get; set; }
-
+        
         [JsonProperty(PropertyName = "avs_result_code")]
         public string AvsResultCode { get; set; }
 
