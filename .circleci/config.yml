@@ -8,6 +8,8 @@ jobs:
     steps:
       - checkout
       - run: whereis dotnet
+      - run: apt install dotnet-sdk-3.1 
+      - run: whereis dotnet
       - run: echo 'Hello, Windows'
     
 
