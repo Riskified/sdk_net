@@ -18,5 +18,22 @@ jobs:
       - run: sudo apt-get install -y dotnet-sdk-6.0 
       - run: whereis dotnet
       - run: echo 'Hello, Windows'
+      - restore_cache:
+           keys:
+             - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+             
+       - run:
+           name: "Install project dependencies"
+           command: dotnet restore
+           
+       - save_cache:
+          paths:
+            - C:\Users\circleci\.nuget\packages
+          key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+          
+       - run:
+          name: "Run Build step"
+          command: dotnet build --configuration Release
+          #command: dotnet publish -c Release -r win10-x64
     
 
