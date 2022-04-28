@@ -7,11 +7,23 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - checkout
-      - run: apt-get update
-      - run: sudo apt-get install -y nuget mono-devel mono-xbuild
-      - run: sudo nuget update -self
-      - run: nuget restore SDK_NET.sln
-      - run: mono --version
-      - run: xbuild /p:Configuration=Release SDK_NET.sln
+      - run: 
+          name: "Downloads the package lists from the repository"
+          command: sudo apt-get update
+      - run: 
+          name: "Install Nuget, Mono-devell and Mono-XBuild"
+          command: sudo apt-get install -y nuget mono-devel mono-xbuild
+      - run: 
+          name: "Updating Nuget to most recent version"
+          command: sudo nuget update -self
+      - run: 
+          name: "Downloading project dependencies"
+          command: nuget restore SDK_NET.sln
+      - run: 
+          name: "Mono version"
+          command: mono --version
+      - run: 
+          name: "Build and release binaries
+          command: xbuild /p:Configuration=Release SDK_NET.sln
     
 
