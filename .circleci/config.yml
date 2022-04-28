@@ -1,7 +1,7 @@
 
 version: 2
 docker:
-      - image: cimg/base:2021.04
+  - image: cimg/base:2021.04
 jobs:
   build:
     steps:
