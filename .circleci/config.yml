@@ -7,6 +7,7 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - checkout
+      - run: dotnet tool install --global
       - run: echo 'Hello, Windows'
     
 
