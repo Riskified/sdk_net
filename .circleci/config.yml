@@ -1,13 +1,9 @@
 
-version: 2.1
-orbs:
-  win: circleci/windows@4.1
+version: 2
+docker:
+      - image: cimg/base:2021.04
 jobs:
   build:
-    executor: win/server-2019
     steps:
-      - run: Write-Host 'Hello, Windows'
-workflows:
-  my-workflow:
-    jobs:
-      - build
+      - run: echo 'Hello, Windows'
+
