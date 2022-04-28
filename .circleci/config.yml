@@ -33,4 +33,4 @@ workflows:
       - build:
           filters: 
             branches:
-              only: master
+              only: TIS-361
