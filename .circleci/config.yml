@@ -13,6 +13,7 @@ jobs:
       - run: sudo apt-get install -y nuget mono-devel mono-xbuild
       - run: sudo nuget update -self
       - run: mono --version
+      - run: msbuild Riskified.SDK.csproj
       #- run: xbuild SDK_NET.sln
     
 
