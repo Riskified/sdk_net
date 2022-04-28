@@ -7,4 +7,5 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - run: echo 'Hello, Windows'
+      - run: dotnet --version
 
