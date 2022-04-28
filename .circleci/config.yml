@@ -26,4 +26,11 @@ jobs:
           name: "Build and release binaries"
           command: xbuild /p:Configuration=Release SDK_NET.sln
     
-
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters: 
+            branches:
+              only: TIS-361
