@@ -19,8 +19,8 @@ jobs:
       - run: whereis dotnet
       - run: echo 'Hello, Windows'
       - restore_cache:
-           keys:
-             - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
              
        - run:
            name: "Install project dependencies"
