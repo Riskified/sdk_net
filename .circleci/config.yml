@@ -9,28 +9,9 @@ jobs:
       - checkout
       - run: whereis dotnet
       - run: pwd
-      - run: wget https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-      - run: sudo dpkg -i packages-microsoft-prod.deb
-      - run: rm packages-microsoft-prod.deb
       - run: sudo apt-get update
-      - run: sudo apt-get install -y apt-transport-https
-      - run: sudo apt-get update
-      - run: sudo apt-get install -y dotnet-sdk-6.0 
-      - run: whereis dotnet
-      - run: echo 'Hello, Windows'
-      - restore_cache:
-          keys:
-            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}     
-      - run:
-          name: "Install project dependencies"
-          command: dotnet restore
-      - save_cache:
-         paths:
-           - C:\Users\circleci\.nuget\packages
-         key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }} 
-      - run:
-         name: "Run Build step"
-         #command: dotnet build --configuration Release
-         command: dotnet publish -c Release -r win10-x64
+      - run: sudo apt-get install -y nuget mono-devel mono-xbuild
+      - run: sudo nuget update -self
+      - run: xbuild SDK_NET.sln
     
 
