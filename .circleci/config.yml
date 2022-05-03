@@ -10,11 +10,9 @@ jobs:
       - run: 
           name: "Downloads the package lists from the repository"
           command: sudo apt-get update
+     
       - run: 
-          name: "Install msbuild"
-          command: sudo apt-get install msbuild
-      - run: 
-          name: "Install Nuget, Mono-devell and Mono-XBuild"
+          name: "Install Nuget, Mono-devel and Mono-XBuild"
           command: sudo apt-get install -y nuget mono-devel mono-xbuild
       - run: 
           name: "Updating Nuget to most recent version"
