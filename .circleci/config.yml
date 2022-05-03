@@ -27,7 +27,7 @@ jobs:
           command: xbuild /p:Configuration=Release SDK_NET.sln
       - run: 
           name: "Nuget pack"
-          command: nuget pack
+          command: nuget pack Riskified.SDK/Riskified.SDK.csproj
     
 workflows:
   version: 2
