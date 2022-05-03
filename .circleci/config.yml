@@ -34,7 +34,7 @@ jobs:
           command: xbuild /p:Configuration=Release SDK_NET.sln
       - run: 
           name: "Nuget pack"
-          command: donet pack
+          command: dotnet pack
       - run: 
           command: ls
     
