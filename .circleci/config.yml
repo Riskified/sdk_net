@@ -31,7 +31,8 @@ jobs:
           command: mono --version
       - run: 
           name: "Build and release binaries"
-          command: xbuild /p:Configuration=Release SDK_NET.sln
+          command: xbuild SDK_NET.sln
+          #command: xbuild /p:Configuration=Release SDK_NET.sln
       - run: 
           name: "Nuget pack"
           command: dotnet pack Riskified.SDK/Riskified.SDK.csproj
