@@ -34,7 +34,7 @@ jobs:
           command: xbuild /p:Configuration=Release SDK_NET.sln
       - run: 
           name: "Nuget pack"
-          command: nuget pack Riskified.SDK.csproj
+          command: donet pack
       - run: 
           command: ls
     
