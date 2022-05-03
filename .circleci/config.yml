@@ -12,7 +12,7 @@ jobs:
           command: sudo apt-get update
       - run: 
           name: "Install Nuget, Mono-devell and Mono-XBuild"
-          command: sudo apt-get install -y nuget mono-devel mono-xbuild
+          command: sudo apt-get install -y nuget mono-devel mono-xbuild msbuild
       - run: 
           name: "Updating Nuget to most recent version"
           command: sudo nuget update -self
