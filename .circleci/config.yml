@@ -17,7 +17,7 @@ jobs:
       - run: sudo apt-get install -y apt-transport-https
       - run: sudo apt-get update
       - run: sudo apt-get install -y dotnet-sdk-6.0 
-      - run: dotnet
+      - run: dotnet --version
       
       #- run: 
       #    name: "Install Nuget, Mono-devel and Mono-XBuild"
