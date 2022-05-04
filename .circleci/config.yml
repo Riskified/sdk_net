@@ -10,8 +10,16 @@ jobs:
       #- run: 
        #   name: "Downloads the package lists from the repository"
         #  command: sudo apt-get update
-      
+      - run: wget https://packages.microsoft.com/config/ubuntu/21.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+      - run: sudo dpkg -i packages-microsoft-prod.deb
+      - run: rm packages-microsoft-prod.deb
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y apt-transport-https
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y dotnet-sdk-6.0 
+      - run: dotnet --version
       - run: # print the name of the branch we're on
+      
           name: "what version am I using "
           command: echo dotnet --version
       - run: 
