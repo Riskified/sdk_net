@@ -7,7 +7,11 @@ jobs:
       - image: cl0sey/dotnet-mono-docker
     working_directory: ~/RiskifiedSDK
     steps:
-      - run: apt-get install git
+      - run:
+          name: Install OpenSSH 8.1p1
+          command: |
+            sudo apt-get update
+            mkdir ~/tempdownload; cd ~/tempdownload; wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.1p1.tar.gz; tar zxvf openssh-8.1p1.tar.gz; cd openssh-8.1p1 && ./configure && make && sudo make install
       - checkout
       #- run: 
        #   name: "Downloads the package lists from the repository"
