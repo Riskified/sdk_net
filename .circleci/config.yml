@@ -7,7 +7,7 @@ jobs:
       - image: cl0sey/dotnet-mono-docker
     working_directory: ~/RiskifiedSDK
     steps:
-      - run: apt-get git
+      - run: apt-get install git
       - checkout
       #- run: 
        #   name: "Downloads the package lists from the repository"
