@@ -7,6 +7,7 @@ jobs:
       - image: cl0sey/dotnet-mono-docker
     working_directory: ~/RiskifiedSDK
     steps:
+      - run: apt-get git
       - checkout
       #- run: 
        #   name: "Downloads the package lists from the repository"
@@ -26,7 +27,7 @@ jobs:
       #- run: 
        #   name: "Install Nuget, Mono-devel and Mono-XBuild"
         #  command: sudo apt-get install -y nuget mono-devel mono-xbuild
-      - run: apt-get git
+      
       - run: 
           name: "Mono version"
           command: mono --version
