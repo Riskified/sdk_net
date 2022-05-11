@@ -10,8 +10,8 @@ jobs:
       - run:
           name: Install OpenSSH 8.1p1
           command: |
-            sudo apt-get update
-            mkdir ~/tempdownload; cd ~/tempdownload; wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.1p1.tar.gz; tar zxvf openssh-8.1p1.tar.gz; cd openssh-8.1p1 && ./configure && make && sudo make install
+            apt-get update
+            mkdir ~/tempdownload; cd ~/tempdownload; wget https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.1p1.tar.gz; tar zxvf openssh-8.1p1.tar.gz; cd openssh-8.1p1 && ./configure && make && make install
       - checkout
       #- run: 
        #   name: "Downloads the package lists from the repository"
@@ -37,7 +37,7 @@ jobs:
           command: mono --version
       - run: 
           name: "Updating Nuget to most recent version"
-          command: sudo nuget update -self
+          command: nuget update -self
       - run: 
           name: "Downloading project dependencies"
           command: nuget restore SDK_NET.sln
