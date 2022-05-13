@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       #- image: cimg/base:2021.04
-      - image: atlemann/dotnet-mono-docker
+      - image: cl0sey/dotnet-mono-docker
     working_directory: ~/RiskifiedSDK
     steps:
       - run:
