@@ -33,7 +33,7 @@ jobs:
       - run: 
           name: "Nuget pack"
           command: nuget pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
-
+      - run: ls
     
 workflows:
   version: 2
