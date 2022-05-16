@@ -43,10 +43,11 @@ jobs:
       
       - run: 
           name: "Build and release binaries"
-          command: xbuild SDK_NET.sln
+          command: msbuild SDK_NET.sln
           #command: xbuild /p:Configuration=Release SDK_NET.sln
 
       - run: cd Riskified.SDK
+      - run: pwd
       - run: ls
       - run: 
           name: "Nuget pack"
