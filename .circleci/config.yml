@@ -34,6 +34,9 @@ jobs:
           name: "Nuget pack"
           command: nuget pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
       - run: ls
+      - run:
+          name: "Publishing to Nuget"
+          command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
     
 workflows:
   version: 2
