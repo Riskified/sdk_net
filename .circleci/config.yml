@@ -8,6 +8,7 @@ jobs:
       - image: mono
     working_directory: ~/RiskifiedSDK
     steps:
+      - run: apt-get install -y sudo wget zip unzip git openssh-client
     
       - checkout
       #- run: 
