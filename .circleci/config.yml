@@ -64,6 +64,13 @@ workflows:
           filters: 
             branches:
               only: TIS-361
+      - hold_on_deploy: 
+          type: approval
+          requires:
+          - build
       - deploy:
           requires:
-            - build
+            - hold_on_deploy
+          filters:
+            branches:
+              only: TIS-361
