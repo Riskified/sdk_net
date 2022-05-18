@@ -40,8 +40,6 @@ jobs:
           root: .
           paths:
            - Riskified.SDK.*.nupkg
-      - run: pwd
-      - run: ls
       
   deploy:
     docker: 
@@ -52,10 +50,7 @@ jobs:
       - run:
           name: "Publishing to Nuget"
           command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
-      #- run:
-      #    name: "Publishing to Nuget"
-      #    command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
-    
+      
 workflows:
   version: 2
   build_and_deploy:
