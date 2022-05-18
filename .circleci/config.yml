@@ -43,8 +43,15 @@ jobs:
       - run: pwd
       - run: ls
       
-      
-      
+  deploy:
+    docker: 
+      - image: mono
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publishing to Nuget"
+          command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
       #- run:
       #    name: "Publishing to Nuget"
       #    command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
@@ -57,3 +64,4 @@ workflows:
           filters: 
             branches:
               only: TIS-361
+      - deploy
