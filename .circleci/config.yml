@@ -40,7 +40,7 @@ jobs:
           root: .
           paths:
            - Riskified.SDK.*.nupkg
-      - run: pws
+      - run: pwd
       - run: ls
       
       
