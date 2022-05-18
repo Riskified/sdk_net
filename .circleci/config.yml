@@ -1,0 +1,71 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: mono
+      
+    working_directory: ~/RiskifiedSDK
+    steps:
+      - run: apt-get update
+      - run: 
+          name: "Install Git client"
+          command: apt-get install -y sudo wget zip unzip git openssh-client
+    
+      - checkout
+      - run: 
+          name: "Mono version"
+          command: mono --version
+      - run: 
+          name: "Updating Nuget to most recent version"
+          command: nuget update -self
+      - run: 
+          name: "Downloading project dependencies"
+          command: nuget restore SDK_NET.sln
+      
+      - run: 
+          name: "Build and release binaries"
+          command: xbuild SDK_NET.sln
+          #command: msbuild ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj -p:Configuration=Release
+          #command: xbuild /p:Configuration=Release SDK_NET.sln
+
+      - run: cd Riskified.SDK
+      - run: pwd
+      - run: ls
+      - run: 
+          name: "Nuget pack"
+          command: nuget pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
+      - run: ls
+      - persist_to_workspace:
+          root: .
+          paths:
+           - Riskified.SDK.*.nupkg
+      
+  deploy:
+    docker: 
+      - image: mono
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: "Publishing to Nuget"
+          command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
+      
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build:
+          filters: 
+            branches:
+              only: master
+      - hold_on_deploy: 
+          type: approval
+          requires:
+          - build
+      - deploy:
+          requires:
+            - hold_on_deploy
+          filters:
+            branches:
+              only: master
