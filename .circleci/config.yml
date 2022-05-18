@@ -64,4 +64,6 @@ workflows:
           filters: 
             branches:
               only: TIS-361
-      - deploy
+      - deploy:
+          requires:
+            - build
