@@ -16,11 +16,11 @@ namespace Riskified.SDK.Model
         /// Creates a new order chargeback
         /// </summary>
         /// <param name="merchantOrderId">The unique id of the order at the merchant systems</param>
-        public OrderChargeback(string merchantOrderId, ChargebackDetails chargebackDetails, FulfillmentDetails fulfillment, DisputeDetails disputeDetails)
+        public OrderChargeback(string merchantOrderId, ChargebackDetails chargebackDetails, List <FulfillmentDetails> fulfillment, DisputeDetails disputeDetails)
             : base(merchantOrderId)
         {
             this.Chargeback = chargebackDetails;
-            this.Fulfillment = fulfillment;
+            this.Fulfillments = fulfillment;
             this.Dispute = disputeDetails;
         }
 
@@ -38,8 +38,8 @@ namespace Riskified.SDK.Model
         /// <summary>
         /// 
         /// </summary>
-        [JsonProperty(PropertyName = "fulfillment")]
-        public FulfillmentDetails Fulfillment { get; set; }
+        [JsonProperty(PropertyName = "fulfillments")]
+        public List<FulfillmentDetails> Fulfillments { get; set; }
 
         /// <summary>
         /// 
