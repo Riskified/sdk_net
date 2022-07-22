@@ -349,13 +349,14 @@ namespace Riskified.SDK.Sample
                                 cardholder: "John Smith",
                                 message: "Cardholder disputes quality/ mischaracterization of service/merchandise. Supply detailed refute of these claims, along with any applicable/supporting doc");
 
+            List<FulfillmentDetails> fulfillments = new List<FulfillmentDetails>();
             var fulfillmentDetails = new FulfillmentDetails(
                                              fulfillmentId: "123",
                                              createdAt: new DateTimeOffset(2018, 12, 8, 14, 12, 12, new TimeSpan(-7, 0, 0)),
                                              status: FulfillmentStatusCode.Success,
                                              lineItems: new LineItem[] { new LineItem("Bag", 10.0, 1) },
                                              trackingCompany: "TestCompany");
-
+            fulfillments.Add(fulfillmentDetails);
             var disputeDetails = new DisputeDetails(
                                         disputeType: "first_dispute",
                                         caseId: "a1234",
@@ -364,7 +365,7 @@ namespace Riskified.SDK.Sample
                                         disputedAt: new DateTime(2016, 9, 15),
                                         expectedResolutionDate: new DateTime(2016, 11, 1, 0, 0, 0, DateTimeKind.Local));
 
-            return new OrderChargeback(orderNum, chargebackDetails, fulfillmentDetails, disputeDetails);
+            return new OrderChargeback(orderNum, chargebackDetails, fulfillments, disputeDetails);
 
         }
 
