@@ -195,10 +195,12 @@ namespace Riskified.SDK.Utils
             try
             {
                 transactionResult = JsonConvert.DeserializeObject<T>(responseBody);
+                ErrorResponse response = JsonConvert.DeserializeObject<ErrorResponse>(responseBody);
+                
                 if (transactionResult.GetType().Name == "ErrorResponse") {
                     foreach (var propInfo in transactionResult.GetType().GetProperties())
                     {
-                        propInfo.SetValue(transactionResult, responseBody);
+                        propInfo.SetValue(transactionResult, response.Error);
                     }
                 }
             }
