@@ -214,3 +214,13 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 Riskified.SDK.Sample/App.config
+Riskified.SDK/Riskified.SDK.sln
+Riskified.SDK/.vs/Riskified.SDK/xs/UserPrefs.xml
+Riskified.SDK/.vs/Riskified.SDK/xs/project-cache/Riskified.SDK-Debug.json
+Riskified.SDK.Sample/App.config
+.vs/SDK_NET/xs/UserPrefs.xml
+.vs/SDK_NET/xs/project-cache/Riskified.SDK.Sample-Debug.json
+.vs/SDK_NET/xs/project-cache/Riskified.SDK-Debug.json
+Riskified.SDK.Sample/App.config
+Riskified.SDK.Sample/App.config
+*.config
