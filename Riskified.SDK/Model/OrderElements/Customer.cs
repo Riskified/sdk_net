@@ -43,7 +43,6 @@ namespace Riskified.SDK.Model.OrderElements
             FirstPurchaseAt = firstPurchaseAt;
             DocumentId = documentId;
             DocumentType = documentType;
-             
         }
 
         /// <summary>
@@ -165,5 +164,10 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "document_id")]
         public string DocumentId { get; set; }
 
+        [JsonProperty(PropertyName = "spending_limit")]
+        public float SpendingLimit { get; set; }
+
+        [JsonProperty(PropertyName = "has_defaulted")]
+        public bool HasDefaulted { get; set; }
     }
 }
