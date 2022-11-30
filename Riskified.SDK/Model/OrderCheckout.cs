@@ -53,9 +53,9 @@ namespace Riskified.SDK.Model
                 {
                     BillingAddress.Validate(validationType);
                 }
-                else if(ShippingAddress != null)
+                else if(ShippingAddress != null && ShippingAddress.Length > 0)
                 {
-                    ShippingAddress.Validate(validationType);
+                    ShippingAddress.ToList().ForEach(item => item.Validate(validationType));
                 }
             }
             else
@@ -64,9 +64,9 @@ namespace Riskified.SDK.Model
                 {
                     BillingAddress.Validate(validationType);
                 }
-                if(ShippingAddress != null)
+                if(ShippingAddress != null && ShippingAddress.Length > 0)
                 {
-                    ShippingAddress.Validate(validationType);
+                    ShippingAddress.ToList().ForEach(item => item.Validate(validationType));
                 }
             }
 
