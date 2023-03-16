@@ -165,9 +165,9 @@ namespace Riskified.SDK.Model.OrderElements
         public string DocumentId { get; set; }
 
         [JsonProperty(PropertyName = "spending_limit")]
-        public float SpendingLimit { get; set; }
+        public float? SpendingLimit { get; set; }
 
         [JsonProperty(PropertyName = "has_defaulted")]
-        public bool HasDefaulted { get; set; }
+        public bool? HasDefaulted { get; set; }
     }
 }

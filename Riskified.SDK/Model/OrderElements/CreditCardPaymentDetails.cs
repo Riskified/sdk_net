@@ -123,10 +123,10 @@ namespace Riskified.SDK.Model.OrderElements
         public int? Installments { get; set; }
 
         [JsonProperty(PropertyName = "initial_payment_amount")]
-        public float InitialPaymentAmount { get; set; }
+        public float? InitialPaymentAmount { get; set; }
 
         [JsonProperty(PropertyName = "payment_frequency")]
-        public int PaymentFrequency { get; set; }
+        public int? PaymentFrequency { get; set; }
     }
 
 }
