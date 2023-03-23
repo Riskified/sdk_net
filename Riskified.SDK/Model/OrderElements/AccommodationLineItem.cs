@@ -28,6 +28,7 @@ namespace Riskified.SDK.Model.OrderElements
             DeliveredToType? deliveredTo = null, 
             DateTime? deliveredAt = null,
             Policy policy = null,
+            Recipient recipient = null,
             // accommodation specific
             string roomType = null,
             string city = null,
@@ -40,7 +41,7 @@ namespace Riskified.SDK.Model.OrderElements
             string accommodationType = null
             ) : base(title: title, price: price, quantityPurchased: quantityPurchased, productId: productId, sku: sku, condition: condition, 
                      requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
-                     category: category, subCategory: subCategory, brand: brand, productType: OrderElements.ProductType.Accommodation, policy: policy)
+                     category: category, subCategory: subCategory, brand: brand, productType: OrderElements.ProductType.Accommodation, policy: policy, recipient: recipient)
         {
             RoomType = roomType;
             City = city;

@@ -32,7 +32,8 @@ namespace Riskified.SDK.Model.OrderElements
             string category = null,
             string subCategory = null,
             Policy policy = null,
-            RegistryType? registryType = null)
+            RegistryType? registryType = null,
+            Recipient recipient= null)
         {
 
             Title = title;
@@ -53,6 +54,7 @@ namespace Riskified.SDK.Model.OrderElements
             Brand = brand;
             Policy = policy;
             RegistryType = registryType;
+            Recipient = recipient;
         }
 
         /// <summary>
@@ -169,5 +171,8 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "registry_type")]
         [JsonConverter(typeof (StringEnumConverter))]
         public RegistryType? RegistryType { get; set; }
+
+        [JsonProperty(PropertyName = "recipient")]
+        public Recipient Recipient { get; set; }
     }
 }
