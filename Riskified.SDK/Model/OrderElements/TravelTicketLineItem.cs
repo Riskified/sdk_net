@@ -30,6 +30,7 @@ namespace Riskified.SDK.Model.OrderElements
             // travel ticket specific
             string legId = null,
             string departurePortCode = null,
+            Recipient recipient = null,
             string departureCity = null,
             string departureCountryCode = null,
             string arrivalPortCode = null,
@@ -48,7 +49,7 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.TravelTicket, policy: policy)
+                productType: OrderElements.ProductType.TravelTicket, policy: policy, recipient: recipient)
         {
             LegId = legId;
             DeparturePortCode = departurePortCode;
