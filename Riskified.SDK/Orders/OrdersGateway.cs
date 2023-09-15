@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model;
 using Riskified.SDK.Utils;
