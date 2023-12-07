@@ -12,10 +12,12 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         /// <param name="accountNumber">The account number</param>
         /// <param name="routingNumber">The routing number</param>
-        public BankWirePaymentDetails(String accountNumber, String routingNumber)
+        /// <param name="token">Additional token for validating account details</param>
+        public BankWirePaymentDetails(String accountNumber, String routingNumber, String token = null)
         {
             AccountNumber = accountNumber;
             RoutingNumber = routingNumber;
+            Token = token;
         }
 
         /// <summary>
@@ -37,5 +39,8 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "routing_number")]
         public string RoutingNumber { get; set; }
+
+        [JsonProperty(PropertyName = "token")]
+        public string Token { get; set; }
     }
 }
