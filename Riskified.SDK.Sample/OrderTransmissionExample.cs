@@ -11,6 +11,7 @@ using Riskified.SDK.Orders;
 using Riskified.SDK.Utils;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
+using System.Text;
 
 namespace Riskified.SDK.Sample
 {
@@ -141,7 +142,7 @@ namespace Riskified.SDK.Sample
                         case "v":
                             Console.WriteLine("Order Generated with merchant order number: " + orderNum);
                             order.Id = orderNum.ToString();
-                            orderNum++;
+                            //orderNum++;
                             // sending order for synchronous decision
                             // it will generate a synchronous response with the decision regarding the order
                             // (for sync flow only)
@@ -292,11 +293,31 @@ namespace Riskified.SDK.Sample
 
                     if (res != null)
                     {
-                        Console.WriteLine("\n\nOrder sent successfully:" +
-                                              "\nStatus at Riskified: " + res.Status +
-                                              "\nOrder ID received:" + res.Id +
-                                              "\nDescription: " + res.Description +
-                                              "\nWarnings: " + (res.Warnings == null ? "---" : string.Join("        \n", res.Warnings)) + "\n\n");
+                        StringBuilder message = new StringBuilder();
+
+                        // Basic order information
+                        message.AppendLine("\nOrder sent successfully:");
+                        message.AppendLine($"Status at Riskified: {res.Status}");
+                        message.AppendLine($"Order ID received: {res.Id}");
+                        message.AppendLine($"Description: {res.Description}");
+                        // Conditional policy response
+                        if (res.PolicyProtect != null && res.PolicyProtect.Policies.Any())
+                        {
+                            //the example only retrieve the first item, in prod env, merchant should implement policy response it in for loop format. 
+                            message.AppendLine($"Policy Response: {res.PolicyProtect.Policies.First().PolicyType}");
+                        }
+
+                        // Warnings or a placeholder if there are no warnings
+                        if (res.Warnings != null && res.Warnings.Any())
+                        {
+                            message.AppendLine("Warnings: " + string.Join("\n        ", res.Warnings));
+                        }
+                        else
+                        {
+                            message.AppendLine("Warnings: ---");
+                        }
+                        Console.WriteLine(message.ToString());
+
                     }
                     if (accRes != null)
                     {
