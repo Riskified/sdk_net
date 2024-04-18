@@ -141,12 +141,14 @@
     <Compile Include="Model\OrderCheckoutElements\AuthenticationType.cs" />
     <Compile Include="Model\OrderCheckoutElements\AuthenticationResult.cs" />
     <Compile Include="Model\OrderElements\Policy.cs" />
+    <Compile Include="Model\PolicyElements\PolicyProtect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\AccountActionElements\" />
+    <Folder Include="Model\PolicyElements\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
