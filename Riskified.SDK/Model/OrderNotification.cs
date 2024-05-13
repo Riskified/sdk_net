@@ -1,4 +1,5 @@
 using Riskified.SDK.Model.Internal;
+using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Model.PolicyElements;
 
@@ -31,6 +32,7 @@ namespace Riskified.SDK.Model
             Category = notificationInfo.Order.Category;
             Warnings = notificationInfo.Warnings;
             Score = notificationInfo.Order.Score;
+            Advice = notificationInfo.Order.Advice;
             Action = notificationInfo.Order.Action;
             AuthenticationType = notificationInfo.Order.AuthenticationType;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
@@ -49,6 +51,7 @@ namespace Riskified.SDK.Model
         public string[] Warnings { get; private set; }
         public int Score { get; set; }
         public AuthenticationType AuthenticationType { get; private set; }
+        public Advice Advice { get; private set; }
         public PolicyProtect PolicyProtect { get; private set; }
     }
 }

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Model.OrderElements;
 using Riskified.SDK.Model.PolicyElements;
 
@@ -40,6 +41,9 @@ namespace Riskified.SDK.Model.Internal
 
         [JsonProperty(PropertyName = "authentication_type", Required = Required.Default)]
         public AuthenticationType AuthenticationType { get; set; }
+
+        [JsonProperty(PropertyName = "advice", Required = Required.Default)]
+        public Advice Advice { get; set; }
 
         [JsonProperty(PropertyName = "policy_protect", Required = Required.Default)]
         public PolicyProtect PolicyProtect  { get; set; }
