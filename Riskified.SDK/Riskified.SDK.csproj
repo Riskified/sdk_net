@@ -142,6 +142,7 @@
     <Compile Include="Model\OrderCheckoutElements\AuthenticationResult.cs" />
     <Compile Include="Model\OrderElements\Policy.cs" />
     <Compile Include="Model\PolicyElements\PolicyProtect.cs" />
+    <Compile Include="Model\OrderCheckoutElements\Advice.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

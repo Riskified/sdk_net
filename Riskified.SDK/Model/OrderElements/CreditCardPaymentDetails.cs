@@ -127,6 +127,12 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "payment_frequency")]
         public int? PaymentFrequency { get; set; }
+
+        [JsonProperty(PropertyName = "credit_card_country")]
+        public string CreditCardCountry { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_region")]
+        public string AcquirerRegion { get; set; }
     }
 
 }
