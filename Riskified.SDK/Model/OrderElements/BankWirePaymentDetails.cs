@@ -37,5 +37,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "routing_number")]
         public string RoutingNumber { get; set; }
+
+        [JsonProperty(PropertyName = "issuer")]
+        public string Issuer { get; set; }
+
+        [JsonProperty(PropertyName = "recipient_name")]
+        public string RecipientName { get; set; }
     }
 }
