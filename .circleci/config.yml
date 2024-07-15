@@ -43,6 +43,7 @@ jobs:
            - Riskified.SDK.*.nupkg
       
   deploy:
+    resource_class: riskified/container-agent
     docker: 
       - image: mono
     steps:
