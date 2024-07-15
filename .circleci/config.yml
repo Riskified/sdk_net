@@ -2,6 +2,7 @@ version: 2
 
 jobs:
   build:
+    resource_class: riskified/container-agent
     docker:
       - image: mono
       
