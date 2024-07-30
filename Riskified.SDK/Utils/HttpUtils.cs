@@ -74,7 +74,6 @@ namespace Riskified.SDK.Utils
             where TReqObj  : class 
         {
             var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
-
             var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
             return resObj;
         }
@@ -105,21 +104,26 @@ namespace Riskified.SDK.Utils
                 if (wex.Response != null)
                 {
                     HttpWebResponse errorResponse = (HttpWebResponse)wex.Response;
+                    HttpStatusCode statusCode = errorResponse.StatusCode;
+              
+                    
                     try
                     {
                         var errorObj = ParseObjectFromJsonResponse<ErrorResponse>(errorResponse);
-                        error = errorObj.Error.Message + " (Http Status code: " + errorResponse.StatusCode + ")";
+                        error = errorObj.Error.Message + " (Http Status code: " + statusCode + ")";
+                       
                     }
                     catch (Exception parseEx)
                     {
-                        if (errorResponse.StatusCode == HttpStatusCode.InternalServerError)
+                        if (statusCode == HttpStatusCode.InternalServerError)
                             error = "Server side error (500): ";
-                        else if (errorResponse.StatusCode == HttpStatusCode.BadRequest)
+                        else if (statusCode == HttpStatusCode.BadRequest)
                             error = "Client side error (400): ";
                         else
-                            error = "Error occurred. Http status code " + errorResponse.StatusCode + ":";
+                            error = "Error occurred. Http status code " + statusCode + ":";
                         error += parseEx.Message;
                     }
+
 
                 }
                 LoggingServices.Error(error, wex);
@@ -131,7 +135,6 @@ namespace Riskified.SDK.Utils
                 LoggingServices.Error(errorMsg, e);
                 throw new RiskifiedTransactionException(errorMsg, e);
             }
-
             return response;
         }
 
@@ -184,8 +187,8 @@ namespace Riskified.SDK.Utils
             finally
             {
                 response.Close();
-            }
 
+            }
             return JsonStringToObject<T>(responseBody);
         }
 
