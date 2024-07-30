@@ -39,5 +39,8 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "payment_details")]
         public IPaymentDetails[] PaymentDetails { get; set; }
+
+        [JsonProperty(PropertyName = "submission_reason")]
+        public string SubmissionReason { get; set; }
     }
 }
