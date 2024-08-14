@@ -143,6 +143,11 @@
     <Compile Include="Model\OrderElements\Policy.cs" />
     <Compile Include="Model\PolicyElements\PolicyProtect.cs" />
     <Compile Include="Model\OrderCheckoutElements\Advice.cs" />
+    <Compile Include="Model\OrderElements\RecoveryEligibility.cs" />
+    <Compile Include="Model\OrderElements\OtpInitiate.cs" />
+    <Compile Include="Model\OrderElements\ChannelMethod.cs" />
+    <Compile Include="Model\OrderElements\ChannelType.cs" />
+    <Compile Include="Model\OtpElements\OtpWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -150,6 +155,7 @@
   <ItemGroup>
     <Folder Include="Model\AccountActionElements\" />
     <Folder Include="Model\PolicyElements\" />
+    <Folder Include="Model\OtpElements\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
