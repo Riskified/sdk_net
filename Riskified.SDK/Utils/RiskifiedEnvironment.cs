@@ -16,6 +16,7 @@ namespace Riskified.SDK.Utils
         Default,
         Sync,
         Account,
+        Otp,
         Deco
     }
 
@@ -42,12 +43,14 @@ namespace Riskified.SDK.Utils
             SandboxUrl.Add(FlowStrategy.Default, "https://sandbox.riskified.com");
             SandboxUrl.Add(FlowStrategy.Account, "https://api-sandbox.riskified.com");
             SandboxUrl.Add(FlowStrategy.Deco, "https://sandboxw.decopayments.com");
+            SandboxUrl.Add(FlowStrategy.Otp, "https://otp-sandbox.self-veri.com");
             EnvToUrl.Add(RiskifiedEnvironment.Sandbox, SandboxUrl);
 
             ProductionUrl.Add(FlowStrategy.Default, "https://wh.riskified.com");
             ProductionUrl.Add(FlowStrategy.Sync, "https://wh-sync.riskified.com");
             ProductionUrl.Add(FlowStrategy.Account, "https://api.riskified.com");
             ProductionUrl.Add(FlowStrategy.Deco, "https://w.decopayments.com");
+            ProductionUrl.Add(FlowStrategy.Otp, "https://otp.self-veri.com/recover/v1/otp");
             EnvToUrl.Add(RiskifiedEnvironment.Production, ProductionUrl);
         }
 

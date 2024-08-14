@@ -6,6 +6,8 @@ using Riskified.SDK.Utils;
 using Riskified.SDK.Model.AccountActionElements;
 using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
+using Riskified.SDK.Model.OrderElements;
+using Riskified.SDK.Model.OtpElements;
 
 namespace Riskified.SDK.Orders
 {
@@ -264,6 +266,12 @@ namespace Riskified.SDK.Orders
             return SendOrder(orderChargeback, HttpUtils.BuildUrl(_env, "/api/chargeback"));
         }
 
+        public OtpWidgetNotification InitiateOtp(OtpInitiate otpInitiate)
+        {
+            return SendInitiateOtp(otpInitiate, HttpUtils.BuildUrl(_env, "/recover/v1/otp/initiate", FlowStrategy.Otp));
+
+        }
+
         /// <summary>
         /// Validates the list of historical orders and sends them in batches to Riskified Servers.
         /// The FinancialStatus field of each order should contain the latest order status as described at "http://apiref.riskified.com/net/#actions-historical"
@@ -357,6 +365,12 @@ namespace Riskified.SDK.Orders
         private AccountActionNotification SendAccountAction(AbstractAccountAction accountAction, Uri riskifiedEndpointUrl)
         {
             var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<AccountActionNotification, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain);
+            return transactionResult;
+        }
+
+        private OtpWidgetNotification SendInitiateOtp(OtpInitiate otpInitiate, Uri riskifiedEndpointUrl)
+        {
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OtpWidgetNotification, OtpInitiate>(riskifiedEndpointUrl, otpInitiate, _authToken, _shopDomain);
             return transactionResult;
         }
 

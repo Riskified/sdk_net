@@ -18,6 +18,7 @@ namespace Riskified.SDK.Model
             DecisionCode = notificationInfo.Order.DecisionCode;
             Warnings = notificationInfo.Warnings;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
+            RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
 
 
         }
@@ -36,6 +37,7 @@ namespace Riskified.SDK.Model
             Action = notificationInfo.Order.Action;
             AuthenticationType = notificationInfo.Order.AuthenticationType;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
+            RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
 
             //PolicyProtect = notificationInfo.Order.polc
         }
@@ -53,5 +55,6 @@ namespace Riskified.SDK.Model
         public AuthenticationType AuthenticationType { get; private set; }
         public Advice Advice { get; private set; }
         public PolicyProtect PolicyProtect { get; private set; }
+        public RecoveryEligibility RecoveryEligibility { get; private set; }
     }
 }
