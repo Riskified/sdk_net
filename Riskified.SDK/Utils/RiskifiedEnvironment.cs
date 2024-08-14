@@ -50,7 +50,7 @@ namespace Riskified.SDK.Utils
             ProductionUrl.Add(FlowStrategy.Sync, "https://wh-sync.riskified.com");
             ProductionUrl.Add(FlowStrategy.Account, "https://api.riskified.com");
             ProductionUrl.Add(FlowStrategy.Deco, "https://w.decopayments.com");
-            ProductionUrl.Add(FlowStrategy.Otp, "https://otp.self-veri.com/recover/v1/otp");
+            ProductionUrl.Add(FlowStrategy.Otp, "https://otp.self-veri.com");
             EnvToUrl.Add(RiskifiedEnvironment.Production, ProductionUrl);
         }
 
