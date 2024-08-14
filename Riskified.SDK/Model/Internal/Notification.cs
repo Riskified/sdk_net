@@ -48,6 +48,9 @@ namespace Riskified.SDK.Model.Internal
         [JsonProperty(PropertyName = "policy_protect", Required = Required.Default)]
         public PolicyProtect PolicyProtect  { get; set; }
 
+        [JsonProperty(PropertyName = "recovery_eligibility", Required = Required.Default)]
+        public RecoveryEligibility RecoveryEligibility { get; set; }
+
 
     }
 }

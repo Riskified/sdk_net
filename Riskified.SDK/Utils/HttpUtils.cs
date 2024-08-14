@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
 
@@ -85,7 +87,15 @@ namespace Riskified.SDK.Utils
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
+                //jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
+                var settings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    Converters = new List<JsonConverter> { new StringEnumConverter() }  // Adding the StringEnumConverter
+                };
+
+                jsonStr = JsonConvert.SerializeObject(jsonObj, settings);
+                Console.WriteLine(jsonStr);
             }
             catch (Exception e)
             {
@@ -158,6 +168,7 @@ namespace Riskified.SDK.Utils
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
             request.UserAgent = "Riskified.SDK_NET/" + AssemblyVersion;
             request.Accept = string.Format("application/vnd.riskified.com; version={0}", ServerApiVersion);
+            request.Accept = string.Format("application/json");
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
             request.ContentLength = bodyBytes.Length;
