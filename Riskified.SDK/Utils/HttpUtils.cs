@@ -95,7 +95,6 @@ namespace Riskified.SDK.Utils
                 };
 
                 jsonStr = JsonConvert.SerializeObject(jsonObj, settings);
-                Console.WriteLine(jsonStr);
             }
             catch (Exception e)
             {

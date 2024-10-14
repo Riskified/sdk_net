@@ -44,14 +44,13 @@ namespace Riskified.SDK.Model.OrderElements
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.Digital, policy: policy)
+                productType: OrderElements.ProductType.Digital, policy: policy, message: message)
         {
             SenderName = senderName;
             DisplayName = displayName;
             PhotoUploaded = photoUploaded;
             PhotoUrl = photoUrl;
             GreetingPhotoUrl = greetingPhotoUrl;
-            Message = message;
             GreetingMessage = greetingMessage;
             CardType = cardType;
             CardSubtype = cardSubType;
@@ -103,6 +102,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// The digital good's (giftcard) message.
         /// </summary>
+        [Obsolete]
         [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
 
