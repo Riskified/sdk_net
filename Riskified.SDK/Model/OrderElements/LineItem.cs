@@ -33,7 +33,8 @@ namespace Riskified.SDK.Model.OrderElements
             string subCategory = null,
             Policy policy = null,
             RegistryType? registryType = null,
-            Recipient recipient= null)
+            Recipient recipient= null,
+            string message = null)
         {
 
             Title = title;
@@ -55,6 +56,7 @@ namespace Riskified.SDK.Model.OrderElements
             Policy = policy;
             RegistryType = registryType;
             Recipient = recipient;
+            Message = message;
         }
 
         /// <summary>
@@ -174,5 +176,8 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "recipient")]
         public Recipient Recipient { get; set; }
+
+        [JsonProperty(PropertyName = "message")]
+        public string Message { get; set; }
     }
 }

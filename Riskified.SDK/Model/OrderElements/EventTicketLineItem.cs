@@ -33,13 +33,14 @@ namespace Riskified.SDK.Model.OrderElements
             string city = null,
             string countryCode = null,
             float? latitude = null,
-            float? longitude = null
+            float? longitude = null,
+            string message = null
             ) : base(
                 title: title, price: price, quantityPurchased: quantityPurchased, productId: productId, sku: sku,
                 condition: condition,
                 requiresShipping: requiresShipping, seller: seller, deliveredTo: deliveredTo, delivered_at: deliveredAt,
                 category: category, subCategory: subCategory, brand: brand,
-                productType: OrderElements.ProductType.EventTicket, policy: policy, recipient: recipient)
+                productType: OrderElements.ProductType.EventTicket, policy: policy, recipient: recipient, message: message)
         {
             Section = section;
             EventDate = eventDate;
