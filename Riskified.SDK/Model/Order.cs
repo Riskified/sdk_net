@@ -45,7 +45,7 @@ namespace Riskified.SDK.Model
                      string email,
                      Customer customer,
                      AddressInformation billingAddress,
-                     AddressInformation shippingAddress,
+                     AddressInformation[] shippingAddress,
                      LineItem[] lineItems,
                      ShippingLine[] shippingLines,
                      string gateway,
@@ -164,7 +164,7 @@ namespace Riskified.SDK.Model
                 }
                 else
                 {
-                    ShippingAddress.Validate(validationType);
+                    ShippingAddress.ToList().ForEach(item => item.Validate(validationType));
                 }
 
                 if (CustomerBrowserIp != null)
@@ -177,7 +177,7 @@ namespace Riskified.SDK.Model
                 InputValidators.ValidateObjectNotNull(BillingAddress, "Billing Address");
                 BillingAddress.Validate(validationType);
                 InputValidators.ValidateObjectNotNull(ShippingAddress, "Shipping Address");
-                ShippingAddress.Validate(validationType);
+                ShippingAddress.ToList().ForEach(item => item.Validate(validationType));
                 InputValidators.ValidateIp(CustomerBrowserIp);
             }
 
