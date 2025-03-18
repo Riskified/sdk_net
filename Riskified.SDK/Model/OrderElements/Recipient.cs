@@ -55,5 +55,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "social")]
         public SocialDetails Social { get; set; }
+
+        [JsonProperty(PropertyName = "account_number")]
+        public string AccountNumber { get; set; }
+
+        [JsonProperty(PropertyName = "routing_number")]
+        public string RoutingNumber { get; set; }
     }
 }
