@@ -19,7 +19,7 @@ namespace Riskified.SDK.Model
             Warnings = notificationInfo.Warnings;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
-
+            RiskScore = notificationInfo.Order.RiskScore;
 
         }
 
@@ -38,6 +38,7 @@ namespace Riskified.SDK.Model
             AuthenticationType = notificationInfo.Order.AuthenticationType;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
+            RiskScore = notificationInfo.Order.RiskScore;
 
             //PolicyProtect = notificationInfo.Order.polc
         }
@@ -56,5 +57,6 @@ namespace Riskified.SDK.Model
         public Advice Advice { get; private set; }
         public PolicyProtect PolicyProtect { get; private set; }
         public RecoveryEligibility RecoveryEligibility { get; private set; }
+        public double RiskScore { get; private set; }
     }
 }
