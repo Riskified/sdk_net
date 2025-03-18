@@ -31,10 +31,10 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
         [JsonProperty(PropertyName = "eci")]
         public string eci { get; set; }
 
-        [JsonProperty(PropertyName = "tran_status")]
+        [JsonProperty(PropertyName = "trans_status")]
         public TranStatus tranStatus { get; set; }
 
-        [JsonProperty(PropertyName = "tran_status_reason")]
+        [JsonProperty(PropertyName = "trans_status_reason")]
         public string tranStatusReason { get; set; }
 
         [JsonProperty(PropertyName = "created_at")]

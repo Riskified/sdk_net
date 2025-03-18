@@ -169,5 +169,8 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "has_defaulted")]
         public bool? HasDefaulted { get; set; }
+
+        [JsonProperty(PropertyName = "kyc_verified")]
+        public bool KycVerified { get; set; }
     }
 }

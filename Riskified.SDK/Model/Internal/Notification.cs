@@ -51,6 +51,8 @@ namespace Riskified.SDK.Model.Internal
         [JsonProperty(PropertyName = "recovery_eligibility", Required = Required.Default)]
         public RecoveryEligibility RecoveryEligibility { get; set; }
 
+        [JsonProperty(PropertyName = "risk_score", Required = Required.Default)]
+        public double RiskScore { get; set; }
 
     }
 }
