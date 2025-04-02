@@ -184,6 +184,7 @@ namespace Riskified.SDK.Utils
             headers.Add(HmacHeaderName, hashCode);
             headers.Add(ShopDomainHeaderName, shopDomain);
             headers.Add("Accept-Encoding", "gzip,deflate,sdch");
+            headers.Add("API-VERSION", "2");
         }
 
         private static T ParseObjectFromJsonResponse<T>(WebResponse response) where T : class

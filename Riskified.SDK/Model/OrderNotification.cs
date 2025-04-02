@@ -20,6 +20,7 @@ namespace Riskified.SDK.Model
             PolicyProtect = notificationInfo.Order.PolicyProtect;
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
             RiskScore = notificationInfo.Order.RiskScore;
+            Advice = notificationInfo.Order.Advice;
 
         }
 
