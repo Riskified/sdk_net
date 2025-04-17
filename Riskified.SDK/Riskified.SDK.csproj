@@ -148,6 +148,8 @@
     <Compile Include="Model\OrderElements\ChannelMethod.cs" />
     <Compile Include="Model\OrderElements\ChannelType.cs" />
     <Compile Include="Model\OtpElements\OtpWidget.cs" />
+    <Compile Include="Model\OrderElements\Recommendation.cs" />
+    <Compile Include="Model\OrderElements\KycDetails.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

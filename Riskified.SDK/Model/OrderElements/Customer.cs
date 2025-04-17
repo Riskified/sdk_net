@@ -169,5 +169,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "has_defaulted")]
         public bool? HasDefaulted { get; set; }
+
+        [JsonProperty(PropertyName = "date_of_birth")]
+        public DateTimeOffset? DateOfBirth { get; set; }
+
+        [JsonProperty(PropertyName = "kyc_details")]
+        public KycDetails[] KycDetails { get; set; }
     }
 }
