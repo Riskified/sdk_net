@@ -1,8 +1,67 @@
-sdk_net
+Riskified .NET SDK
 =======
 
-An implementation of the Riskified API in C# for .NET  
-Refer to the [documentation](http://apiref.riskified.com) for more details.
+## 📚 Documentation
+
+For complete API documentation, visit [Riskified API Reference](http://apiref.riskified.com).
+
+## 🏁 Getting Started
+
+### Installation
+
+#### NuGet Package Manager
+
+```powershell
+Install-Package Riskified.SDK
+```
+
+### .NET CLI
+```bash
+dotnet add package Riskified.SDK
+```
+
+### Configuration
+Configure your `shopurl` and `authtoken` in the ``App.config`` file:
+```xml
+<appSettings>
+  <add key="MerchantDomain" value="your-shopUrl" />
+  <add key="MerchantAuthenticationToken" value="your-auth-token" />
+  <add key="RiskifiedEnvironment" value="Sandbox" />
+</appSettings>
+```
+
+## 🔍 Orders Gateway
+
+Each endpoint/method designed for a specific purpose:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/Create` | `ordersGateway.Create(Order)` | Create a new order |
+| `/Update` | `ordersGateway.Update(Order)` | Update an existing order |
+| `/Submit` | `ordersGateway.Submit(Order)` | Submit an order for analysis |
+| `/Refund` | `ordersGateway.PartlyRefund(OrderPartialRefund)` | Process a partial refund |
+| `/Cancel` | `ordersGateway.Cancel(OrderCancellation)` | Cancel an order |
+| `/historical` | `ordersGateway.SendHistoricalOrders(Orders)` | Send historical orders data |
+
+
+## Examples
+### Creating an Order
+```csharp
+csharp
+// Initialize the gateway
+var gateway = new OrdersGateway();
+
+// Create an order
+var order = new Order
+{
+    Id = "123",
+    Email = "customer@example.com",
+    // Add all required order properties
+};
+
+// Send the order to Riskified
+OrderResponse response = gateway.Create(order);
+```
 
 Running the sample code
 -----------------------
@@ -17,23 +76,4 @@ All examples are at the _Riskified.SDK.Sample_ folder. For the basics:
 
 If you wish to send your own data - Change the model object (Order) in the ```OrderTransmissionExample.cs``` [GenerateOrder method] (https://github.com/Riskified/sdk_net/blob/master/Riskified.SDK.Sample/OrderTransmissionExample.cs#L93)
 
-
-Migrating from older versions (prior to: API v2 - v2.0.0.0)
------------------------------------------------------------
-
-API Version 2 introduces new features (and breaks some old ones).  
-
-### Orders Gateway ###
-
-This version represents a shift from data-driven order handling to multiple API endpoints and introduces some new Model objects.  
-Each endpoint/method designed for a specific purpose:
-
-* `/Create` - served by `ordersGateway.Create(Order)`
-* `/Update` - served by `ordersGateway.Update(Order)`
-* `/Submit` - served by `ordersGateway.Submit(Order)`
-* `/Refund` - served by `ordersGateway.PartlyRefund(OrderPartialRefund)`
-* `/Cancel` - served by `ordersGateway.Cancel(OrderCancellation)`
-* `/historical` - served by `ordersGateway.SendHistoricalOrders(Orders)`
-
-When migrating from version 1, you'll need to separate the different calls to Riskified's API to support this new process.
 
