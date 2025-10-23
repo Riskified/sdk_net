@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Model.OrderElements;
@@ -53,6 +54,9 @@ namespace Riskified.SDK.Model.Internal
 
         [JsonProperty(PropertyName = "risk_score", Required = Required.Default)]
         public double RiskScore { get; set; }
+
+        [JsonProperty(PropertyName = "risk_indicators", Required = Required.Default)]
+        public Dictionary<string, object> RiskIndicators { get; set; }
 
     }
 }
