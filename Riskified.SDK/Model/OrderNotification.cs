@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Riskified.SDK.Model.Internal;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Model.OrderElements;
@@ -21,6 +22,7 @@ namespace Riskified.SDK.Model
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
             RiskScore = notificationInfo.Order.RiskScore;
             Advice = notificationInfo.Order.Advice;
+            RiskIndicators = notificationInfo.Order.RiskIndicators;
 
         }
 
@@ -40,6 +42,7 @@ namespace Riskified.SDK.Model
             PolicyProtect = notificationInfo.Order.PolicyProtect;
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
             RiskScore = notificationInfo.Order.RiskScore;
+            RiskIndicators = notificationInfo.Order.RiskIndicators;
 
             //PolicyProtect = notificationInfo.Order.polc
         }
@@ -59,5 +62,6 @@ namespace Riskified.SDK.Model
         public PolicyProtect PolicyProtect { get; private set; }
         public RecoveryEligibility RecoveryEligibility { get; private set; }
         public double RiskScore { get; private set; }
+        public Dictionary<string, object> RiskIndicators { get; private set; }
     }
 }
