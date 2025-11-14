@@ -94,8 +94,8 @@ namespace Riskified.SDK.Notifications
                     bool acionSucceeded = false;
                     try
                     {
-                        var notificationData = HttpUtils.ParsePostRequestToObject<OrderWrapper<Notification>>(request,_authToken);
-                        OrderNotification n = new OrderNotification(notificationData);
+                        OrderNotification n = NotificationParser.ParseListenerRequest(request, _authToken);
+                        
                         responseString =
                                 string.Format(
                                     "<HTML><BODY>Merchant Received Notification For Order {0} with status {1} and description {2}</BODY></HTML>",
