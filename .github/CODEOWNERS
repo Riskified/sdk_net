@@ -1,3 +1,4 @@
+*                                                           @Riskified/dev-payment-fraud-chargeback-sg @Riskified/operations-integrations-dev-sg
 /.github/                                                   @Riskified/dev-sre-sg @Riskified/biztech-security-secops-sg
 /.infrastructure/                                           @Riskified/dev-sre-sg @Riskified/biztech-security-secops-sg
 /.infrastructure/terraform/aws/accounts/**/dynamodb.tf      @Riskified/dev-data-data-apps-sg
