@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Riskified.SDK.Exceptions;
-using System.Configuration;
 
 namespace Riskified.SDK.Utils
 {
@@ -36,9 +36,11 @@ namespace Riskified.SDK.Utils
             SandboxUrl = new Dictionary<FlowStrategy, string>(3);
             ProductionUrl = new Dictionary<FlowStrategy, string>(4);
 
-            if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]))
-                DebugUrl.Add(FlowStrategy.Default, ConfigurationManager.AppSettings["DebugRiskifiedHostUrl"]);
-                EnvToUrl.Add(RiskifiedEnvironment.Debug, DebugUrl);
+            // Use environment variable instead of ConfigurationManager for .NET 8 compatibility
+            var debugHostUrl = Environment.GetEnvironmentVariable("RISKIFIED_DEBUG_HOST_URL");
+            if (!string.IsNullOrEmpty(debugHostUrl))
+                DebugUrl.Add(FlowStrategy.Default, debugHostUrl);
+            EnvToUrl.Add(RiskifiedEnvironment.Debug, DebugUrl);
 
             SandboxUrl.Add(FlowStrategy.Default, "https://sandbox.riskified.com");
             SandboxUrl.Add(FlowStrategy.Account, "https://api-sandbox.riskified.com");
