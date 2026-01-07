@@ -133,6 +133,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "acquirer_region")]
         public string AcquirerRegion { get; set; }
+
+        [JsonProperty(PropertyName = "verification_type")]
+        public string VerificationType { get; set; }
     }
 
 }

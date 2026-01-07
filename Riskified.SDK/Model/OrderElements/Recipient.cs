@@ -61,5 +61,14 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "routing_number")]
         public string RoutingNumber { get; set; }
+
+        [JsonProperty(PropertyName = "bank_name")]
+        public string BankName { get; set; }
+
+        [JsonProperty(PropertyName = "fingerprint")]
+        public string Fingerprint { get; set; }
+
+        [JsonProperty(PropertyName = "wallet")]
+        public Wallet Wallet { get; set; }
     }
 }
