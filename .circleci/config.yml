@@ -31,11 +31,10 @@ jobs:
       - run: 
           name: "Nuget pack"
           command: dotnet pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
-      - run: ls
       - persist_to_workspace:
           root: .
           paths:
-           - "**/Riskified.SDK.*.nupkg"
+           - "*/Riskified.SDK.*.nupkg"
       
   deploy:
     executor: dotnet-executor
