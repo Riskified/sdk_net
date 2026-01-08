@@ -1,11 +1,14 @@
 version: 2.1
 
-jobs:
-  build:
+executors:
+  dotnet-executor:
     resource_class: riskified/container-agent
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:10.0
-      
+      - image: 284309667046.dkr.ecr.us-east-1.amazonaws.com/riskified/images-library/dotnet-sdk:master-10.0
+
+jobs:
+  build:
+    executor: dotnet-executor
     working_directory: ~/RiskifiedSDK
     steps:
       - run: 
@@ -31,9 +34,7 @@ jobs:
            - "**/Riskified.SDK.*.nupkg"
       
   deploy:
-    resource_class: riskified/container-agent
-    docker: 
-      - image: mcr.microsoft.com/dotnet/sdk:10.0
+    executor: dotnet-executor
     steps:
       - attach_workspace:
           at: .
