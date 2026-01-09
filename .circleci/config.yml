@@ -55,7 +55,7 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            braches:
+            branches:
               ignore: /.*/
       - deploy:
           requires:
@@ -63,5 +63,5 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            braches:
+            branches:
               ignore: /.*/
