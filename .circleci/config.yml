@@ -53,10 +53,13 @@ workflows:
       - hold_on_deploy: 
           type: approval
           requires:
-          - build
+            - build
+          filters:
+            tags:
+              only: /^v.*/
       - deploy:
           requires:
             - hold_on_deploy
           filters:
-            branches:
-              only: master
+            tags:
+              only: /^v.*/
