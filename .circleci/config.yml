@@ -34,9 +34,6 @@ jobs:
           paths:
             - ~/.nuget/packages
       - run:
-          name: "Build and release binaries"
-          command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
-      - run:
           name: "Nuget pack"
           command: dotnet pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
       - persist_to_workspace:
