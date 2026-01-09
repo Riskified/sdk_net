@@ -34,20 +34,27 @@ jobs:
           paths:
             - ~/.nuget/packages
       - run:
-          name: "Nuget pack"
-          command: dotnet pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
-      - persist_to_workspace:
-          root: .
-          paths:
-            - "./*/bin/Release/Riskified.SDK.*.nupkg"
+          name: "Build release binaries"
+          command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
   deploy:
     executor: dotnet-executor
+    working_directory: ~/RiskifiedSDK
     steps:
-      - attach_workspace:
-          at: .
+      - git-shallow-clone/checkout:
+          depth: 1
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+            - dotnet-packages-v1-
+      - run:
+          name: "Restore dependencies"
+          command: dotnet restore Riskified.SDK/Riskified.SDK.csproj
+      - run:
+          name: "Pack release"
+          command: dotnet pack -c Release Riskified.SDK/Riskified.SDK.csproj
       - run:
           name: "Publishing to Nuget"
-          command: dotnet nuget push Riskified.SDK.*.nupkg --api-key $nugetSecret -source https://api.nuget.org/v3/index.json
+          command: dotnet nuget push Riskified.SDK/bin/Release/Riskified.SDK.*.nupkg --api-key $nugetSecret --source https://api.nuget.org/v3/index.json
 
 workflows:
   build_and_deploy:
