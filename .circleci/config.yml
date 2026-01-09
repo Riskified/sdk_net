@@ -14,28 +14,27 @@ jobs:
     executor: dotnet-executor
     working_directory: ~/RiskifiedSDK
     steps:
-      - run: 
+      - run:
           name: "Install packages"
           command: apt-get update && apt-get install -y zip unzip openssh-client
       - git-shallow-clone/checkout:
           depth: 1
-      - run: 
+      - run:
           name: "Dotnet version"
           command: dotnet --version
-      - run: 
+      - run:
           name: "Downloading project dependencies"
           command: dotnet restore Riskified.SDK/Riskified.SDK.csproj
-      - run: 
+      - run:
           name: "Build and release binaries"
           command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
-      - run: 
+      - run:
           name: "Nuget pack"
           command: dotnet pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
       - persist_to_workspace:
           root: .
           paths:
-           - "./*/bin/Release/Riskified.SDK.*.nupkg"
-      
+            - "./*/bin/Release/Riskified.SDK.*.nupkg"
   deploy:
     executor: dotnet-executor
     steps:
@@ -44,13 +43,12 @@ jobs:
       - run:
           name: "Publishing to Nuget"
           command: dotnet nuget push Riskified.SDK.*.nupkg --api-key $nugetSecret -source https://api.nuget.org/v3/index.json
-      
+
 workflows:
-  version: 2
   build_and_deploy:
     jobs:
       - build
-      - hold_on_deploy: 
+      - hold_on_deploy:
           type: approval
           requires:
             - build
