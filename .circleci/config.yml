@@ -55,9 +55,13 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            braches:
+              ignore: /.*/
       - deploy:
           requires:
             - hold_on_deploy
           filters:
             tags:
               only: /^v.*/
+            braches:
+              ignore: /.*/
