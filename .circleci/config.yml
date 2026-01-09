@@ -22,9 +22,17 @@ jobs:
       - run:
           name: "Dotnet version"
           command: dotnet --version
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+            - dotnet-packages-v1-
       - run:
           name: "Downloading project dependencies"
           command: dotnet restore Riskified.SDK/Riskified.SDK.csproj
+      - save_cache:
+          key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+          paths:
+            - ~/.nuget/packages
       - run:
           name: "Build and release binaries"
           command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
