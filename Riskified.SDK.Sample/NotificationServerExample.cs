@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Threading.Tasks;
 using Riskified.SDK.Model;
 using Riskified.SDK.Notifications;
@@ -12,9 +11,11 @@ namespace Riskified.SDK.Sample
 
         public static void ReceiveNotificationsExample()
         {
-            string merchantNotificationsWebhook = ConfigurationManager.AppSettings["NotificationsWebhookUrl"];
+            // Configuration via environment variable (recommended for .NET 8)
+            // Set RISKIFIED_NOTIFICATIONS_WEBHOOK_URL environment variable
+            string merchantNotificationsWebhook = Environment.GetEnvironmentVariable("RISKIFIED_NOTIFICATIONS_WEBHOOK_URL") ?? "http://localhost:8080/notifications/";
             
-            Console.WriteLine("Local Notifications server url set in the config file: " + merchantNotificationsWebhook);
+            Console.WriteLine("Local Notifications server url (from env var RISKIFIED_NOTIFICATIONS_WEBHOOK_URL): " + merchantNotificationsWebhook);
             Console.WriteLine("'s' to start the notifications server, else to skip all");
             string key = Console.ReadLine();
             switch(key)
@@ -41,8 +42,8 @@ namespace Riskified.SDK.Sample
         
         private static void StartServer(string merchantNotificationsWebhook)
         {
-            string domain = ConfigurationManager.AppSettings["MerchantDomain"];
-            string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
+            string domain = Environment.GetEnvironmentVariable("RISKIFIED_MERCHANT_DOMAIN") ?? "your_merchant_domain.com";
+            string authToken = Environment.GetEnvironmentVariable("RISKIFIED_AUTH_TOKEN") ?? "your_auth_token";
 
             // setup of a notification server listening to incoming notification from riskified
             // the webhook is the url on the local server which the httpServer will be listening at

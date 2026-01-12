@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Configuration;
 using Riskified.SDK.Model;
 using Riskified.SDK.Model.ChargebackElements;
 using Riskified.SDK.Model.OrderElements;
@@ -21,9 +20,15 @@ namespace Riskified.SDK.Sample
         {
             #region preprocessing and loading config
 
-            string domain = ConfigurationManager.AppSettings["MerchantDomain"];
-            string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-            RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
+            // Configuration via environment variables (recommended for .NET 8)
+            // Set these environment variables before running:
+            //   RISKIFIED_MERCHANT_DOMAIN
+            //   RISKIFIED_AUTH_TOKEN
+            //   RISKIFIED_ENVIRONMENT (Debug, Sandbox, or Production)
+            string domain = Environment.GetEnvironmentVariable("RISKIFIED_MERCHANT_DOMAIN") ?? "your_merchant_domain.com";
+            string authToken = Environment.GetEnvironmentVariable("RISKIFIED_AUTH_TOKEN") ?? "your_auth_token";
+            string envStr = Environment.GetEnvironmentVariable("RISKIFIED_ENVIRONMENT") ?? "Sandbox";
+            RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), envStr);
 
             // Generating a random starting order number
             // we need to send the order with a new order number in order to create it on riskified
@@ -305,6 +310,24 @@ namespace Riskified.SDK.Sample
                         {
                             //the example only retrieve the first item, in prod env, merchant should implement policy response it in for loop format. 
                             message.AppendLine($"Policy Response: {res.PolicyProtect.Policies.First().PolicyType}");
+                        }
+
+                        if(res.RiskIndicators != null && res.RiskIndicators.Count > 0)
+                        {
+                            Console.WriteLine("=== Risk Indicators ===");
+
+                            // Iterate all
+                            foreach (var indicator in res.RiskIndicators)
+                            {
+                                Console.WriteLine($"{indicator.Key}: {indicator.Value}");
+                            }
+
+                            // Check for specific field
+                            if (res.RiskIndicators.ContainsKey("email_age"))
+                            {
+                                Console.WriteLine($"Email Age: {res.RiskIndicators["email_age"]}");
+                            }
+
                         }
 
                         // Warnings or a placeholder if there are no warnings
@@ -691,6 +714,7 @@ namespace Riskified.SDK.Sample
                     creditCardToken: "2233445566778899"
                 )
             };
+            payments[0].VerificationType = "no_auth";
 
             var noChargeAmount = new NoChargeDetails(
                 refundId: "123444",
@@ -714,13 +738,20 @@ namespace Riskified.SDK.Sample
                 email: "aa@bb.com",
                 phone: "96522444221",
                 social: recipientSocial);
+            recipient.Fingerprint = "fingerprint";
+            recipient.BankName = "Chase";
+
+            Wallet wallet = new Wallet();
+            wallet.Id = "57";
+            wallet.Type = "apple walleet";
+            recipient.Wallet = wallet;
 
 
             var items = new[]
             {
                 new LineItem(title: "Bag", price: 55.44, quantityPurchased: 1, productId: "48484", sku: "1272727",
                     deliveredTo: DeliveredToType.StorePickup,
-                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local), registryType: RegistryType.Wedding),
+                    delivered_at: new DateTime(2016, 12, 8, 14, 12, 12, DateTimeKind.Local), registryType: RegistryType.Wedding, recipient: recipient, productType:ProductType.Remittance),
                 new LineItem(title: "Monster", price: 22.3, quantityPurchased: 3,
                     seller: new Seller(customer: customer, correspondence: 1, priceNegotiated: true, startingPrice: 120)),
                 // Events Tickets Product (aplicaible for event industry merchants)
@@ -1067,9 +1098,10 @@ namespace Riskified.SDK.Sample
         {
             try
             {
-                string domain = ConfigurationManager.AppSettings["MerchantDomain"];
-                string authToken = ConfigurationManager.AppSettings["MerchantAuthenticationToken"];
-                RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), ConfigurationManager.AppSettings["RiskifiedEnvironment"]);
+                string domain = Environment.GetEnvironmentVariable("RISKIFIED_MERCHANT_DOMAIN") ?? "your_merchant_domain.com";
+                string authToken = Environment.GetEnvironmentVariable("RISKIFIED_AUTH_TOKEN") ?? "your_auth_token";
+                string envStr = Environment.GetEnvironmentVariable("RISKIFIED_ENVIRONMENT") ?? "Sandbox";
+                RiskifiedEnvironment riskifiedEnv = (RiskifiedEnvironment)Enum.Parse(typeof(RiskifiedEnvironment), envStr);
 
                 OrderNotification res = null;
                 var rand = new Random();

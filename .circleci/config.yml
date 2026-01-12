@@ -1,73 +1,79 @@
-version: 2
+version: 2.1
+
+orbs:
+  git-shallow-clone: riskified/git-shallow-clone@2.8.0
+
+executors:
+  dotnet-executor:
+    resource_class: riskified/container-agent
+    docker:
+      - image: 284309667046.dkr.ecr.us-east-1.amazonaws.com/riskified/images-library/dotnet-sdk:master-10.0
 
 jobs:
   build:
-    resource_class: riskified/container-agent
-    docker:
-      - image: mono
-      
+    executor: dotnet-executor
     working_directory: ~/RiskifiedSDK
     steps:
-      - run: apt-get update
-      - run: 
-          name: "Install Git client"
-          command: apt-get install -y sudo wget zip unzip git openssh-client
-    
-      - checkout
-      - run: 
-          name: "Mono version"
-          command: mono --version
-      - run: 
-          name: "Updating Nuget to most recent version"
-          command: nuget update -self
-      - run: 
+      - run:
+          name: "Install packages"
+          command: apt-get update && apt-get install -y zip unzip openssh-client
+      - git-shallow-clone/checkout:
+          depth: 1
+      - run:
+          name: "Dotnet version"
+          command: dotnet --version
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+            - dotnet-packages-v1-
+      - run:
           name: "Downloading project dependencies"
-          command: nuget restore SDK_NET.sln
-      
-      - run: 
-          name: "Build and release binaries"
-          command: xbuild SDK_NET.sln
-          #command: msbuild ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj -p:Configuration=Release
-          #command: xbuild /p:Configuration=Release SDK_NET.sln
-
-      - run: cd Riskified.SDK
-      - run: pwd
-      - run: ls
-      - run: 
-          name: "Nuget pack"
-          command: nuget pack ~/RiskifiedSDK/Riskified.SDK/Riskified.SDK.csproj
-      - run: ls
-      - persist_to_workspace:
-          root: .
+          command: dotnet restore Riskified.SDK/Riskified.SDK.csproj
+      - save_cache:
+          key: dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
           paths:
-           - Riskified.SDK.*.nupkg
-      
+            - ~/.nuget/packages
+      - run:
+          name: "Build release binaries"
+          command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
   deploy:
-    resource_class: riskified/container-agent
-    docker: 
-      - image: mono
+    executor: dotnet-executor
+    working_directory: ~/RiskifiedSDK
     steps:
-      - attach_workspace:
-          at: .
+      - git-shallow-clone/checkout:
+          depth: 1
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK/Riskified.SDK.csproj" }}
+            - dotnet-packages-v1-
+      - run:
+          name: "Restore dependencies"
+          command: dotnet restore Riskified.SDK/Riskified.SDK.csproj
+      - run:
+          name: "Pack release"
+          command: dotnet pack -c Release Riskified.SDK/Riskified.SDK.csproj
       - run:
           name: "Publishing to Nuget"
-          command: nuget push Riskified.SDK.*.nupkg $nugetSecret -Source https://api.nuget.org/v3/index.json
-      
+          command: dotnet nuget push Riskified.SDK/bin/Release/Riskified.SDK.*.nupkg --api-key $nugetSecret --source https://api.nuget.org/v3/index.json
+
 workflows:
-  version: 2
   build_and_deploy:
     jobs:
-      - build:
-          filters: 
-            branches:
-              only: master
-      - hold_on_deploy: 
+      - build
+      - hold_on_deploy:
           type: approval
           requires:
-          - build
+            - build
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - deploy:
           requires:
             - hold_on_deploy
           filters:
+            tags:
+              only: /^v.*/
             branches:
-              only: master
+              ignore: /.*/

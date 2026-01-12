@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "Riskified.SDK.Sample": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RISKIFIED_MERCHANT_DOMAIN": "your_domain.com",
+        "RISKIFIED_AUTH_TOKEN": "your_auth_token",
+        "RISKIFIED_ENVIRONMENT": "Sandbox",
+        "RISKIFIED_NOTIFICATIONS_WEBHOOK_URL": "http://localhost:8080/notifications/",
+        "RISKIFIED_DEBUG_HOST_URL": ""
+      }
+    }
+  }
+}
+
