@@ -17,6 +17,9 @@ jobs:
       - run:
           name: "Install packages"
           command: apt-get update && apt-get install -y zip unzip openssh-client
+      - run:
+          name: Avoid hosts unknown for github
+          command: mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - git-shallow-clone/checkout:
           depth: 1
       - run:
@@ -40,6 +43,12 @@ jobs:
     executor: dotnet-executor
     working_directory: ~/RiskifiedSDK
     steps:
+      - run:
+          name: "Install packages"
+          command: apt-get update && apt-get install -y zip unzip openssh-client
+      - run:
+          name: Avoid hosts unknown for github
+          command: mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - git-shallow-clone/checkout:
           depth: 1
       - restore_cache:
