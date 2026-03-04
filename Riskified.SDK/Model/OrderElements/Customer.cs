@@ -20,7 +20,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="verifiedEmail">Signs if the email was verified by the merchant is some way (optional)</param>
         /// <param name="createdAt">The time of creation of the customer card (optional)</param>
         /// <param name="notes">Additional notes regarding the customer (optional)</param>
-        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTimeOffset? verifiedEmailAt = null, bool? verifiedPhone = null, DateTimeOffset? verifiedPhoneAt = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null,  string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null, int? linkedAccounts = null, DateTimeOffset? firstPurchaseAt = null, string documentId = null, string documentType = null)
+        public Customer(string firstName, string lastName, string id, int? ordersCount = null, string email = null, bool? verifiedEmail = null, DateTimeOffset? verifiedEmailAt = null, bool? verifiedPhone = null, DateTimeOffset? verifiedPhoneAt = null, DateTimeOffset? createdAt = null, DateTimeOffset? updatedAt = null,  string notes = null, SocialDetails[] social = null, BasicAddress address = null, string accountType = null, int? linkedAccounts = null, DateTimeOffset? firstPurchaseAt = null, string documentId = null, string documentType = null, float? totalSpent = null)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -43,6 +43,7 @@ namespace Riskified.SDK.Model.OrderElements
             FirstPurchaseAt = firstPurchaseAt;
             DocumentId = documentId;
             DocumentType = documentType;
+            TotalSpent = totalSpent;
         }
 
         /// <summary>
@@ -94,6 +95,10 @@ namespace Riskified.SDK.Model.OrderElements
             {
                 InputValidators.ValidateDateNotDefault(FirstPurchaseAt.Value, "First Purchase At");
             }
+            if (TotalSpent.HasValue)
+            {
+                InputValidators.ValidateZeroOrPositiveValue(TotalSpent.Value, "Total Spent");
+            }
             if (Social != null)
             {
                 Social.ToList().ForEach(item => item.Validate(validationType));
@@ -127,6 +132,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "orders_count")]
         public int? OrdersCount { get; set; }
+
+        [JsonProperty(PropertyName = "total_spent")]
+        public float? TotalSpent { get; set; }
 
         [JsonProperty(PropertyName = "verified_email")]
         public bool? VerifiedEmail { get; set; }
