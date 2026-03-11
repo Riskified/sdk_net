@@ -1,6 +1,4 @@
-﻿using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -19,8 +17,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="payerAddressStatus">The payer address status as received from paypal</param>
         /// <param name="protectionEligibility">The merchants protection eligibility for the order as received from paypal</param>
         /// <param name="pendingReason">The pending reason received from paypal</param>
-        public PaypalPaymentDetails(string paymentStatus, string authorizationId = null, string payerEmail = null, string payerStatus = null, string payerAddressStatus = null , 
-            string protectionEligibility = null , string pendingReason = null)
+        public PaypalPaymentDetails(string paymentStatus, string authorizationId = null, string payerEmail = null, string payerStatus = null, string payerAddressStatus = null,
+            string protectionEligibility = null, string pendingReason = null)
         {
             AuthorizationId = authorizationId;
             PayerEmail = payerEmail;
@@ -28,7 +26,7 @@ namespace Riskified.SDK.Model.OrderElements
             PayerAddressStatus = payerAddressStatus;
             ProtectionEligibility = protectionEligibility;
             PaymentStatus = paymentStatus;
-            PendingReason = PendingReason;
+            PendingReason = pendingReason;
         }
 
         /// <summary>
@@ -44,7 +42,7 @@ namespace Riskified.SDK.Model.OrderElements
             }
         }
 
-        
+
         [JsonProperty(PropertyName = "authorization_id")]
         public string AuthorizationId { get; set; }
 
@@ -71,6 +69,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authentication_result")]
         public AuthorizationError AuthorizationResult { get; set; }
+
+        [JsonProperty(PropertyName = "payment_type")]
+        public PaymentType PaymentType { get; } = PaymentType.Paypal;
 
     }
 }

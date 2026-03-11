@@ -43,5 +43,8 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "recipient_name")]
         public string RecipientName { get; set; }
+
+        [JsonProperty(PropertyName = "payment_type")]
+        public PaymentType PaymentType { get; } = PaymentType.BankTransfer;
     }
 }

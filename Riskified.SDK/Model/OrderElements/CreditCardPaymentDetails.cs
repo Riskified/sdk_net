@@ -3,14 +3,12 @@ using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
-using System.Runtime.Serialization;
-using Newtonsoft.Json.Converters;
 
 namespace Riskified.SDK.Model.OrderElements
 {
     public class CreditCardPaymentDetails : IPaymentDetails
     {
-       
+
 
         /// <summary>
         /// The payment information for the order
@@ -22,12 +20,12 @@ namespace Riskified.SDK.Model.OrderElements
         /// <param name="creditCardNumber">The 4 last digits of the customer's credit card number, with most of the leading digits redacted with Xs</param>
         /// <param name="authorizationId">Unique identifier of the payment transaction as granted by the processing gateway.</param>
         public CreditCardPaymentDetails(string avsResultCode,
-                                        string cvvResultCode, 
-                                        string creditCardBin, 
-                                        string creditCardCompany, 
-                                        string creditCardNumber, 
+                                        string cvvResultCode,
+                                        string creditCardBin,
+                                        string creditCardCompany,
+                                        string creditCardNumber,
                                         string authorizationId = null,
-                                        string creditCardToken = null, 
+                                        string creditCardToken = null,
                                         DateTimeOffset? storedPaymentCreatedAt = null,
                                         DateTimeOffset? storedPaymentUpdatedAt = null,
                                         int? installments = null)
@@ -59,13 +57,13 @@ namespace Riskified.SDK.Model.OrderElements
                 InputValidators.ValidateCvvResultCode(CvvResultCode);
                 InputValidators.ValidateCreditCard(CreditCardNumber);
             }
-            
+
             InputValidators.ValidateValuedString(CreditCardBin, "Credit Card Bin");
             InputValidators.ValidateValuedString(CreditCardCompany, "Credit Card Company");
         }
 
 
-        
+
         [JsonProperty(PropertyName = "avs_result_code")]
         public string AvsResultCode { get; set; }
 
@@ -131,6 +129,9 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "verification_type")]
         public string VerificationType { get; set; }
+
+        [JsonProperty(PropertyName = "payment_type")]
+        public PaymentType PaymentType { get; } = PaymentType.Card;
     }
 
 }
