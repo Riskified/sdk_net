@@ -8,11 +8,6 @@ using Newtonsoft.Json.Converters;
 
 namespace Riskified.SDK.Model.OrderElements
 {
-    [Obsolete("PaymentType not in use anymore", true)]
-    public enum PaymentType
-    {
-        credit_card, paypal
-    }
     public class CreditCardPaymentDetails : IPaymentDetails
     {
        
