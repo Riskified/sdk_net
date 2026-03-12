@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Riskified.SDK.Model.OrderElements;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Riskified.SDK.Model
 {
@@ -185,7 +181,10 @@ namespace Riskified.SDK.Model
         public string OrderType { get; set; }
         
         [JsonProperty(PropertyName = "custom")]
-        public Custom Custom { get; set; } 
+        public Custom Custom { get; set; }
+
+        [JsonProperty(PropertyName = "partner_sub_merchant_id")]
+        public string PartnerSubMerchantId { get; set; } = null;
 
     }
 }
