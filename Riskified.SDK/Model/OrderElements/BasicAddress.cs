@@ -24,10 +24,10 @@ namespace Riskified.SDK.Model.OrderElements
             Address1 = address1;
             City = city;
             Country = country;
-            CountryCode = countryCode;
+            CountryCode = countryCode?.ToUpper();
             Phone = phone;
             AdditionalPhone = additionalPhone;
-            ProvinceCode = provinceCode;
+            ProvinceCode = provinceCode?.ToUpper();
             Address2 = address2;
             Province = province;
             ZipCode = zipCode;
@@ -50,12 +50,12 @@ namespace Riskified.SDK.Model.OrderElements
 
             if (!string.IsNullOrEmpty(CountryCode))
             {
-                InputValidators.ValidateCountryOrProvinceCode(CountryCode);
+                InputValidators.ValidateCountryCode(CountryCode);
             }
 
             if (!string.IsNullOrEmpty(ProvinceCode))
             {
-                InputValidators.ValidateCountryOrProvinceCode(ProvinceCode);
+                InputValidators.ValidateProvinceCode(ProvinceCode);
             }
         }
 
