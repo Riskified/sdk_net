@@ -58,7 +58,7 @@ namespace Riskified.SDK.Model.OrderElements
         {
             base.Validate(validationType);
 
-            if (CountryCode != null) InputValidators.ValidateCountryOrProvinceCode(CountryCode);
+            if (CountryCode != null) InputValidators.ValidateCountryCode(CountryCode);
         }
 
         [JsonProperty(PropertyName = "room_type")]
