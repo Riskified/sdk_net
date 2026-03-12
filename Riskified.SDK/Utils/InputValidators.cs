@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -14,15 +15,23 @@ namespace Riskified.SDK.Utils
             if (value == null)
                 return false;
             var r = new Regex(regex);
-            
+
             return r.IsMatch(value);
+        }
+
+        private static bool IsCountryCodeValid(string countryCode)
+        {
+            return CultureInfo
+                .GetCultures(CultureTypes.SpecificCultures)
+                    .Select(culture => new RegionInfo(culture.LCID))
+                        .Any(region => region.TwoLetterISORegionName == countryCode);
         }
 
         public static void ValidateEmail(string email)
         {
-            if(!IsInputFullMatchingRegex(email,@"^.+@.+\..+$"))
+            if (!IsInputFullMatchingRegex(email, @"^.+@.+\..+$"))
                 //|| (!isWeak && !IsInputFullMatchingRegex(email, @"^([a-zA-Z0-9_\-\.\+\%]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})$")))
-                throw new OrderFieldBadFormatException(string.Format("Email field invalid. Was \"{0}\"",email));
+                throw new OrderFieldBadFormatException(string.Format("Email field invalid. Was \"{0}\"", email));
         }
 
         public static void ValidateIp(string ip)
@@ -36,7 +45,7 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateCountryCode(string countryCode)
         {
-            if (!IsInputFullMatchingRegex(countryCode, @"^[A-Z]{2}$"))
+            if (!IsCountryCodeValid(countryCode))
                 throw new OrderFieldBadFormatException(string.Format("Country Code field invalid. Should be exactly 2 letters. Value was \"{0}\"", countryCode));
         }
 
@@ -49,7 +58,7 @@ namespace Riskified.SDK.Utils
         public static void ValidateAvsResultCode(string resultCode)
         {
             if (!IsInputFullMatchingRegex(resultCode, @"^[A-Za-z0-9 ]+$"))
-                throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));   
+                throw new OrderFieldBadFormatException(string.Format("Avs result Code field invalid. Should contain only letters and digits. Value was \"{0}\"", resultCode));
         }
 
         public static void ValidateCvvResultCode(string resultCode)
@@ -73,7 +82,7 @@ namespace Riskified.SDK.Utils
         public static void ValidateZeroOrPositiveValue(double number, string fieldName)
         {
             if (number < 0)
-                throw new OrderFieldBadFormatException(string.Format("{0} must be positive or zero. Value was \"{1}\"",fieldName, number));
+                throw new OrderFieldBadFormatException(string.Format("{0} must be positive or zero. Value was \"{1}\"", fieldName, number));
         }
 
         public static void ValidateZeroOrPositiveValue(float number, string fieldName)
@@ -90,25 +99,25 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateObjectNotNull(object obj, string fieldName)
         {
-            if(obj == null)
+            if (obj == null)
                 throw new OrderFieldBadFormatException(string.Format("{0} can't be null.", fieldName));
         }
 
         public static void ValidateDateNotDefault(DateTimeOffset? date, string fieldName)
         {
-            if(date.Equals(DateTimeOffset.MinValue) || date.Equals(DateTimeOffset.MaxValue))
+            if (date.Equals(DateTimeOffset.MinValue) || date.Equals(DateTimeOffset.MaxValue))
                 throw new OrderFieldBadFormatException(string.Format("{0} date value must have a valid logical date (not default value).", fieldName));
         }
 
         public static void ValidateCurrency(string currency)
         {
-            if (string.IsNullOrEmpty(currency) || currency.Length != 3 || !IsInputFullMatchingRegex(currency,"^[A-Za-z]{3}$"))
+            if (string.IsNullOrEmpty(currency) || currency.Length != 3 || !IsInputFullMatchingRegex(currency, "^[A-Za-z]{3}$"))
                 throw new OrderFieldBadFormatException("Currency must be a 3 letters code matching ISO 4217.");
         }
 
         public static void ValidateCreditCard(string creditCardNumber)
         {
-            if(!IsInputFullMatchingRegex(creditCardNumber,@"^[Xx\-0-9]*[0-9]{4}$"))
+            if (!IsInputFullMatchingRegex(creditCardNumber, @"^[Xx\-0-9]*[0-9]{4}$"))
                 throw new OrderFieldBadFormatException("Credit card number should end with 4 digits, with preceeding sequence of digits and symbols of 'X','x',-'");
         }
     }
