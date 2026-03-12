@@ -34,10 +34,16 @@ namespace Riskified.SDK.Utils
             }
         }
 
-        public static void ValidateCountryOrProvinceCode(string locationCode)
+        public static void ValidateCountryCode(string countryCode)
         {
-            if (!IsInputFullMatchingRegex(locationCode, @"^[A-Za-z]{2}$"))
-                throw new OrderFieldBadFormatException(string.Format("Location Code field invalid. Should be exactly 2 letters. Value was \"{0}\"", locationCode));
+            if (!IsInputFullMatchingRegex(countryCode, @"^[A-Z]{2}$"))
+                throw new OrderFieldBadFormatException(string.Format("Country Code field invalid. Should be exactly 2 letters. Value was \"{0}\"", countryCode));
+        }
+
+        public static void ValidateProvinceCode(string provinceCode)
+        {
+            if (!IsInputFullMatchingRegex(provinceCode, @"^[A-Z0-9]{1,3}$"))
+                throw new OrderFieldBadFormatException(string.Format("Providence Code field invalid. Should be up to 3 alphanumeric values. Value was \"{0}\"", provinceCode));
         }
 
         public static void ValidateAvsResultCode(string resultCode)
