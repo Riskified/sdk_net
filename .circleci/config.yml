@@ -92,7 +92,7 @@ workflows:
       - hold_on_deploy:
           type: approval
           requires:
-            - build
+            - test
           filters:
             tags:
               only: /^v.*/
