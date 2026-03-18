@@ -7,7 +7,7 @@ Refer to the [documentation](https://developers.riskified.com/reference/api-over
 
 All examples are at the _Riskified.SDK.Sample_ folder. For the basics:
 
-1. Edit [`Riskified.SDK.Sample.config`](Riskified.SDK.Sample/Properties/launchSettings.json) to include your credentials: 
+1. Edit [`launchSettings.json`](Riskified.SDK.Sample/Properties/launchSettings.json) to include your credentials: 
     - **RISKIFIED_MERCHANT_DOMAIN** - The same domain you use for login at riskified.com
     - **RISKIFIED_AUTH_TOKEN** - Auth token to access our API. Can be found in our web app under _'Settings'->'Developers'_ 
     - **RISKIFIED_ENVIRONMENT** - `Sandbox` for Sandbox testing or `Production` for Production live work
