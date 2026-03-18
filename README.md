@@ -7,14 +7,14 @@ Refer to the [documentation](https://developers.riskified.com/reference/api-over
 
 All examples are at the _Riskified.SDK.Sample_ folder. For the basics:
 
-1. Edit [`launchSettings.json`](Riskified.SDK.Sample/Properties/launchSettings.json) to include your credentials: 
+1. Edit [`launchSettings.json`](Riskified.SDK.Sample/Properties/launchSettings.json) to include: 
     - **RISKIFIED_MERCHANT_DOMAIN** - The same domain you use for login at riskified.com
     - **RISKIFIED_AUTH_TOKEN** - Auth token to access our API. Can be found in our web app under _'Settings'->'Developers'_ 
     - **RISKIFIED_ENVIRONMENT** - `Sandbox` for Sandbox testing or `Production` for Production live work
     - **RISKIFIED_NOTIFICATIONS_WEBHOOK_URL** - Webhook URL for notifications
 2. Build and run the sample project executable
 
-If you wish to send your own data - Change the model object (Order) in the `OrderTransmissionExample.cs` [GenerateOrder method](https://github.com/Riskified/sdk_net/blob/master/Riskified.SDK.Sample/OrderTransmissionExample.cs#L650)
+If you wish to send your own data, change the model object (Order) in the `OrderTransmissionExample.cs` [GenerateOrder method](https://github.com/Riskified/sdk_net/blob/master/Riskified.SDK.Sample/OrderTransmissionExample.cs#L650)
 
 
 ## Migrating from older versions (prior to: API v2 - v2.0.0.0)
