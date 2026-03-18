@@ -14,7 +14,7 @@
     <Company>Riskified</Company>
     <Product>Riskified.SDK</Product>
     <Description>Implementation of the Riskified API in C# (official SDK nuget release).</Description>
-    <Copyright>Copyright © Riskified 2012-2024</Copyright>
+    <Copyright>Copyright © Riskified 2012-2026</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
