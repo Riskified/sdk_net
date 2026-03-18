@@ -33,6 +33,29 @@ jobs:
       - run:
           name: "Build release binaries"
           command: dotnet build -c Release Riskified.SDK/Riskified.SDK.csproj
+  test:
+    executor: dotnet-executor
+    working_directory: ~/RiskifiedSDK
+    steps:
+      - git-shallow-clone/checkout:
+          depth: 1
+      - run:
+          name: "Dotnet version"
+          command: dotnet --version
+      - restore_cache:
+          keys:
+            - dotnet-packages-v1-{{ checksum "Riskified.SDK.Tests/Riskified.SDK.Tests.csproj" }}
+            - dotnet-packages-v1-
+      - run:
+          name: "Downloading project dependencies"
+          command: dotnet restore Riskified.SDK.Tests/Riskified.SDK.Tests.csproj
+      - save_cache:
+          key: dotnet-packages-v1-{{ checksum "Riskified.SDK.Tests/Riskified.SDK.Tests.csproj" }}
+          paths:
+            - ~/.nuget/packages
+      - run:
+          name: "Run tests"
+          command: dotnet test -c Release Riskified.SDK.Tests/Riskified.SDK.Tests.csproj
   deploy:
     executor: dotnet-executor
     working_directory: ~/RiskifiedSDK
@@ -60,6 +83,12 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - test:
+          filters:
+            tags:
+              only: /^v.*/
+          requires:
+            - build
       - hold_on_deploy:
           type: approval
           requires:
