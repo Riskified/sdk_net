@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -17,14 +16,6 @@ namespace Riskified.SDK.Utils
             var r = new Regex(regex);
 
             return r.IsMatch(value);
-        }
-
-        private static bool IsCountryCodeValid(string countryCode)
-        {
-            return CultureInfo
-                .GetCultures(CultureTypes.SpecificCultures)
-                    .Select(culture => new RegionInfo(culture.LCID))
-                        .Any(region => region.TwoLetterISORegionName == countryCode);
         }
 
         public static void ValidateEmail(string email)
@@ -45,7 +36,7 @@ namespace Riskified.SDK.Utils
 
         public static void ValidateCountryCode(string countryCode)
         {
-            if (!IsCountryCodeValid(countryCode))
+            if (!Country.IsValid(countryCode))
                 throw new OrderFieldBadFormatException(string.Format("Country Code field invalid. Should be exactly 2 letters. Value was \"{0}\"", countryCode));
         }
 
