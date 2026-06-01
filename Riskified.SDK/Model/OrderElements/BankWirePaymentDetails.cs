@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
+using System.Collections.Generic;
 
 namespace Riskified.SDK.Model.OrderElements
 {
@@ -46,5 +47,11 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "payment_type")]
         public PaymentType PaymentType { get; } = PaymentType.BankTransfer;
+
+        [JsonProperty(PropertyName = "account_identity")]
+        public AccountIdentity AccountIdentity { get; set; }
+
+        [JsonProperty(PropertyName = "account_balance")]
+        public AccountBalance AccountBalance { get; set; }
     }
 }
