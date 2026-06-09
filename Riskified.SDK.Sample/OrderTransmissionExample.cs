@@ -492,6 +492,7 @@ namespace Riskified.SDK.Sample
             orderCheckout.TotalPrice = 100.60;
             orderCheckout.CartToken = "a68778783ad298f1c80c3bafcddeea02f";
             orderCheckout.ReferringSite = "nba.com";
+            orderCheckout.AiAgent = AiAgent.Chatgpt;
             orderCheckout.LineItems = items;
             orderCheckout.DiscountCodes = discountCodes;
             orderCheckout.ShippingLines = lines;
@@ -627,6 +628,7 @@ namespace Riskified.SDK.Sample
             orderCheckout.TotalPrice = 100.60;
             orderCheckout.CartToken = "a68778783ad298f1c80c3bafcddeea02f";
             orderCheckout.ReferringSite = "nba.com";
+            orderCheckout.AiAgent = AiAgent.Chatgpt;
             orderCheckout.LineItems = items;
             orderCheckout.DiscountCodes = discountCodes;
             orderCheckout.ShippingLines = lines;

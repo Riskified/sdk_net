@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Model.OrderElements;
 using System;
 
@@ -158,6 +159,15 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "referring_site")]
         public string ReferringSite { get; set; }
+
+        /// <summary>
+        /// Identifies the AI agent that completed the checkout autonomously on behalf of the consumer.
+        /// Populate only for fully autonomous agentic orders (the agent completes checkout end-to-end).
+        /// For agent referrals where the consumer completes checkout manually, use ReferringSite instead.
+        /// </summary>
+        [JsonProperty(PropertyName = "ai_agent")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public AiAgent? AiAgent { get; set; }
 
         [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }
