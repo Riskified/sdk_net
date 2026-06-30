@@ -266,13 +266,32 @@ namespace Riskified.SDK.Utils
             {
                 Stream s = request.InputStream;
                 string postData = ExtractStreamData(s);
-                if (string.Equals(request.Headers[HmacHeaderName], CalcHmac(postData, authToken), StringComparison.Ordinal))
+#if NETSTANDARD2_0
+                if (ConstantTimeEquals(
+                    Encoding.UTF8.GetBytes(request.Headers[HmacHeaderName]),
+                    Encoding.UTF8.GetBytes(CalcHmac(postData, authToken))))
+#else
+                if (CryptographicOperations.FixedTimeEquals(
+                    Encoding.UTF8.GetBytes(request.Headers[HmacHeaderName]),
+                    Encoding.UTF8.GetBytes(CalcHmac(postData, authToken))))
+#endif
                 {
                     return postData;
                 }
             }
             throw new RiskifiedAuthenticationException("Request HMAC signature was either missing or incorrect");
         }
+
+#if NETSTANDARD2_0
+        private static bool ConstantTimeEquals(byte[] a, byte[] b)
+        {
+            if (a.Length != b.Length) return false;
+            int result = 0;
+            for (int i = 0; i < a.Length; i++)
+                result |= a[i] ^ b[i];
+            return result == 0;
+        }
+#endif
 
         private static string ExtractStreamData(Stream stream)
         {
@@ -291,16 +310,8 @@ namespace Riskified.SDK.Utils
             LoggingServices.Error(errMsg);
             throw new RiskifiedTransactionException(errMsg);
         }
-        /*
-        private static bool IsStringVerified(string data, string authToken, string hmacValueToVerify)
-        {
-            string calculatedHmac = CalcHmac(data, authToken);
-            return calculatedHmac.Equals(hmacValueToVerify);
-        }
-        */
         public static void BuildAndSendResponse(HttpListenerResponse response, string authToken,string shopDomain, string body,bool isActionSucceeded)
         {
-            AddDefaultHeaders(response.Headers,authToken,shopDomain,body);
             response.ContentType = "text/html";
             response.ContentEncoding = Encoding.UTF8;
             if (isActionSucceeded)
