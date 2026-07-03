@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 
 namespace Riskified.SDK.Model
 {
@@ -19,6 +14,8 @@ namespace Riskified.SDK.Model
         Declined,
         [EnumMember(Value = "declined_fraud")]
         DeclinedFraud,
+        [EnumMember(Value = "declined_business")]
+        DeclinedBusiness,
         [EnumMember(Value = "chargeback_fraud")]
         ChargebackFraud,
         [EnumMember(Value = "chargeback_not_fraud")]
