@@ -1,5 +1,9 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
@@ -14,6 +18,48 @@ namespace Riskified.SDK.Model.OrderElements
     /// </summary>
     public class WalletPaymentDetails : IPaymentDetails
     {
+        private static readonly IReadOnlyList<PaymentType> WalletPaymentTypes = new[]
+        {
+            PaymentType.ApplePay,
+            PaymentType.GooglePay,
+            PaymentType.SamsungPay,
+            PaymentType.WechatPay,
+            PaymentType.AmazonPay,
+            PaymentType.Alipay
+        };
+
+        private static readonly IReadOnlyList<string> ValidAcquirerRegions = new[] { "EU", "NONEU" };
+
+        private sealed class Rule
+        {
+            public Func<WalletPaymentDetails, bool> Check { get; }
+            public string Message { get; }
+
+            public Rule(Func<WalletPaymentDetails, bool> check, string message)
+            {
+                Check = check;
+                Message = message;
+            }
+        }
+
+        private static readonly IReadOnlyList<Rule> Rules = new List<Rule>
+        {
+            new Rule(p => WalletPaymentTypes.Contains(p.PaymentType),
+                "Payment Type must be one of: " + SupportedPaymentTypes()),
+            new Rule(p => !string.IsNullOrEmpty(p.AuthorizationId),
+                "Authorization Id can't be null or empty."),
+            new Rule(p => !string.IsNullOrEmpty(p.AvsResultCode),
+                "AVS Result Code can't be null or empty."),
+            new Rule(p => string.IsNullOrEmpty(p.CreditCardCountry) || Country.IsValid(p.CreditCardCountry),
+                "Credit Card Country is not a valid ISO country code."),
+            new Rule(p => string.IsNullOrEmpty(p.AcquirerRegion) || ValidAcquirerRegions.Contains(p.AcquirerRegion),
+                "Acquirer Region must be one of: [" + string.Join(", ", ValidAcquirerRegions) + "]"),
+            new Rule(p => !p.ExpiryMonth.HasValue || (p.ExpiryMonth.Value >= 1 && p.ExpiryMonth.Value <= 12),
+                "Expiry Month must be between 01 and 12"),
+            new Rule(p => !p.ExpiryYear.HasValue || (p.ExpiryYear.Value >= 1900 && p.ExpiryYear.Value <= 9999),
+                "Expiry Year must be a 4-digit integer formatted as YYYY")
+        };
+
         /// <summary>
         /// Creates a wallet payment details object with its required fields.
         /// </summary>
@@ -34,40 +80,25 @@ namespace Riskified.SDK.Model.OrderElements
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
         public void Validate(Validations validationType = Validations.Weak)
         {
-            if (validationType != Validations.Weak)
+            if (validationType == Validations.Weak) return;
+
+            foreach (var rule in Rules)
             {
-                if (!IsWalletPaymentType(PaymentType))
-                    throw new OrderFieldBadFormatException(
-                        string.Format("Payment Type must be one of the digital-wallet types (apple_pay, google_pay, samsung_pay, wechat_pay, amazon_pay, alipay). Value was \"{0}\"", PaymentType));
-
-                InputValidators.ValidateValuedString(AuthorizationId, "Authorization Id");
-                InputValidators.ValidateValuedString(AvsResultCode, "AVS Result Code");
-
-                if (!string.IsNullOrEmpty(CreditCardCountry))
-                    InputValidators.ValidateCountryCode(CreditCardCountry);
-
-                if (!string.IsNullOrEmpty(AcquirerRegion) && !AcquirerRegion.Equals("EU") && !AcquirerRegion.Equals("NONEU"))
-                    throw new OrderFieldBadFormatException(
-                        string.Format("Acquirer Region must be either \"EU\" or \"NONEU\". Value was \"{0}\"", AcquirerRegion));
-
-                if (ExpiryMonth.HasValue && (ExpiryMonth.Value < 1 || ExpiryMonth.Value > 12))
-                    throw new OrderFieldBadFormatException(
-                        string.Format("Expiry Month must be between 1 and 12. Value was \"{0}\"", ExpiryMonth.Value));
-
-                if (ExpiryYear.HasValue && (ExpiryYear.Value < 1000 || ExpiryYear.Value > 9999))
-                    throw new OrderFieldBadFormatException(
-                        string.Format("Expiry Year must be a 4-digit year. Value was \"{0}\"", ExpiryYear.Value));
+                if (!rule.Check(this))
+                    throw new OrderFieldBadFormatException(rule.Message);
             }
         }
 
-        private static bool IsWalletPaymentType(PaymentType paymentType)
+        private static string SupportedPaymentTypes()
         {
-            return paymentType == PaymentType.ApplePay
-                || paymentType == PaymentType.GooglePay
-                || paymentType == PaymentType.SamsungPay
-                || paymentType == PaymentType.WechatPay
-                || paymentType == PaymentType.AmazonPay
-                || paymentType == PaymentType.Alipay;
+            return "[" + string.Join(", ", WalletPaymentTypes.Select(GetEnumMemberValue)) + "]";
+        }
+
+        private static string GetEnumMemberValue(PaymentType type)
+        {
+            MemberInfo member = typeof(PaymentType).GetMember(type.ToString()).FirstOrDefault();
+            EnumMemberAttribute attr = member?.GetCustomAttribute<EnumMemberAttribute>();
+            return attr != null ? attr.Value : type.ToString().ToLower();
         }
 
         [JsonProperty(PropertyName = "payment_type")]
