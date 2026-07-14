@@ -105,50 +105,18 @@ namespace Riskified.SDK.Tests.Model.OrderElements
             Assert.Throws<OrderFieldBadFormatException>(() => details.Validate(Validations.All));
         }
 
-        [Theory]
-        [InlineData("EU")]
-        [InlineData("NONEU")]
-        public void Validate_ValidAcquirerRegion_DoesNotThrow(string region)
+        [Fact]
+        public void Validate_MissingRequiredAuthorizationId_Throws()
         {
-            var details = new WalletPaymentDetails(PaymentType.ApplePay, "auth-123", "Y")
-            {
-                AcquirerRegion = region
-            };
-
-            details.Validate(Validations.All);
-        }
-
-        [Theory]
-        [InlineData("US")]
-        [InlineData("eu")]
-        [InlineData("europe")]
-        public void Validate_InvalidAcquirerRegion_Throws(string region)
-        {
-            var details = new WalletPaymentDetails(PaymentType.ApplePay, "auth-123", "Y")
-            {
-                AcquirerRegion = region
-            };
-
-            Assert.Throws<OrderFieldBadFormatException>(() => details.Validate(Validations.All));
-        }
-
-        [Theory]
-        [InlineData(0)]
-        [InlineData(13)]
-        public void Validate_InvalidExpiryMonth_Throws(int month)
-        {
-            var details = new WalletPaymentDetails(PaymentType.ApplePay, "auth-123", "Y")
-            {
-                ExpiryMonth = month
-            };
+            var details = new WalletPaymentDetails(PaymentType.ApplePay, null, "Y");
 
             Assert.Throws<OrderFieldBadFormatException>(() => details.Validate(Validations.All));
         }
 
         [Fact]
-        public void Validate_MissingRequiredAuthorizationId_Throws()
+        public void Validate_MissingRequiredAvsResultCode_Throws()
         {
-            var details = new WalletPaymentDetails(PaymentType.ApplePay, null, "Y");
+            var details = new WalletPaymentDetails(PaymentType.ApplePay, "auth-123", null);
 
             Assert.Throws<OrderFieldBadFormatException>(() => details.Validate(Validations.All));
         }

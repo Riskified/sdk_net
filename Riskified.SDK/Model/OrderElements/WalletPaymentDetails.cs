@@ -28,8 +28,6 @@ namespace Riskified.SDK.Model.OrderElements
             PaymentType.Alipay
         };
 
-        private static readonly IReadOnlyList<string> ValidAcquirerRegions = new[] { "EU", "NONEU" };
-
         private static readonly IReadOnlyList<ValidationRule<WalletPaymentDetails>> Rules = new List<ValidationRule<WalletPaymentDetails>>
         {
             new ValidationRule<WalletPaymentDetails>(p => WalletPaymentTypes.Contains(p.PaymentType),
@@ -37,15 +35,7 @@ namespace Riskified.SDK.Model.OrderElements
             new ValidationRule<WalletPaymentDetails>(p => !string.IsNullOrEmpty(p.AuthorizationId),
                 "Authorization Id can't be null or empty."),
             new ValidationRule<WalletPaymentDetails>(p => !string.IsNullOrEmpty(p.AvsResultCode),
-                "AVS Result Code can't be null or empty."),
-            new ValidationRule<WalletPaymentDetails>(p => string.IsNullOrEmpty(p.CreditCardCountry) || Country.IsValid(p.CreditCardCountry),
-                "Credit Card Country is not a valid ISO country code."),
-            new ValidationRule<WalletPaymentDetails>(p => string.IsNullOrEmpty(p.AcquirerRegion) || ValidAcquirerRegions.Contains(p.AcquirerRegion),
-                "Acquirer Region must be one of: [" + string.Join(", ", ValidAcquirerRegions) + "]"),
-            new ValidationRule<WalletPaymentDetails>(p => !p.ExpiryMonth.HasValue || (p.ExpiryMonth.Value >= 1 && p.ExpiryMonth.Value <= 12),
-                "Expiry Month must be between 01 and 12"),
-            new ValidationRule<WalletPaymentDetails>(p => !p.ExpiryYear.HasValue || (p.ExpiryYear.Value >= 1900 && p.ExpiryYear.Value <= 9999),
-                "Expiry Year must be a 4-digit integer formatted as YYYY")
+                "AVS Result Code can't be null or empty.")
         };
 
         /// <summary>
