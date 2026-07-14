@@ -30,33 +30,21 @@ namespace Riskified.SDK.Model.OrderElements
 
         private static readonly IReadOnlyList<string> ValidAcquirerRegions = new[] { "EU", "NONEU" };
 
-        private sealed class Rule
+        private static readonly IReadOnlyList<ValidationRule<WalletPaymentDetails>> Rules = new List<ValidationRule<WalletPaymentDetails>>
         {
-            public Func<WalletPaymentDetails, bool> Check { get; }
-            public string Message { get; }
-
-            public Rule(Func<WalletPaymentDetails, bool> check, string message)
-            {
-                Check = check;
-                Message = message;
-            }
-        }
-
-        private static readonly IReadOnlyList<Rule> Rules = new List<Rule>
-        {
-            new Rule(p => WalletPaymentTypes.Contains(p.PaymentType),
+            new ValidationRule<WalletPaymentDetails>(p => WalletPaymentTypes.Contains(p.PaymentType),
                 "Payment Type must be one of: " + SupportedPaymentTypes()),
-            new Rule(p => !string.IsNullOrEmpty(p.AuthorizationId),
+            new ValidationRule<WalletPaymentDetails>(p => !string.IsNullOrEmpty(p.AuthorizationId),
                 "Authorization Id can't be null or empty."),
-            new Rule(p => !string.IsNullOrEmpty(p.AvsResultCode),
+            new ValidationRule<WalletPaymentDetails>(p => !string.IsNullOrEmpty(p.AvsResultCode),
                 "AVS Result Code can't be null or empty."),
-            new Rule(p => string.IsNullOrEmpty(p.CreditCardCountry) || Country.IsValid(p.CreditCardCountry),
+            new ValidationRule<WalletPaymentDetails>(p => string.IsNullOrEmpty(p.CreditCardCountry) || Country.IsValid(p.CreditCardCountry),
                 "Credit Card Country is not a valid ISO country code."),
-            new Rule(p => string.IsNullOrEmpty(p.AcquirerRegion) || ValidAcquirerRegions.Contains(p.AcquirerRegion),
+            new ValidationRule<WalletPaymentDetails>(p => string.IsNullOrEmpty(p.AcquirerRegion) || ValidAcquirerRegions.Contains(p.AcquirerRegion),
                 "Acquirer Region must be one of: [" + string.Join(", ", ValidAcquirerRegions) + "]"),
-            new Rule(p => !p.ExpiryMonth.HasValue || (p.ExpiryMonth.Value >= 1 && p.ExpiryMonth.Value <= 12),
+            new ValidationRule<WalletPaymentDetails>(p => !p.ExpiryMonth.HasValue || (p.ExpiryMonth.Value >= 1 && p.ExpiryMonth.Value <= 12),
                 "Expiry Month must be between 01 and 12"),
-            new Rule(p => !p.ExpiryYear.HasValue || (p.ExpiryYear.Value >= 1900 && p.ExpiryYear.Value <= 9999),
+            new ValidationRule<WalletPaymentDetails>(p => !p.ExpiryYear.HasValue || (p.ExpiryYear.Value >= 1900 && p.ExpiryYear.Value <= 9999),
                 "Expiry Year must be a 4-digit integer formatted as YYYY")
         };
 
@@ -82,11 +70,7 @@ namespace Riskified.SDK.Model.OrderElements
         {
             if (validationType == Validations.Weak) return;
 
-            foreach (var rule in Rules)
-            {
-                if (!rule.Check(this))
-                    throw new OrderFieldBadFormatException(rule.Message);
-            }
+            Rules.RunAll(this);
         }
 
         private static string SupportedPaymentTypes()
