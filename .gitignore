@@ -224,3 +224,8 @@ Riskified.SDK.Sample/App.config
 Riskified.SDK.Sample/App.config
 Riskified.SDK.Sample/App.config
 *.config
+
+# Editor / IDE folders
+.vscode/
+.idea/
+*.user
