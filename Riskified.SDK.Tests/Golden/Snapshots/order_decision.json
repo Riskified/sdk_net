@@ -1,0 +1,13 @@
+{
+  "order": {
+    "decision": {
+      "external_status": "declined_fraud",
+      "decided_at": "2026-03-04T12:00:00-05:00",
+      "reason": "used proxy and stolen credit card",
+      "amount": 100.5,
+      "currency": "USD"
+    },
+    "submission_reason": "manual_decision",
+    "id": "golden-4001"
+  }
+}
