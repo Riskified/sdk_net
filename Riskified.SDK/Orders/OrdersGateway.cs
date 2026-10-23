@@ -20,6 +20,7 @@ namespace Riskified.SDK.Orders
         private readonly string _authToken;
         private readonly string _shopDomain;
         private readonly Validations _validationMode;
+        private bool _useLegacyWireFormat;
 
         /// <summary>
         /// Creates the mediator class used to send order data to Riskified
@@ -57,6 +58,23 @@ namespace Riskified.SDK.Orders
             _authToken = authToken;
             _shopDomain = shopDomain;
             _validationMode = validationMode;
+        }
+
+        /// <summary>
+        /// Sends the request JSON in the 5.7.x shapes instead of the documented ones introduced in 5.8.0
+        /// (for example, a single billing_address object instead of an array). Defaults to false.
+        /// Use it only while moving to the documented shapes; it's removed in 6.0.0.
+        /// </summary>
+        [Obsolete("Sends the 5.7.x JSON shapes. Move to the documented shapes; this option is removed in 6.0.0.")]
+        public bool UseLegacyWireFormat
+        {
+            get { return _useLegacyWireFormat; }
+            set { _useLegacyWireFormat = value; }
+        }
+
+        internal WireOptions WireOptions
+        {
+            get { return new WireOptions(_useLegacyWireFormat); }
         }
 
         /// <summary>
@@ -323,7 +341,7 @@ namespace Riskified.SDK.Orders
                     OrdersWrapper wrappedOrders = new OrdersWrapper(batch);
                     try
                     {
-                        HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain);
+                        HttpUtils.JsonPostAndParseResponseToObject<OrdersWrapper>(riskifiedEndpointUrl, wrappedOrders, _authToken, _shopDomain, WireOptions);
                     }
                     catch (RiskifiedTransactionException e)
                     {
@@ -357,20 +375,22 @@ namespace Riskified.SDK.Orders
                 order.Validate(_validationMode);
             }
             var wrappedOrder = new OrderWrapper<AbstractOrder>(order);
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderWrapper<Notification>, OrderWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain, WireOptions);
             return new OrderNotification(transactionResult);
             
         }
 
         private AccountActionNotification SendAccountAction(AbstractAccountAction accountAction, Uri riskifiedEndpointUrl)
         {
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<AccountActionNotification, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<AccountActionNotification, AbstractAccountAction>(riskifiedEndpointUrl, accountAction, _authToken, _shopDomain, WireOptions);
             return transactionResult;
         }
 
         private OtpWidgetNotification SendInitiateOtp(OtpInitiate otpInitiate, Uri riskifiedEndpointUrl)
         {
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OtpWidgetNotification, OtpInitiate>(riskifiedEndpointUrl, otpInitiate, _authToken, _shopDomain);
+            // The OTP endpoint has only ever been called with Accept: application/json.
+            var otpWireOptions = new WireOptions(_useLegacyWireFormat, jsonAcceptHeader: true);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OtpWidgetNotification, OtpInitiate>(riskifiedEndpointUrl, otpInitiate, _authToken, _shopDomain, otpWireOptions);
             return transactionResult;
         }
 
@@ -390,7 +410,7 @@ namespace Riskified.SDK.Orders
                 orderCheckout.Validate(_validationMode);
             }
             var wrappedOrder = new OrderCheckoutWrapper<AbstractOrder>(orderCheckout);
-            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain);
+            var transactionResult = HttpUtils.JsonPostAndParseResponseToObject<OrderCheckoutWrapper<Notification>, OrderCheckoutWrapper<AbstractOrder>>(riskifiedEndpointUrl, wrappedOrder, _authToken, _shopDomain, WireOptions);
             return new OrderNotification(transactionResult);
         }
     }

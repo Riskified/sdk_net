@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Logging;
+using Riskified.SDK.Model;
+using Riskified.SDK.Model.Internal;
+using Riskified.SDK.Model.OrderElements;
 
 namespace Riskified.SDK.Utils
 {
@@ -36,13 +41,69 @@ namespace Riskified.SDK.Utils
         /// <summary>
         /// The settings used to serialize every request body sent to Riskified
         /// </summary>
-        internal static JsonSerializerSettings CreateSerializerSettings()
+        /// <param name="wireOptions">How to shape the JSON; null sends the documented shapes</param>
+        internal static JsonSerializerSettings CreateSerializerSettings(WireOptions wireOptions = null)
         {
-            return new JsonSerializerSettings
+            var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
                 Converters = new List<JsonConverter> { new StringEnumConverter() }
             };
+
+            if (wireOptions != null)
+            {
+                settings.Context = new StreamingContext(StreamingContextStates.Other, wireOptions);
+            }
+
+            return settings;
+        }
+
+        /// <summary>
+        /// The JSON request body sent to Riskified for the given object
+        /// </summary>
+        /// <param name="body">The object to serialize, e.g. an order wrapped the way OrdersGateway wraps it</param>
+        /// <param name="wireOptions">How to shape the JSON; null sends the documented shapes</param>
+        internal static string SerializeRequestBody(object body, WireOptions wireOptions = null)
+        {
+            var settings = CreateSerializerSettings(wireOptions);
+            var legacy = wireOptions != null && wireOptions.LegacyWireFormat;
+
+            if (!legacy && body is OrderCheckoutWrapper<AbstractOrder> wrapper && wrapper.Order is OrderCheckoutDenied checkoutDenied
+                && checkoutDenied.AuthorizationError != null && checkoutDenied.PaymentDetails != null)
+            {
+                var json = JObject.FromObject(body, JsonSerializer.Create(settings));
+                CopyAuthorizationErrorIntoPaymentDetails(json, checkoutDenied);
+                return json.ToString(Formatting.None);
+            }
+
+            return JsonConvert.SerializeObject(body, settings);
+        }
+
+        // /checkout_denied documents authorization_error inside card and wallet payment details; the SDK's
+        // OrderCheckoutDenied.AuthorizationError is on the order. Copy it into each card and wallet entry
+        // that has no error of its own, in the JSON only, so the caller's payment objects aren't changed.
+        // The order-level key stays. PayPal is left out until the API team confirms it applies there too.
+        private static void CopyAuthorizationErrorIntoPaymentDetails(JObject body, OrderCheckoutDenied checkoutDenied)
+        {
+            var order = body["checkout"];
+            var rootError = order?["authorization_error"];
+            var paymentDetails = order?["payment_details"] as JArray;
+            if (rootError == null || paymentDetails == null)
+            {
+                return;
+            }
+
+            var count = Math.Min(paymentDetails.Count, checkoutDenied.PaymentDetails.Length);
+            for (var i = 0; i < count; i++)
+            {
+                var isCardOrWallet = checkoutDenied.PaymentDetails[i] is CreditCardPaymentDetails
+                    || checkoutDenied.PaymentDetails[i] is WalletPaymentDetails;
+
+                if (isCardOrWallet && paymentDetails[i] is JObject entry && entry["authorization_error"] == null)
+                {
+                    entry["authorization_error"] = rootError.DeepClone();
+                }
+            }
         }
 
         /// <summary>
@@ -55,11 +116,12 @@ namespace Riskified.SDK.Utils
         /// <param name="jsonObj">The object to be json serialized as body of the HTTP request</param>
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
+        /// <param name="wireOptions">How to shape the request JSON; null sends the documented shapes</param>
         /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
-        public static void JsonPostAndParseResponseToObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
+        public static void JsonPostAndParseResponseToObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain, WireOptions wireOptions = null)
         {
-            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain, wireOptions);
 
             if(response != null)
             {
@@ -80,26 +142,27 @@ namespace Riskified.SDK.Utils
         /// <param name="jsonObj">The object to be json serialized as body of the HTTP request</param>
         /// <param name="authToken">The merchant authentication Token</param>
         /// <param name="shopDomain">The shop domain url of the merchant at Riskified</param>
+        /// <param name="wireOptions">How to shape the request JSON; null sends the documented shapes</param>
         /// <returns>'TRespObj' typed response object</returns>
         /// <exception cref="OrderFieldBadFormatException">On bad format of an order (missing fields data or invalid data)</exception>
         /// <exception cref="RiskifiedTransactionException">On errors with the transaction itself (network errors, bad response data)</exception>
-        public static TRespObj JsonPostAndParseResponseToObject<TRespObj,TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain) 
+        public static TRespObj JsonPostAndParseResponseToObject<TRespObj,TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain, WireOptions wireOptions = null)
             where TRespObj : class
-            where TReqObj  : class 
+            where TReqObj  : class
         {
-            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain);
+            var response = PostObject<TReqObj>(riskifiedWebhookUrl, jsonObj, authToken, shopDomain, wireOptions);
             var resObj = ParseObjectFromJsonResponse<TRespObj>(response);
             return resObj;
         }
 
 
 
-        private static HttpWebResponse PostObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain)
+        private static HttpWebResponse PostObject<TReqObj>(Uri riskifiedWebhookUrl, TReqObj jsonObj, string authToken, string shopDomain, WireOptions wireOptions)
         {
             string jsonStr;
             try
             {
-                jsonStr = JsonConvert.SerializeObject(jsonObj, CreateSerializerSettings());
+                jsonStr = SerializeRequestBody(jsonObj, wireOptions);
             }
             catch (Exception e)
             {
@@ -109,7 +172,7 @@ namespace Riskified.SDK.Utils
             HttpWebResponse response;
             try
             {
-                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON);
+                WebRequest request = GeneratePostRequest(riskifiedWebhookUrl, jsonStr, authToken, shopDomain, HttpBodyType.JSON, wireOptions);
                 response = (HttpWebResponse)request.GetResponse();
             }
             catch (WebException wex)
@@ -162,7 +225,18 @@ namespace Riskified.SDK.Utils
             return result;
         }
 
-        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType)
+        /// <summary>
+        /// The Accept header: the documented vendor value (what every endpoint received before 3.9.0),
+        /// except for the OTP endpoint and with the compatibility switch on, which send application/json
+        /// as 5.7.x did.
+        /// </summary>
+        internal static string AcceptHeader(WireOptions wireOptions)
+        {
+            var json = wireOptions != null && (wireOptions.LegacyWireFormat || wireOptions.JsonAcceptHeader);
+            return json ? "application/json" : string.Format("application/vnd.riskified.com; version={0}", ServerApiVersion);
+        }
+
+        private static WebRequest GeneratePostRequest(Uri url, string body, string authToken,string shopDomain, HttpBodyType bodyType, WireOptions wireOptions)
         {
             HttpWebRequest request = WebRequest.CreateHttp(url);
             // Set custom Riskified headers
@@ -171,8 +245,7 @@ namespace Riskified.SDK.Utils
             request.Method = "POST";
             request.ContentType = "application/"+ Enum.GetName(typeof(HttpBodyType),bodyType).ToLower();
             request.UserAgent = "Riskified.SDK_NET/" + AssemblyVersion;
-            request.Accept = string.Format("application/vnd.riskified.com; version={0}", ServerApiVersion);
-            request.Accept = string.Format("application/json");
+            request.Accept = AcceptHeader(wireOptions);
             request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
             request.ContentLength = bodyBytes.Length;

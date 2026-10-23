@@ -100,6 +100,7 @@
               {
                 "vendor_name": "Onfido",
                 "updated_at": "2025-11-01T10:00:00-05:00",
+                "update_at": "2025-11-01T10:00:00-05:00",
                 "kyc_verified": true,
                 "kyc_type": "soft"
               }
@@ -131,7 +132,7 @@
           },
           "correspondence": 1,
           "price_negotiated": true,
-          "starting_price": 120.0
+          "starting_price": "120.00"
         },
         "sub_category": "Backpacks",
         "category": "Bags",
@@ -294,40 +295,45 @@
         "pickup_date": "2026-06-01T03:00:00Z",
         "pickup_latitude": 40.5,
         "pickup_longitude": -74.25,
-        "pickup_address": {
-          "first_name": "Luke",
-          "last_name": "Rolling",
-          "address1": "4 Bermingham street",
-          "city": "Cherry Hill",
-          "country": "United States",
-          "country_code": "US",
-          "phone": "55546665",
-          "province": "New Jersey",
-          "province_code": "NJ",
-          "zip": "08002"
-        },
+        "pickup_address": [
+          {
+            "first_name": "Luke",
+            "last_name": "Rolling",
+            "address1": "4 Bermingham street",
+            "city": "Cherry Hill",
+            "country": "United States",
+            "country_code": "US",
+            "phone": "55546665",
+            "province": "New Jersey",
+            "province_code": "NJ",
+            "zip": "08002"
+          }
+        ],
         "dropoff_date": "2026-06-01T04:00:00Z",
         "dropoff_latitiude": 40.75,
+        "dropoff_latitude": 40.75,
         "dropoff_longitude": -73.75,
-        "dropoff_address": {
-          "first_name": "Ben",
-          "last_name": "Rolling",
-          "name": "Ben Philip Rolling",
-          "address1": "27 5th avenue",
-          "address2": "Apartment 5",
-          "city": "Manhattan",
-          "company": "IBM",
-          "country": "United States",
-          "country_code": "US",
-          "phone": "5554321234",
-          "province": "New York",
-          "province_code": "NY",
-          "zip": "10001",
-          "id": "addr-1",
-          "neighborhood": "Chelsea",
-          "latitude": 40.74642,
-          "longitude": -74.00149
-        },
+        "dropoff_address": [
+          {
+            "first_name": "Ben",
+            "last_name": "Rolling",
+            "name": "Ben Philip Rolling",
+            "address1": "27 5th avenue",
+            "address2": "Apartment 5",
+            "city": "Manhattan",
+            "company": "IBM",
+            "country": "United States",
+            "country_code": "US",
+            "phone": "5554321234",
+            "province": "New York",
+            "province_code": "NY",
+            "zip": "10001",
+            "id": "addr-1",
+            "neighborhood": "Chelsea",
+            "latitude": 40.74642,
+            "longitude": -74.00149
+          }
+        ],
         "transport_method": "car",
         "price_by": "fixed",
         "vehicle_class": "executive",
@@ -338,6 +344,7 @@
         "meet_n_greet": "yes",
         "cancellation_policy": "24 hours in advance",
         "authorized_payments": 74.0,
+        "authorized_payment": 74.0,
         "route_index": 1,
         "leg_index": 1,
         "damage_excess": 500.0,
@@ -569,37 +576,6 @@
         "payment_type": "gift_card"
       }
     ],
-    "billing_address": {
-      "first_name": "Ben",
-      "last_name": "Rolling",
-      "name": "Ben Philip Rolling",
-      "address1": "27 5th avenue",
-      "address2": "Apartment 5",
-      "city": "Manhattan",
-      "company": "IBM",
-      "country": "United States",
-      "country_code": "US",
-      "phone": "5554321234",
-      "province": "New York",
-      "province_code": "NY",
-      "zip": "10001",
-      "id": "addr-1",
-      "neighborhood": "Chelsea",
-      "latitude": 40.74642,
-      "longitude": -74.00149
-    },
-    "shipping_address": {
-      "first_name": "Luke",
-      "last_name": "Rolling",
-      "address1": "4 Bermingham street",
-      "city": "Cherry Hill",
-      "country": "United States",
-      "country_code": "US",
-      "phone": "55546665",
-      "province": "New Jersey",
-      "province_code": "NJ",
-      "zip": "08002"
-    },
     "passengers": [
       {
         "first_name": "John",
@@ -682,6 +658,7 @@
         {
           "vendor_name": "Onfido",
           "updated_at": "2025-11-01T10:00:00-05:00",
+          "update_at": "2025-11-01T10:00:00-05:00",
           "kyc_verified": true,
           "kyc_type": "soft"
         }
@@ -740,16 +717,53 @@
       "accept_language": "en-US",
       "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)"
     },
-    "charge_free_payment_details": {
-      "gateway": "giftcard",
-      "amount": 45.0
-    },
     "group_founder_order_id": "golden-1000",
     "order_type": "test",
     "custom": {
       "app_dom_id": "D2C"
     },
     "invoice_id": "inv-5701",
-    "id": "golden-5701"
+    "id": "golden-5701",
+    "billing_address": [
+      {
+        "first_name": "Ben",
+        "last_name": "Rolling",
+        "name": "Ben Philip Rolling",
+        "address1": "27 5th avenue",
+        "address2": "Apartment 5",
+        "city": "Manhattan",
+        "company": "IBM",
+        "country": "United States",
+        "country_code": "US",
+        "phone": "5554321234",
+        "province": "New York",
+        "province_code": "NY",
+        "zip": "10001",
+        "id": "addr-1",
+        "neighborhood": "Chelsea",
+        "latitude": 40.74642,
+        "longitude": -74.00149
+      }
+    ],
+    "shipping_address": [
+      {
+        "first_name": "Luke",
+        "last_name": "Rolling",
+        "address1": "4 Bermingham street",
+        "city": "Cherry Hill",
+        "country": "United States",
+        "country_code": "US",
+        "phone": "55546665",
+        "province": "New Jersey",
+        "province_code": "NJ",
+        "zip": "08002"
+      }
+    ],
+    "charge_free_payment_details": [
+      {
+        "gateway": "giftcard",
+        "amount": 45.0
+      }
+    ]
   }
 }
