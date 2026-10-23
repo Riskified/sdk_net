@@ -179,5 +179,29 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
+
+        /// <summary>
+        /// The size of the item (e.g. shirt or shoe size).
+        /// </summary>
+        [JsonProperty(PropertyName = "size")]
+        public string Size { get; set; }
+
+        /// <summary>
+        /// The drop-off point, when the customer hands the package in at one.
+        /// </summary>
+        [JsonProperty(PropertyName = "drop_point")]
+        public string DropPoint { get; set; }
+
+        /// <summary>
+        /// The id of the shipping address this item ships to. Required when an order has multiple shipping addresses.
+        /// </summary>
+        [JsonProperty(PropertyName = "shipping_address_id")]
+        public string ShippingAddressId { get; set; }
+
+        /// <summary>
+        /// Required when each line item can have a different affiliated partner.
+        /// </summary>
+        [JsonProperty(PropertyName = "vendor")]
+        public Vendor Vendor { get; set; }
     }
 }

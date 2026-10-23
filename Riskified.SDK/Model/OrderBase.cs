@@ -196,5 +196,11 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "partner_sub_merchant_id")]
         public string PartnerSubMerchantId { get; set; } = null;
 
+        /// <summary>
+        /// The ID of the invoice associated with the order.
+        /// </summary>
+        [JsonProperty(PropertyName = "invoice_id")]
+        public string InvoiceId { get; set; }
+
     }
 }

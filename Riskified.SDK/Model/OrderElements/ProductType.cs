@@ -26,6 +26,10 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "ride")]
         RideTicket,
         [EnumMember(Value = "remittance")]
-        Remittance
+        Remittance,
+        [EnumMember(Value = "crypto")]
+        Crypto,
+        [EnumMember(Value = "giftcard")]
+        GiftCard
     }
 }

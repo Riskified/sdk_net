@@ -100,5 +100,23 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "posts")]
         public int? Posts { get; set; }
 
+        /// <summary>
+        /// The customer's profile id on the network.
+        /// </summary>
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// The user's authentication token.
+        /// </summary>
+        [JsonProperty(PropertyName = "auth_token")]
+        public string AuthToken { get; set; }
+
+        /// <summary>
+        /// The user data from the network.
+        /// </summary>
+        [JsonProperty(PropertyName = "social_data")]
+        public Dictionary<string, object> SocialData { get; set; }
+
     }
 }
