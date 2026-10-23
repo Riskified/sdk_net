@@ -177,7 +177,7 @@ namespace Riskified.SDK.Model
         }
 
         // /checkout_denied documents a single address object; every other order endpoint an array.
-        // The compatibility switch sends the 5.7.x single object everywhere.
+        // The compatibility switch sends the 5.6.x single object everywhere.
         private bool SendsSingleAddresses
         {
             get { return _legacyWireFormat || this is OrderCheckoutDenied; }
@@ -274,7 +274,7 @@ namespace Riskified.SDK.Model
             set { SingleOrArray.ReplaceAll(_chargeFreePaymentDetails, value); }
         }
 
-        // The compatibility switch sends the 5.7.x single object.
+        // The compatibility switch sends the 5.6.x single object.
         [JsonProperty(PropertyName = "charge_free_payment_details")]
         private object ChargeFreePaymentDetailsWire
         {

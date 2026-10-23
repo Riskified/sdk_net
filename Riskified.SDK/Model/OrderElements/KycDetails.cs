@@ -19,7 +19,7 @@ namespace Riskified.SDK.Model.OrderElements
         public DateTimeOffset? UpdatedAt { get; set; }
 
         // The docs spell this key update_at; updated_at is still sent too. Not sent with the
-        // compatibility switch on (5.7.x didn't send it).
+        // compatibility switch on (5.6.x didn't send it).
         [JsonProperty(PropertyName = "update_at")]
         private DateTimeOffset? UpdateAtWire
         {

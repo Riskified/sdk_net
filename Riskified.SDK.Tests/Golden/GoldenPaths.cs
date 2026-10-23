@@ -19,7 +19,7 @@ namespace Riskified.SDK.Tests.Golden
         public static string Snapshots => Path.Combine(Root, "Snapshots");
 
         /// <summary>
-        /// What 5.7.x sent, frozen when 5.8.0 started changing shapes. GOLDEN_UPDATE never rewrites these.
+        /// What 5.6.x sent, frozen when 5.7.0 started changing shapes. GOLDEN_UPDATE never rewrites these.
         /// </summary>
         public static string Snapshots5_7 => Path.Combine(Snapshots, "5.7");
 

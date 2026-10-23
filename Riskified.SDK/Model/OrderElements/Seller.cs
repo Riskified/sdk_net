@@ -63,7 +63,7 @@ namespace Riskified.SDK.Model.OrderElements
 
         // starting_price is documented as a float-formatted string. Two decimals at least, like the docs'
         // examples, plus any further digits; invariant culture so it's never "120,00". The compatibility
-        // switch sends the 5.7.x number.
+        // switch sends the 5.6.x number.
         [JsonProperty(PropertyName = "starting_price")]
         private object StartingPriceWire
         {

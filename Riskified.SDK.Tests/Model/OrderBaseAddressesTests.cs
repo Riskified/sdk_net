@@ -133,7 +133,7 @@ namespace Riskified.SDK.Tests.Model
         }
 
         // Orders can't be created by DeserializeObject (their constructor validates merchantOrderId, which
-        // the JSON calls "id"; unchanged from 5.7.x), so this populates an existing order, which goes
+        // the JSON calls "id"; unchanged from 5.6.x), so this populates an existing order, which goes
         // through the same private wire setters.
         [Theory]
         [InlineData(false)]

@@ -44,7 +44,7 @@ namespace Riskified.SDK.Tests.Golden
         public static TheoryData<string> Snapshot5_7Names => new TheoryData<string>(
             Directory.GetFiles(GoldenPaths.Snapshots5_7, "*.json").Select(path => Path.GetFileNameWithoutExtension(path)));
 
-        // The compatibility switch (OrdersGateway.UseLegacyWireFormat) must send exactly what 5.7.x sent.
+        // The compatibility switch (OrdersGateway.UseLegacyWireFormat) must send exactly what 5.6.x sent.
         [Theory]
         [MemberData(nameof(Snapshot5_7Names))]
         public void Serialization_WithLegacyWireFormat_MatchesThe5_7Snapshot(string sampleName)
@@ -54,7 +54,7 @@ namespace Riskified.SDK.Tests.Golden
             var expected = ParseJson(File.ReadAllText(snapshotPath));
 
             Assert.True(JToken.DeepEquals(expected, actual),
-                $"With the compatibility switch on, '{sampleName}' differs from the 5.7.x output in {snapshotPath}.{Environment.NewLine}" +
+                $"With the compatibility switch on, '{sampleName}' differs from the 5.6.x output in {snapshotPath}.{Environment.NewLine}" +
                 $"Expected:{Environment.NewLine}{expected}{Environment.NewLine}Actual:{Environment.NewLine}{actual}");
         }
 

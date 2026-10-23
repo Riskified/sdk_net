@@ -29,7 +29,7 @@ namespace Riskified.SDK.Utils
         }
 
         /// <summary>
-        /// Send the 5.7.x JSON shapes and headers instead of the documented ones introduced in 5.8.0.
+        /// Send the 5.6.x JSON shapes and headers instead of the documented ones introduced in 5.7.0.
         /// </summary>
         public bool LegacyWireFormat { get; }
 
@@ -40,7 +40,7 @@ namespace Riskified.SDK.Utils
         public bool JsonAcceptHeader { get; }
 
         /// <summary>
-        /// Whether the serialization in progress asked for the 5.7.x shapes. Without options in the
+        /// Whether the serialization in progress asked for the 5.6.x shapes. Without options in the
         /// context (e.g. a merchant calling JsonConvert directly), the documented shapes are used.
         /// </summary>
         public static bool IsLegacy(StreamingContext context)

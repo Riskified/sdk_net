@@ -9,7 +9,7 @@ namespace Riskified.SDK.Tests.Model.OrderElements
 {
     /// <summary>
     /// Step 3.5: keys whose documented spelling differs from what the SDK sent go out under both names,
-    /// except with the compatibility switch on, which sends only the 5.7.x name.
+    /// except with the compatibility switch on, which sends only the 5.6.x name.
     /// </summary>
     public class RenamedKeysTests
     {

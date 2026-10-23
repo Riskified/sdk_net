@@ -91,8 +91,8 @@ namespace Riskified.SDK.Sample
 
                 // the OrdersGateway is responsible for sending orders to Riskified servers
                 OrdersGateway gateway = new OrdersGateway(riskifiedEnv, authToken, domain);
-                // Since 5.8.0 the SDK sends the documented JSON shapes (e.g. billing_address as an array).
-                // If your integration still needs the 5.7.x shapes, uncomment this while you move over;
+                // Since 5.7.0 the SDK sends the documented JSON shapes (e.g. billing_address as an array).
+                // If your integration still needs the 5.6.x shapes, uncomment this while you move over;
                 // it's obsolete and removed in 6.0.0.
                 // gateway.UseLegacyWireFormat = true;
                 try
@@ -912,7 +912,7 @@ namespace Riskified.SDK.Sample
             // Part of the order paid with a gift card. Buy now, pay later payments use BuyNowPayLaterPaymentDetails.
             order.PaymentDetails = new IPaymentDetails[] { payments[0], new NonChbPaymentDetails(PaymentType.GiftCard) };
 
-            // Since 5.8.0 addresses and charge-free payments are sent as arrays. The single properties
+            // Since 5.7.0 addresses and charge-free payments are sent as arrays. The single properties
             // (ShippingAddress, ChargeFreePaymentDetails, ...) set the first entry; use the plural ones for more.
             var secondShipping = new AddressInformation(
                 firstName: "Luke",

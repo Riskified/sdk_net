@@ -228,7 +228,7 @@ namespace Riskified.SDK.Utils
         /// <summary>
         /// The Accept header: the documented vendor value (what every endpoint received before 3.9.0),
         /// except for the OTP endpoint and with the compatibility switch on, which send application/json
-        /// as 5.7.x did.
+        /// as 5.6.x did.
         /// </summary>
         internal static string AcceptHeader(WireOptions wireOptions)
         {

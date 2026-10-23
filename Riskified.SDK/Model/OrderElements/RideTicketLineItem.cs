@@ -119,7 +119,7 @@ namespace Riskified.SDK.Model.OrderElements
             set { SingleOrArray.ReplaceAll(_pickupAddresses, value); }
         }
 
-        // The compatibility switch sends the 5.7.x single object.
+        // The compatibility switch sends the 5.6.x single object.
         [JsonProperty(PropertyName = "pickup_address")]
         private object PickupAddressWire
         {
@@ -134,7 +134,7 @@ namespace Riskified.SDK.Model.OrderElements
         public float? DropoffLatitude { get; set; }
 
         // The documented spelling; the misspelled key above is still sent too. Not sent with the
-        // compatibility switch on (5.7.x didn't send it).
+        // compatibility switch on (5.6.x didn't send it).
         [JsonProperty(PropertyName = "dropoff_latitude")]
         private float? DropoffLatitudeWire
         {
@@ -226,7 +226,7 @@ namespace Riskified.SDK.Model.OrderElements
             set { AuthorizedPayments = value; }
         }
 
-        // Not sent with the compatibility switch on (5.7.x didn't send it).
+        // Not sent with the compatibility switch on (5.6.x didn't send it).
         [JsonProperty(PropertyName = "authorized_payment")]
         private float? AuthorizedPaymentWire
         {

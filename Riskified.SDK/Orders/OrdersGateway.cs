@@ -61,11 +61,11 @@ namespace Riskified.SDK.Orders
         }
 
         /// <summary>
-        /// Sends the request JSON in the 5.7.x shapes instead of the documented ones introduced in 5.8.0
+        /// Sends the request JSON in the 5.6.x shapes instead of the documented ones introduced in 5.7.0
         /// (for example, a single billing_address object instead of an array). Defaults to false.
         /// Use it only while moving to the documented shapes; it's removed in 6.0.0.
         /// </summary>
-        [Obsolete("Sends the 5.7.x JSON shapes. Move to the documented shapes; this option is removed in 6.0.0.")]
+        [Obsolete("Sends the 5.6.x JSON shapes. Move to the documented shapes; this option is removed in 6.0.0.")]
         public bool UseLegacyWireFormat
         {
             get { return _useLegacyWireFormat; }
