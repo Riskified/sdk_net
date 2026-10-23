@@ -176,5 +176,10 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonConverter(typeof(StringEnumConverter))]
         public TransportMethodType? TransportMethod { get; set; }
 
+        /// <summary>
+        /// The booking cancellation policy.
+        /// </summary>
+        [JsonProperty(PropertyName = "cancellation_policy")]
+        public string CancellationPolicy { get; set; }
     }
 }

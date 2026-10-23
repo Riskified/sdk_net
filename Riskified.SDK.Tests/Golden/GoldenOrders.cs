@@ -22,6 +22,9 @@ namespace Riskified.SDK.Tests.Golden
             ["order_checkout"] = new OrderCheckoutWrapper<AbstractOrder>(OrderCheckout()),
             ["order_checkout_denied"] = new OrderCheckoutWrapper<AbstractOrder>(OrderCheckoutDenied()),
             ["order_decision"] = new OrderWrapper<AbstractOrder>(OrderDecision()),
+            ["order_5_7"] = new OrderWrapper<AbstractOrder>(Order5_7()),
+            ["order_checkout_denied_5_7"] = new OrderCheckoutWrapper<AbstractOrder>(OrderCheckoutDenied5_7()),
+            ["order_decision_5_7"] = new OrderWrapper<AbstractOrder>(OrderDecision5_7()),
         };
 
         private static Order Order()
@@ -172,6 +175,139 @@ namespace Riskified.SDK.Tests.Golden
             {
                 SubmissionReason = "manual_decision"
             };
+        }
+
+        // The *_5_7 samples add the properties introduced in 5.7.0 (Release 2) on top of their base
+        // samples, whose snapshots must stay unchanged: code that doesn't set them sends the same JSON.
+        private static Order Order5_7()
+        {
+            var card = CreditCardPaymentDetails();
+            card.AuthorizationType = AuthorizationType.Authorization;
+            card.BillingAddressId = "addr-1";
+            card.ExpiryMonth = 12;
+            card.ExpiryYear = 2030;
+
+            var paypal = PaypalPaymentDetails();
+            paypal.Id = "pm-paypal-1";
+            paypal.Mid = "mid-3";
+            paypal.AcquirerBin = "433333";
+            paypal.AuthenticationResult = AuthenticationResult();
+
+            var bankWire = BankWirePaymentDetails();
+            bankWire.Token = "bank-token-1";
+
+            var buyNowPayLater = new BuyNowPayLaterPaymentDetails
+            {
+                InitialPaymentAmount = 250.5,
+                Installments = 4,
+                PaymentFrequency = 14
+            };
+
+            // New payment types go last, so the base sample's payment_details indexes stay the same.
+            var order = Order();
+            order.Id = "golden-5701";
+            order.PaymentDetails = [card, paypal, WalletPaymentDetails(), bankWire, buyNowPayLater, new NonChbPaymentDetails(PaymentType.GiftCard)];
+
+            // The same Customer instance is also the first line item's seller customer.
+            var customer = order.Customer;
+            customer.Phone = "5554321234";
+            customer.Tags = "vip,newsletter";
+            customer.UserName = "johnd";
+            customer.GroupName = "gold";
+            customer.LastOrderId = "golden-0999";
+            customer.ReferrerCustomerId = "405050600";
+            customer.AcceptsMarketing = true;
+            customer.KycVerified = true;
+            customer.PhoneMandatory = false;
+            customer.BuyAttempts = 3;
+            customer.SellAttempts = 1;
+            customer.Gender = Gender.Male;
+            customer.SocialSignupType = SocialType.Google;
+
+            order.InvoiceId = "inv-5701";
+            order.BillingAddress.Id = "addr-1";
+            order.BillingAddress.Neighborhood = "Chelsea";
+            order.BillingAddress.Latitude = 40.74642;
+            order.BillingAddress.Longitude = -74.00149;
+
+            // billing_address isn't an array yet (step 3.1), so the schema check doesn't look inside it;
+            // customer.address is checked against the same address schema.
+            customer.Address.Id = "addr-2";
+            customer.Address.Neighborhood = "Flatiron";
+            customer.Address.Latitude = 40.74106;
+            customer.Address.Longitude = -73.98966;
+
+            // Line items: physical, remittance, event, digital, travel, accommodation, ride.
+            var physical = order.LineItems[0];
+            physical.Size = "M";
+            physical.DropPoint = "Locker 12, 27 5th avenue";
+            physical.ShippingAddressId = "addr-1";
+            physical.Vendor = new Vendor { VendorId = "vendor-7", VendorName = "Acme Outlet" };
+            ((EventTicketLineItem)order.LineItems[2]).CancellationPolicy = "refundable until 48 hours before";
+            ((TravelTicketLineItem)order.LineItems[4]).CancellationPolicy = "non-refundable";
+            ((RideTicketLineItem)order.LineItems[6]).DamageExcess = 500;
+
+            customer.CryptoWallets =
+            [
+                new CryptoWallet("0xc0ffee254729296a45a3885639AC7E10F9d54979", "ethereum") { Type = CryptoWalletType.Primary },
+                new CryptoWallet("bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh", "bitcoin")
+            ];
+            var social = customer.Social[0];
+            social.Id = "fb-1001";
+            social.AuthToken = "EAAGm0PX4ZCpsBA";
+            social.SocialData = new Dictionary<string, object> { ["friends_count"] = 120, ["verified"] = true };
+
+            order.ShippingLines[0].Company = "UPS";
+            order.ShippingLines[0].ShippingAddressId = "addr-1";
+
+            // The remittance and digital line items share this recipient.
+            var recipient = order.LineItems[1].Recipient;
+            recipient.CryptoWallet = new CryptoWallet("0xfe9e8709d3215310075d67e3ed32a380ccf451c8", "ethereum") { Type = CryptoWalletType.NonCustodial };
+            recipient.BankCode = "CHASUS33";
+            recipient.CreatedAt = new DateTimeOffset(2025, 6, 1, 9, 0, 0, NewYork);
+            recipient.UpdatedAt = new DateTimeOffset(2026, 2, 1, 9, 0, 0, NewYork);
+            recipient.SelfRecipient = false;
+
+            card.AuthenticationResult.tranStatus = SDK.Model.OrderCheckoutElements.AuthenticationResult.TranStatus.S;
+            card.AcquirerRegion = AcquirerRegion.NonEu;
+            order.Source = OrderSource.MobileAppIos;
+            customer.KycDetails[0].KycType = KycType.Soft;
+            ((TravelTicketLineItem)order.LineItems[4]).TransportMethod = TransportMethodType.Tram;
+            ((RideTicketLineItem)order.LineItems[6]).TransportMethod = RideTransportMethod.Car;
+
+            // Gift card and crypto line items are DigitalLineItems with their own product_type; appended last
+            // so the base sample's line_items indexes stay the same.
+            var giftCard = new DigitalLineItem(title: "Gift card", price: 100, quantityPurchased: 1, productId: "giftcard-1",
+                requiresShipping: false, category: "Gift cards", recipient: recipient, cardType: "digital")
+            {
+                ProductType = ProductType.GiftCard
+            };
+            var crypto = new DigitalLineItem(title: "0.05 ETH", price: 150, quantityPurchased: 1, productId: "crypto-1",
+                requiresShipping: false, category: "one_time_buy", recipient: recipient)
+            {
+                ProductType = ProductType.Crypto
+            };
+            order.LineItems = [.. order.LineItems, giftCard, crypto];
+            return order;
+        }
+
+        private static OrderCheckoutDenied OrderCheckoutDenied5_7()
+        {
+            var wallet = WalletPaymentDetails();
+            wallet.AuthorizationError = new AuthorizationError(new DateTimeOffset(2026, 3, 3, 8, 0, 2, NewYork), "do_not_honor", "Do not honor.");
+
+            var orderCheckoutDenied = OrderCheckoutDenied();
+            orderCheckoutDenied.Id = "golden-5702";
+            orderCheckoutDenied.PaymentDetails = [orderCheckoutDenied.PaymentDetails[0], wallet];
+            return orderCheckoutDenied;
+        }
+
+        private static OrderDecision OrderDecision5_7()
+        {
+            var orderDecision = OrderDecision();
+            orderDecision.Id = "golden-5703";
+            orderDecision.Gateway = "adyen";
+            return orderDecision;
         }
 
         private static Customer Customer()

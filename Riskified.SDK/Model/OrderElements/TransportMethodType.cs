@@ -15,6 +15,8 @@ namespace Riskified.SDK.Model
         [EnumMember(Value = "bus")]
         Bus,
         [EnumMember(Value = "train")]
-        Train
+        Train,
+        [EnumMember(Value = "tram")]
+        Tram
     }
 }
