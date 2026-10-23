@@ -37,9 +37,6 @@ namespace Riskified.SDK.Tests.Golden
         [
             .. new[]
             {
-                Gap("order_decision", ["pre-auth-decision"], "#/order.payment_details PropertyRequired",
-                    fixedBy: "step 1.1"),
-
                 Gap("order", OrderSchemas, "#/order.billing_address ArrayExpected", fixedBy: "step 3.1"),
                 Gap("order", OrderSchemas, "#/order.shipping_address ArrayExpected", fixedBy: "step 3.1"),
                 Gap("order", OrderSchemas, "#/order.charge_free_payment_details ArrayExpected", fixedBy: "step 3.2"),

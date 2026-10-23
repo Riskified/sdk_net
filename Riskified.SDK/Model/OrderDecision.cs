@@ -11,12 +11,14 @@ namespace Riskified.SDK.Model
             : base(merchantOrderId)
         {
             this.Decision = decision;
+            this.PaymentDetails = paymentDetails;
         }
 
         public OrderDecision(string merchantOrderId, DecisionDetails decision, IPaymentDetails[] paymentDetails = null)
             : base(merchantOrderId)
         {
             this.Decision = decision;
+            this.PaymentDetails = paymentDetails;
         }
 
         /// <summary>

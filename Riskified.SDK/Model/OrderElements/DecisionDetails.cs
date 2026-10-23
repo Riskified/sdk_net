@@ -22,7 +22,7 @@ namespace Riskified.SDK.Model.OrderElements
             this.Reason = reason;
             this.Amount = amount;
             this.Currency = currency;
-            this.Notes = Notes;
+            this.Notes = notes;
         }
 
         public void Validate(Utils.Validations validationType = Validations.Weak)
