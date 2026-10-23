@@ -1,0 +1,1259 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Chargeback Guarantee",
+    "description": "# Riskified API for Fraud Prevention and Risk Management\n\nThis API allows merchants to submit orders for review, check order status, and manage the complete order lifecycle.\n\n## Authentication\nAll API requests must include the following headers:\n- `X-RISKIFIED-SHOP-DOMAIN`: Your shop domain registered with Riskified\n- `X-RISKIFIED-HMAC-SHA256`: HMAC-SHA256 signature of the request body using your authentication token\n- `Accept`: `application/vnd.riskified.com; version=2`\n- `Content-Type`: `application/json`\n\n## Environments\n- Sandbox: Used for testing and integration\n- Production: Used for live transactions\n\n## Integration Types\nRiskified supports different integration types:\n- **Pre-authorization Synchronous**: Review orders before payment authorization\n- **Post-authorization Synchronous**: Review orders after payment authorization with synchronous response\n- **Post-authorization Asynchronous**: Review orders after payment authorization with asynchronous response\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Riskified Support",
+      "url": "http://apiref.riskified.com/",
+      "email": "support@riskified.com"
+    }
+  },
+  "x-samples-languages": [
+    "json",
+    "shell",
+    "javascript",
+    "python",
+    "node"
+  ],
+  "x-explorer-enabled": false,
+  "servers": [
+    {
+      "url": "https://sandbox.riskified.com",
+      "description": "Sandbox environment for testing and integration"
+    },
+    {
+      "url": "https://wh.riskified.com",
+      "description": "Production environment for live transactions"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pre-Authorization Flow",
+      "description": "Operations that allow you to send orders to Riskified for fraud review before payment authorization"
+    }
+  ],
+  "paths": {
+    "/api/decision": {
+      "post": {
+        "summary": "Merchant Decision",
+        "description": "Update the existing order external status. The `/decision` endpoint should be used in the following scenarios:\n\n - To confirm to Riskified that authorization was successful  (common scenario)\n\n - To update Riskified about the final status of the order (specific use cases)\n\nLet us know what was your decision on your order.",
+        "operationId": "decision",
+        "tags": [
+          "Pre-Authorization Flow"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RiskifiedShopDomain"
+          },
+          {
+            "$ref": "#/components/parameters/RiskifiedSignature"
+          },
+          {
+            "$ref": "#/components/parameters/ContentType"
+          },
+          {
+            "$ref": "#/components/parameters/Accept"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/decision_order_wrapper"
+              },
+              "examples": {
+                "payment_approved": {
+                  "summary": "Payment authorized and order confirmed",
+                  "value": {
+                    "order": {
+                      "id": "450789469",
+                      "decision": {
+                        "external_status": "approved",
+                        "reason": "transaction authorized and order confirmed",
+                        "decided_at": "2013-04-23T13:36:50-04:00",
+                        "notes": "",
+                        "amount": "120.0",
+                        "currency": "USD"
+                      },
+                      "gateway": "Adyen",
+                      "payment_details": [
+                        {
+                          "payment_type": "card",
+                          "avs_result_code": "8",
+                          "cvv_result_code": "M",
+                          "authorization_id": "134678ac"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/decision_response"
+                },
+                "examples": {
+                  "decision_good_response_200": {
+                    "value": {
+                      "order": {
+                        "id": "450789469",
+                        "status": "approved",
+                        "description": "Reviewed and approved by Riskified",
+                        "old_status": "approved"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decision_bad_response_400": {
+                    "value": {
+                      "error": {
+                        "message": "JSON malformed - only UTF-8 well formatted JSON payload allowed (RFC 4627)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decision_unauthorized_response_401": {
+                    "value": {
+                      "error": {
+                        "message": "Failed verifying request: 'X-RISKIFIED-HMAC-SHA256' header is either missing or incorrect"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decision_too_many_requests_response": {
+                    "value": {
+                      "error": {
+                        "message": "Too many update requests for this order. Please try again later."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Contact Riskified support"
+          },
+          "504": {
+            "description": "Temporary error, please retry"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "account_balance": {
+        "type": "object",
+        "description": "An object containing account balance information as provided by the Payment Service Provider or bank. If provided, this object should contain all required fields.",
+        "properties": {
+          "available_balance": {
+            "type": "integer",
+            "description": "The amount in the customer’s bank account."
+          },
+          "service_name": {
+            "type": "string",
+            "enum": [
+              "plaid",
+              "mx",
+              "stripe",
+              "truelayer",
+              "klarna",
+              "visa",
+              "mastercard",
+              "yodlee"
+            ],
+            "description": "The service used to complete the transaction and to request the bank account balance."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601) when the account balance was queried."
+          },
+          "currency_code": {
+            "type": "string",
+            "description": "The three letter code (ISO 4217) for the currency of the account balance."
+          }
+        },
+        "required": [
+          "available_balance",
+          "service_name",
+          "updated_at",
+          "currency_code"
+        ],
+        "example": {
+          "available_balance": 2450,
+          "service_name": "plaid",
+          "updated_at": "2025-03-11T09:42:11Z",
+          "currency_code": "USD"
+        }
+      },
+      "account_identity_address": {
+        "type": "object",
+        "properties": {
+          "address1": {
+            "type": "string",
+            "description": "The street name of the address."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "province_code": {
+            "type": "string",
+            "description": "The two-letter ISO 3166-2 alpha-2 code for the state or province of the address."
+          },
+          "zip": {
+            "type": "string",
+            "description": "The zip or postal code of the address."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) of the country address."
+          }
+        },
+        "example": {
+          "address1": "123 Smart St",
+          "city": "Los Angeles",
+          "province_code": "CA",
+          "zip": "90210",
+          "country_code": "US"
+        }
+      },
+      "account_identity": {
+        "type": "object",
+        "description": "An object containing identity information about the purchasing customer as provided by the Payment Service Provider or bank.",
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of names associated with the bank account."
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/account_identity_address"
+            },
+            "description": "A list of addresses associated with the customer bank account."
+          },
+          "phone_numbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of phone numbers associated with the customer bank account."
+          },
+          "emails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of emails associated with the customer bank account."
+          }
+        },
+        "example": {
+          "names": [
+            "John Test"
+          ],
+          "addresses": [
+            {
+              "address1": "123 Smart St",
+              "city": "Los Angeles",
+              "province_code": "CA",
+              "zip": "90210",
+              "country_code": "US"
+            }
+          ],
+          "phone_numbers": [
+            "+143873984567290"
+          ],
+          "emails": [
+            "test@mailmail.com"
+          ]
+        }
+      },
+      "decision_response": {
+        "type": "object",
+        "description": "Decision Response",
+        "properties": {
+          "order": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID of order being acted upon. \n\n Note: This value should be later reflected also as order.id on the subsequent calls",
+                "example": "53953819"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "approved",
+                  "declined"
+                ],
+                "description": "Textual status describing the result of Riskified analysis."
+              },
+              "description": {
+                "type": "string",
+                "description": "Additional context on Riskified decision."
+              },
+              "old_status": {
+                "type": "string",
+                "description": "Old order status"
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "description",
+              "old_status"
+            ]
+          }
+        }
+      },
+      "decision_order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "450789469",
+            "description": "The unique identifier of the order the decision is on."
+          },
+          "gateway": {
+            "type": "string",
+            "example": "Adyen",
+            "description": "Name of gateway used. Use if gateway is unknown during order submission. \n If the transaction was processed using 3D Secure (3DS), append `_3ds` to the gateway name, for example, `adyen_3ds`."
+          },
+          "decision": {
+            "$ref": "#/components/schemas/decision_details",
+            "description": "The decision details for the order."
+          },
+          "payment_details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/decision_payment_details"
+            },
+            "description": "Please provide updated payment details based on gateway authorization response, including avs_result_code, cvv_result_code, and authorization_id results.\n\n authorization_id is required to support automated processing and dispute of chargebacks. Contact your dedicated integration engineer or account manager for more details on direct chargeback reporting and disputing."
+          }
+        },
+        "required": [
+          "id",
+          "decision",
+          "payment_details"
+        ],
+        "example": {
+          "id": "450789469",
+          "gateway": "Adyen_3ds",
+          "decision": {
+            "external_status": "approved",
+            "decided_at": "2025-11-20T17:15:00Z",
+            "reason": "Approved by automated risk system",
+            "amount": 400,
+            "currency": "USD",
+            "notes": "Order passed all checks."
+          },
+          "payment_details": [
+            {
+              "payment_type": "card",
+              "id": "pmt_01",
+              "credit_card_bin": "482932",
+              "credit_card_number": "9876",
+              "credit_card_company": "Visa",
+              "authorization_id": "AUTH_SUCCESS_8765",
+              "avs_result_code": "Y",
+              "cvv_result_code": "M",
+              "initial_payment_amount": 400,
+              "payment_frequency": 1,
+              "acquirer_region": "NONEU",
+              "mid": "AD_MID_7890",
+              "expiry_month": 12,
+              "expiry_year": 2028,
+              "authentication_result": {
+                "eci": "05",
+                "liability_shift": true,
+                "created_at": "2025-11-20T17:14:00Z"
+              }
+            }
+          ]
+        }
+      },
+      "decision_order_wrapper": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/decision_order"
+          }
+        },
+        "required": [
+          "order"
+        ]
+      },
+      "decision_payment_details": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/credit_card_payment_details_pre_auth_decision"
+          },
+          {
+            "$ref": "#/components/schemas/paypal_payment_details_details_pre_auth_decision"
+          },
+          {
+            "$ref": "#/components/schemas/bank_wire_payment_details"
+          },
+          {
+            "$ref": "#/components/schemas/digital_wallets_payment_details_pre_auth_decision"
+          },
+          {
+            "$ref": "#/components/schemas/buy_now_pay_later_payment_details"
+          },
+          {
+            "$ref": "#/components/schemas/non_chb_payment_details"
+          }
+        ]
+      },
+      "digital_wallets_payment_details_pre_auth_decision": {
+        "title": "Digital Wallets",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "apple_pay",
+              "google_pay",
+              "samsung_pay",
+              "wechat_pay",
+              "amazon_pay",
+              "alipay"
+            ],
+            "example": "apple_pay",
+            "description": "Indicates the type of payment."
+          },
+          "credit_card_company": {
+            "type": "string",
+            "example": "Visa",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The company who issued the customer's credit card"
+          },
+          "credit_card_country": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The issuer 2 letter country code. These codes are used to identify the country name"
+          },
+          "credit_card_token": {
+            "type": "string",
+            "description": "The token returned from the credit card company"
+          },
+          "cardholder_name": {
+            "type": "string",
+            "description": "Name of the cardholder"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "stored_payment_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "**(Conditional Requirement)** Required for CVV recommendations.\n\n Date and time (ISO8601) when the payment method was saved to the customer's account"
+          },
+          "stored_payment_updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "**(Conditional Requirement)** Required for CVV recommendations.\n\n Most recent date and time (ISO8601) when the saved payment method was updated by the customer"
+          },
+          "installments": {
+            "type": "integer",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil\n\nNumber of payment installments"
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "acquirer_region": {
+            "type": "string",
+            "enum": [
+              "NONEU",
+              "EU"
+            ],
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation."
+          },
+          "expiry_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "The payment expiration month."
+          },
+          "expiry_year": {
+            "type": "integer",
+            "description": "The payment expiration year; a 4-digit integer formatted as YYYY"
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "The initial amount paid."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "The frequency of payments made."
+          },
+          "billing_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Unique ID, is required in case of multiple billing addresses."
+          },
+          "authorization_id": {
+            "type": "string",
+            "example": "134678ac",
+            "description": "Unique identifier of the payment transaction as granted by the processing gateway"
+          },
+          "avs_result_code": {
+            "type": "string",
+            "example": "8",
+            "description": "Address Verification System response code.\nThe code is a single letter.\nRequired only in Order Model, optional on Account Actions Customer Create / Customer Update event"
+          },
+          "authorization_type": {
+            "description": "The type of authorization used for the payment.",
+            "type": "string",
+            "enum": [
+              "verification",
+              "authorization"
+            ]
+          },
+          "authentication_result": {
+            "$ref": "#/components/schemas/authentication_result",
+            "description": "**(Conditional Requirement)** Required if the transaction was processed using 3D Secure (3DS)."
+          }
+        },
+        "required": [
+          "payment_type",
+          "authorization_id",
+          "avs_result_code"
+        ],
+        "example": {
+          "payment_type": "apple_pay",
+          "credit_card_company": "Visa",
+          "credit_card_country": "US",
+          "credit_card_token": "tok_preauth_XYZ789",
+          "cardholder_name": "John Test Customer",
+          "mid": "PREAUTH_MID_456",
+          "id": "pmt_pre_01",
+          "stored_payment_created_at": "2024-05-15T10:00:00Z",
+          "stored_payment_updated_at": "2024-11-01T14:30:00Z",
+          "installments": 1,
+          "acquirer_bin": "999999",
+          "acquirer_region": "NONEU",
+          "expiry_month": 12,
+          "expiry_year": 2028,
+          "initial_payment_amount": 400,
+          "payment_frequency": 1,
+          "billing_address_id": "addr_bill_01",
+          "authorization_id": "134678ac",
+          "avs_result_code": "Y",
+          "authorization_type": "authorization",
+          "authentication_result": {
+            "eci": "05",
+            "liability_shift": true,
+            "created_at": "2025-11-20T17:14:00Z"
+          }
+        }
+      },
+      "credit_card_payment_details_pre_auth_decision": {
+        "type": "object",
+        "title": "Credit Card",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "card"
+            ],
+            "example": "card",
+            "description": "Indicates the type of payment."
+          },
+          "credit_card_bin": {
+            "type": "string",
+            "example": "482932",
+            "description": "The issuer identification number (IIN), formerly known as bank identification number (BIN) of the customer's credit card.\nMade up of the first 6 or 8 digits of the credit card number (per value received from the Payment Service Providers/tokenization response)."
+          },
+          "credit_card_company": {
+            "type": "string",
+            "example": "Visa",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The company who issued the customer's credit card"
+          },
+          "credit_card_number": {
+            "type": "string",
+            "example": "9876",
+            "description": "The credit card number, with leading digits redacted with Xs (only the last four digits are not hidden)"
+          },
+          "credit_card_country": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The issuer 2 letter country code. These codes are used to identify the country name"
+          },
+          "credit_card_token": {
+            "type": "string",
+            "description": "The token returned from the credit card company"
+          },
+          "cardholder_name": {
+            "type": "string",
+            "description": "Name of the cardholder"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "stored_payment_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "**(Conditional Requirement)** Required for CVV recommendations.\n\n Date and time (ISO8601) when the payment method was saved to the customer's account"
+          },
+          "stored_payment_updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "**(Conditional Requirement)** Required for CVV recommendations.\n\n Most recent date and time (ISO8601) when the saved payment method was updated by the customer"
+          },
+          "installments": {
+            "type": "integer",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil\n\nNumber of payment installments"
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "acquirer_region": {
+            "type": "string",
+            "enum": [
+              "NONEU",
+              "EU"
+            ],
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation."
+          },
+          "expiry_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "The payment expiration month."
+          },
+          "expiry_year": {
+            "type": "integer",
+            "description": "The payment expiration year; a 4-digit integer formatted as YYYY"
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "The initial amount paid."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "The frequency of payments made."
+          },
+          "billing_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Unique ID, is required in case of multiple billing addresses."
+          },
+          "authorization_id": {
+            "type": "string",
+            "example": "134678ac",
+            "description": "Unique identifier of the payment transaction as granted by the processing gateway"
+          },
+          "avs_result_code": {
+            "type": "string",
+            "example": "8",
+            "description": "Address Verification System response code.\nThe code is a single letter.\nRequired only in Order Model, optional on Account Actions Customer Create / Customer Update event"
+          },
+          "cvv_result_code": {
+            "type": "string",
+            "example": "M",
+            "description": "Card Verification Value response code.\nThe code is a single letter.\n Required only in Order Model, optional on Account Actions Customer Create / Customer Update events."
+          },
+          "authorization_type": {
+            "description": "The type of authorization used for the payment.",
+            "type": "string",
+            "enum": [
+              "verification",
+              "authorization"
+            ]
+          },
+          "authentication_result": {
+            "$ref": "#/components/schemas/authentication_result",
+            "description": "**(Conditional Requirement)** Required if the transaction was processed using 3D Secure (3DS)."
+          }
+        },
+        "required": [
+          "payment_type",
+          "credit_card_bin",
+          "credit_card_number",
+          "authorization_id",
+          "avs_result_code",
+          "cvv_result_code"
+        ],
+        "example": {
+          "payment_type": "card",
+          "credit_card_bin": "482932",
+          "credit_card_company": "Visa",
+          "credit_card_number": "9876",
+          "credit_card_country": "US",
+          "credit_card_token": "tok_preauth_XYZ789",
+          "cardholder_name": "John Test Customer",
+          "mid": "PREAUTH_MID_456",
+          "id": "pmt_pre_01",
+          "stored_payment_created_at": "2024-05-15T10:00:00Z",
+          "stored_payment_updated_at": "2024-11-01T14:30:00Z",
+          "installments": 1,
+          "acquirer_bin": "999999",
+          "acquirer_region": "NONEU",
+          "expiry_month": 12,
+          "expiry_year": 2028,
+          "initial_payment_amount": 400,
+          "payment_frequency": 1,
+          "billing_address_id": "addr_bill_01",
+          "authorization_id": "134678ac",
+          "avs_result_code": "Y",
+          "cvv_result_code": "M",
+          "authorization_type": "authorization",
+          "authentication_result": {
+            "eci": "05",
+            "liability_shift": true,
+            "created_at": "2025-11-20T17:14:00Z",
+            "three_d_challenge": true
+          }
+        }
+      },
+      "paypal_payment_details_details_pre_auth_decision": {
+        "type": "object",
+        "title": "Paypal",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "paypal"
+            ],
+            "example": "paypal",
+            "description": "Indicates the type of payment."
+          },
+          "payer_email": {
+            "type": "string",
+            "example": "johndoe123@gmail.com",
+            "description": "The payer email assigned to his paypal account as received from paypal"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "payer_status": {
+            "type": "string",
+            "description": "The payer status as received from paypal"
+          },
+          "payer_address_status": {
+            "type": "string",
+            "description": "The payer address status as received from paypal"
+          },
+          "protection_eligibility": {
+            "type": "string",
+            "description": "The merchants protection eligibility for the order as received from paypal"
+          },
+          "payment_status": {
+            "type": "string",
+            "description": "The payment status as recieved from paypal"
+          },
+          "pending_reason": {
+            "type": "string",
+            "description": "The pending reason received from paypal"
+          },
+          "authorization_id": {
+            "type": "string",
+            "description": "Seller transaction id received from PayPal"
+          },
+          "authorization_error": {
+            "$ref": "#/components/schemas/authorization_error"
+          }
+        },
+        "required": [
+          "payment_type",
+          "payer_email"
+        ],
+        "example": {
+          "payment_type": "paypal",
+          "payer_email": "johndoe123@gmail.com",
+          "authorization_id": "PP-AUTH-SUCCESS-8888",
+          "payer_status": "verified",
+          "payer_address_status": "confirmed",
+          "protection_eligibility": "ELIGIBLE",
+          "payment_status": "Completed",
+          "pending_reason": null,
+          "mid": "PAYPAL_MID_456",
+          "id": "pmt_paypal_03",
+          "acquirer_bin": "888888",
+          "authorization_error": null
+        }
+      },
+      "bank_wire_payment_details": {
+        "title": "Bank Wire / ACH",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "bank_transfer",
+              "ach"
+            ],
+            "example": "bank_transfer",
+            "description": "Indicates the type of payment."
+          },
+          "account_number": {
+            "type": "string",
+            "description": "The full account number",
+            "example": "482058180408"
+          },
+          "routing_number": {
+            "type": "string",
+            "description": "The routing number (ABA) of the customer's bank",
+            "example": "134000358"
+          },
+          "token": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for Plaid Partner integration. The Plaid processor_token value created by calling /processor/token/create. Please see further documentation for Plaid integration."
+          },
+          "account_balance": {
+            "$ref": "#/components/schemas/account_balance",
+            "description": "An object containing account balance information as provided by the Payment Service Provider or bank. If provided, this object should contain all required fields."
+          },
+          "account_identity": {
+            "$ref": "#/components/schemas/account_identity",
+            "description": "An object containing identity information about the purchasing customer as provided by the Payment Service Provider or bank."
+          }
+        },
+        "required": [
+          "payment_type",
+          "account_number",
+          "routing_number"
+        ],
+        "example": {
+          "payment_type": "bank_transfer",
+          "account_number": "482058180408",
+          "routing_number": "134000358",
+          "token": "processor-token-plaid-xyz",
+          "account_balance": {
+            "available_balance": 2450,
+            "service_name": "plaid",
+            "updated_at": "2025-03-11T09:42:11Z",
+            "currency_code": "USD"
+          },
+          "account_identity": {
+            "names": [
+              "John Test"
+            ],
+            "addresses": [
+              {
+                "address1": "123 Smart St",
+                "city": "Los Angeles",
+                "province_code": "CA",
+                "zip": "90210",
+                "country_code": "US"
+              }
+            ],
+            "phone_numbers": [
+              "+143873984567290"
+            ],
+            "emails": [
+              "test@mailmail.com"
+            ]
+          }
+        }
+      },
+      "buy_now_pay_later_payment_details": {
+        "title": "Buy Now, Pay Later (BNPL)",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "bnpl"
+            ],
+            "example": "bnpl",
+            "description": "Indicates the type of payment."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "Number of days between each payment.",
+            "example": 48
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Dollar amount of the first installment.",
+            "example": 1340
+          },
+          "installments": {
+            "type": "integer",
+            "description": "Number of payment installments.",
+            "example": 3
+          }
+        },
+        "required": [
+          "payment_type"
+        ],
+        "example": {
+          "payment_type": "bnpl",
+          "installments": 3
+        }
+      },
+      "non_chb_payment_details": {
+        "title": "Store credits and gift card payments",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "gift_card",
+              "store_credit",
+              "rewards_points"
+            ],
+            "example": "gift_card",
+            "description": "Indicates the type of payment."
+          }
+        },
+        "required": [
+          "payment_type"
+        ],
+        "example": {
+          "payment_type": "gift_card"
+        }
+      },
+      "decision_details": {
+        "type": "object",
+        "properties": {
+          "external_status": {
+            "$ref": "#/components/schemas/decision_type",
+            "description": "The external status, valid values are:\n* approved: The order was approved by the merchant or the gateway.\n* declined: Despite Riskified recommendation to approve, the merchant decided overturn the decision and decline it.\n* cancelled: The order was cancelled due to non-fraud reasons, such as out of stock.\n* declined_fraud: The order was not fulfilled due to fraud related reasons.\n* declined_business: The order was declined by the merchant's business reasons."
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2013-04-23T13:36:50-04:00",
+            "description": "When the order was decided, ISO8601 format."
+          },
+          "reason": {
+            "type": "string",
+            "example": "transaction authorized and order confirmed",
+            "description": "A reason for the decision."
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "example": "120.0",
+            "description": "The amount the decision is relevant on."
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD",
+            "description": "The three letter code (ISO 4217) for the currency used for the payment."
+          },
+          "notes": {
+            "type": "string",
+            "example": "",
+            "description": "Free text for describing the decision."
+          }
+        },
+        "required": [
+          "external_status"
+        ],
+        "example": {
+          "external_status": "approved",
+          "decided_at": "2025-11-19T16:15:00Z",
+          "reason": "Approved by automated risk system",
+          "amount": 400,
+          "currency": "USD",
+          "notes": "No suspicious activity detected; customer history clear."
+        }
+      },
+      "decision_type": {
+        "type": "string",
+        "example": "approved",
+        "enum": [
+          "approved",
+          "declined",
+          "cancelled",
+          "declined_fraud",
+          "declined_business"
+        ]
+      },
+      "authorization_error": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2008-01-10T11:00:00-05:00",
+            "description": "When the checkout was denied by the payment gateway."
+          },
+          "error_code": {
+            "type": "string",
+            "example": "2001",
+            "description": "The authorization error code received from the payment gateway."
+          },
+          "drop_off": {
+            "type": "boolean",
+            "example": false,
+            "description": "An indication for a customer drop off during a checkout flow. e.g abandoned cart"
+          },
+          "message": {
+            "type": "string",
+            "example": "Card was denied.",
+            "description": "The authorization response description. Please be sure to send the raw values received from the payment gateway. Examples include: incorrect_number, invalid_number, invalid_expiry_date, invalid_cvc, expired_card, incorrect_cvc, incorrect_zip, incorrect_address, card_declined, processing_error, call_issuer, pick_up_card, risk_system_declined"
+          }
+        },
+        "required": [
+          "created_at",
+          "error_code",
+          "message"
+        ],
+        "example": {
+          "created_at": "2025-11-20T17:05:00Z",
+          "error_code": "2001",
+          "message": "Card was denied.",
+          "drop_off": true
+        }
+      },
+      "authentication_result": {
+        "type": "object",
+        "properties": {
+          "eci": {
+            "type": "string",
+            "description": "The Electronic Commerce Indicator (ECI), is a number that indicates authentication result and liability shift. For every transaction that went through a 3DS flow attempt - you must include the ECI value as recieved from the gateway. In case there was no 3DS attempt, you should not include ECI value as part of the payload.",
+            "enum": [
+              "00",
+              "01",
+              "02",
+              "05",
+              "06",
+              "07"
+            ]
+          },
+          "liability_shift": {
+            "type": "boolean",
+            "description": "A field indicating if the liability for the transaction was shifted to the Issuer."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time of the authentication."
+          },
+          "cavv": {
+            "type": "string",
+            "description": "Cardholder Authentication Verification Value (cavv) response codes, indicating authentication result and reason."
+          },
+          "trans_status": {
+            "type": "string",
+            "description": "The transStatus value as defined in the 3D Secure 2 specification.",
+            "enum": [
+              "Y",
+              "N",
+              "U",
+              "A",
+              "C",
+              "R",
+              "D",
+              "I",
+              "S"
+            ]
+          },
+          "three_d_challenge": {
+            "type": "boolean",
+            "description": "An indication on whether the user went through a 3DS challenge"
+          },
+          "TRA_exemption": {
+            "type": "boolean",
+            "description": "An indication on whether the order received a TRA exemption"
+          },
+          "trans_status_reason": {
+            "type": "string",
+            "description": "The transStatusReason value as defined in the 3D Secure 2 specification.",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05",
+              "06",
+              "07",
+              "08",
+              "09",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18",
+              "19",
+              "20",
+              "21",
+              "22",
+              "23",
+              "24",
+              "25",
+              "26",
+              "27",
+              "80",
+              "99"
+            ]
+          }
+        },
+        "required": [
+          "eci",
+          "liability_shift",
+          "three_d_challenge",
+          "created_at"
+        ],
+        "example": {
+          "eci": "05",
+          "liability_shift": true,
+          "created_at": "2025-11-20T17:00:00Z",
+          "cavv": "MDAwMDAwMDAwMDE2NTE2MzU5NDY3",
+          "trans_status": "Y",
+          "three_d_challenge": false,
+          "TRA_exemption": true,
+          "trans_status_reason": "01"
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code"
+          },
+          "details": {
+            "type": "string",
+            "description": "Error details"
+          }
+        }
+      },
+      "error_response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/error"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "RiskifiedShopDomain": {
+        "name": "x-riskified-shop-domain",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "merchant.example.com"
+        },
+        "description": "The merchant shop domain registered with Riskified."
+      },
+      "RiskifiedSignature": {
+        "name": "x-riskified-hmac-sha256",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "b1946ac92492d2347c6235b4d2611184"
+        },
+        "description": "Verification hash for the Request.\nGenerated by performing an SHA256 encryption on the request's POST body and calculating the HMAC hash of the result using your Riskified authentication token.\nPlease use UTF8 encoding."
+      },
+      "ContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/json"
+          ]
+        },
+        "description": "As payloads are sent to Riskified in JSON format, value should be: `application/json`"
+      },
+      "Accept": {
+        "name": "accept",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/vnd.riskified.com; version=2"
+          ]
+        },
+        "description": "Specify the version of the API to target. For example, to target the latest version of the API, use the following: `application/vnd.riskified.com; version=2`"
+      }
+    }
+  }
+}
