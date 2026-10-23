@@ -47,7 +47,7 @@ namespace Riskified.SDK.Utils
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Converters = new List<JsonConverter> { new StringEnumConverter() }
+                Converters = new List<JsonConverter> { new PaymentTypeConverter(), new StringEnumConverter() }
             };
 
             if (wireOptions != null)
@@ -69,7 +69,7 @@ namespace Riskified.SDK.Utils
             var legacy = wireOptions != null && wireOptions.LegacyWireFormat;
 
             if (!legacy && body is OrderCheckoutWrapper<AbstractOrder> wrapper && wrapper.Order is OrderCheckoutDenied checkoutDenied
-                && checkoutDenied.AuthorizationError != null && checkoutDenied.PaymentDetails != null)
+                && checkoutDenied.OrderLevelAuthorizationError != null && checkoutDenied.PaymentDetails != null)
             {
                 var json = JObject.FromObject(body, JsonSerializer.Create(settings));
                 CopyAuthorizationErrorIntoPaymentDetails(json, checkoutDenied);
