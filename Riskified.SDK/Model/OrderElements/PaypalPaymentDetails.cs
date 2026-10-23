@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
@@ -74,7 +75,14 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// Sent as authentication_result. Use <see cref="AuthenticationResult"/> instead, which has the documented shape; this one is sent only when AuthenticationResult isn't set.
         /// </summary>
-        public AuthorizationError AuthorizationResult { get; set; }
+        [Obsolete("Use AuthenticationResult, which has the documented shape; AuthorizationResult is removed in 6.0.0.")]
+        public AuthorizationError AuthorizationResult
+        {
+            get { return _authorizationResult; }
+            set { _authorizationResult = value; }
+        }
+
+        private AuthorizationError _authorizationResult;
 
         /// <summary>
         /// The 3D Secure authentication result, sent as authentication_result.
@@ -85,7 +93,7 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "authentication_result")]
         private object AuthenticationResultWire
         {
-            get { return (object)AuthenticationResult ?? AuthorizationResult; }
+            get { return (object)AuthenticationResult ?? _authorizationResult; }
             set
             {
                 // Deserializing an object-typed member yields a JObject; an authorization error has error_code.
@@ -97,7 +105,7 @@ namespace Riskified.SDK.Model.OrderElements
 
                 if (json["error_code"] != null)
                 {
-                    AuthorizationResult = json.ToObject<AuthorizationError>();
+                    _authorizationResult = json.ToObject<AuthorizationError>();
                 }
                 else
                 {

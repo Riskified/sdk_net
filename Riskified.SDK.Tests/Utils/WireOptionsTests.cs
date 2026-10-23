@@ -77,9 +77,7 @@ namespace Riskified.SDK.Tests.Utils
         {
             var gateway = new OrdersGateway(RiskifiedEnvironment.Sandbox, "token", "shop.example.com");
 
-#pragma warning disable CS0618 // the switch is obsolete by design
             gateway.UseLegacyWireFormat = true;
-#pragma warning restore CS0618
 
             Assert.True(gateway.WireOptions.LegacyWireFormat);
         }

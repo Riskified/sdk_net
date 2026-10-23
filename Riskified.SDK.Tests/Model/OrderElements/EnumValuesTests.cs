@@ -23,7 +23,7 @@ namespace Riskified.SDK.Tests.Model.OrderElements
         }
 
         [Fact]
-        public void RewardPoints_StillSendsTheValueItAlwaysSent()
+        public void RewardPoints_KeepsItsEnumMemberValue()
         {
             Assert.Equal("\"reward_points\"", JsonConvert.SerializeObject(PaymentType.RewardPoints, new StringEnumConverter()));
         }
