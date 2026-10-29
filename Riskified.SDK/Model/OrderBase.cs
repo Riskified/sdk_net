@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Riskified.SDK.Model.OrderElements;
+using Riskified.SDK.Utils;
 using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Riskified.SDK.Model
 {
@@ -109,17 +112,82 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "payment_details")]
         public IPaymentDetails[] PaymentDetails { get; set; }
 
-        /// <summary>
-        /// The mailing address associated with the payment method.
-        /// </summary>
-        [JsonProperty(PropertyName = "billing_address")]
-        public AddressInformation BillingAddress { get; set; }
+        // billing_address / shipping_address are documented as arrays. The single and array
+        // properties share one list each, and the private *Wire properties below send it.
+        private readonly List<AddressInformation> _billingAddresses = new List<AddressInformation>();
+        private readonly List<AddressInformation> _shippingAddresses = new List<AddressInformation>();
+        private bool _legacyWireFormat;
 
         /// <summary>
-        /// The mailing address to where the order will be shipped.
+        /// The mailing address associated with the payment method: the first of <see cref="BillingAddresses"/>.
+        /// Setting it replaces the first billing address; null removes it.
         /// </summary>
+        [JsonIgnore]
+        public AddressInformation BillingAddress
+        {
+            get { return SingleOrArray.First(_billingAddresses); }
+            set { SingleOrArray.SetFirst(_billingAddresses, value); }
+        }
+
+        /// <summary>
+        /// The mailing addresses associated with the payment methods. The getter returns a copy;
+        /// assign a new array to change them.
+        /// </summary>
+        [JsonIgnore]
+        public AddressInformation[] BillingAddresses
+        {
+            get { return SingleOrArray.ToArray(_billingAddresses); }
+            set { SingleOrArray.ReplaceAll(_billingAddresses, value); }
+        }
+
+        /// <summary>
+        /// The mailing address to where the order will be shipped: the first of <see cref="ShippingAddresses"/>.
+        /// Setting it replaces the first shipping address; null removes it.
+        /// </summary>
+        [JsonIgnore]
+        public AddressInformation ShippingAddress
+        {
+            get { return SingleOrArray.First(_shippingAddresses); }
+            set { SingleOrArray.SetFirst(_shippingAddresses, value); }
+        }
+
+        /// <summary>
+        /// The mailing addresses to where the order will be shipped. The getter returns a copy;
+        /// assign a new array to change them.
+        /// </summary>
+        [JsonIgnore]
+        public AddressInformation[] ShippingAddresses
+        {
+            get { return SingleOrArray.ToArray(_shippingAddresses); }
+            set { SingleOrArray.ReplaceAll(_shippingAddresses, value); }
+        }
+
+        [JsonProperty(PropertyName = "billing_address")]
+        private object BillingAddressWire
+        {
+            get { return SingleOrArray.ToWire(_billingAddresses, SendsSingleAddresses); }
+            set { SingleOrArray.FromWire(_billingAddresses, value); }
+        }
+
         [JsonProperty(PropertyName = "shipping_address")]
-        public AddressInformation ShippingAddress { get; set; }
+        private object ShippingAddressWire
+        {
+            get { return SingleOrArray.ToWire(_shippingAddresses, SendsSingleAddresses); }
+            set { SingleOrArray.FromWire(_shippingAddresses, value); }
+        }
+
+        // /checkout_denied documents a single address object; every other order endpoint an array.
+        // The compatibility switch sends the 5.7.x single object everywhere.
+        private bool SendsSingleAddresses
+        {
+            get { return _legacyWireFormat || this is OrderCheckoutDenied; }
+        }
+
+        [OnSerializing]
+        private void OnSerializingOrderBase(StreamingContext context)
+        {
+            _legacyWireFormat = WireOptions.IsLegacy(context);
+        }
 
         /// <summary>
         /// Applicable only for Merchants from the travel industry.
@@ -181,8 +249,38 @@ namespace Riskified.SDK.Model
         [JsonProperty(PropertyName = "client_details")]
         public ClientDetails ClientDetails { get; set; }
 
+        // charge_free_payment_details is documented as an array on every endpoint; same bridge as the addresses.
+        private readonly List<ChargeFreePaymentDetails> _chargeFreePaymentDetails = new List<ChargeFreePaymentDetails>();
+
+        /// <summary>
+        /// A non-chargebackable part of the payment: the first of <see cref="ChargeFreePaymentDetailsList"/>.
+        /// Setting it replaces the first one; null removes it.
+        /// </summary>
+        [JsonIgnore]
+        public ChargeFreePaymentDetails ChargeFreePaymentDetails
+        {
+            get { return SingleOrArray.First(_chargeFreePaymentDetails); }
+            set { SingleOrArray.SetFirst(_chargeFreePaymentDetails, value); }
+        }
+
+        /// <summary>
+        /// The non-chargebackable parts of the payment (e.g. gift card sums). The getter returns a copy;
+        /// assign a new array to change them.
+        /// </summary>
+        [JsonIgnore]
+        public ChargeFreePaymentDetails[] ChargeFreePaymentDetailsList
+        {
+            get { return SingleOrArray.ToArray(_chargeFreePaymentDetails); }
+            set { SingleOrArray.ReplaceAll(_chargeFreePaymentDetails, value); }
+        }
+
+        // The compatibility switch sends the 5.7.x single object.
         [JsonProperty(PropertyName = "charge_free_payment_details")]
-        public ChargeFreePaymentDetails ChargeFreePaymentDetails { get; set; } 
+        private object ChargeFreePaymentDetailsWire
+        {
+            get { return SingleOrArray.ToWire(_chargeFreePaymentDetails, _legacyWireFormat); }
+            set { SingleOrArray.FromWire(_chargeFreePaymentDetails, value); }
+        }
 
         [JsonProperty(PropertyName = "group_founder_order_id")]
         public string GroupFounderOrderID { get; set; }

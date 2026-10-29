@@ -23,7 +23,7 @@ namespace Riskified.SDK.Tests.Golden
         [MemberData(nameof(SampleNames))]
         public void Serialization_MatchesSnapshot(string sampleName)
         {
-            var actual = ParseJson(JsonConvert.SerializeObject(GoldenOrders.All[sampleName], HttpUtils.CreateSerializerSettings()));
+            var actual = ParseJson(HttpUtils.SerializeRequestBody(GoldenOrders.All[sampleName]));
             var snapshotPath = Path.Combine(GoldenPaths.Snapshots, sampleName + ".json");
 
             if (UpdateSnapshots)
@@ -38,6 +38,23 @@ namespace Riskified.SDK.Tests.Golden
 
             Assert.True(JToken.DeepEquals(expected, actual),
                 $"Serialized '{sampleName}' differs from {snapshotPath}.{Environment.NewLine}" +
+                $"Expected:{Environment.NewLine}{expected}{Environment.NewLine}Actual:{Environment.NewLine}{actual}");
+        }
+
+        public static TheoryData<string> Snapshot5_7Names => new TheoryData<string>(
+            Directory.GetFiles(GoldenPaths.Snapshots5_7, "*.json").Select(path => Path.GetFileNameWithoutExtension(path)));
+
+        // The compatibility switch (OrdersGateway.UseLegacyWireFormat) must send exactly what 5.7.x sent.
+        [Theory]
+        [MemberData(nameof(Snapshot5_7Names))]
+        public void Serialization_WithLegacyWireFormat_MatchesThe5_7Snapshot(string sampleName)
+        {
+            var actual = ParseJson(HttpUtils.SerializeRequestBody(GoldenOrders.All[sampleName], new WireOptions(legacyWireFormat: true)));
+            var snapshotPath = Path.Combine(GoldenPaths.Snapshots5_7, sampleName + ".json");
+            var expected = ParseJson(File.ReadAllText(snapshotPath));
+
+            Assert.True(JToken.DeepEquals(expected, actual),
+                $"With the compatibility switch on, '{sampleName}' differs from the 5.7.x output in {snapshotPath}.{Environment.NewLine}" +
                 $"Expected:{Environment.NewLine}{expected}{Environment.NewLine}Actual:{Environment.NewLine}{actual}");
         }
 

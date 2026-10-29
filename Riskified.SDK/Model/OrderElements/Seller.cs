@@ -2,7 +2,9 @@
 using Riskified.SDK.Utils;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,9 +54,49 @@ namespace Riskified.SDK.Model.OrderElements
 
         /// <summary>
         /// The original price of the order, prior to any negotiation between seller and customer.
+        /// Sent as a string (e.g. "120.00"), as the API documents it.
         /// </summary>
-        [JsonProperty(PropertyName = "starting_price")]
+        [JsonIgnore]
         public float? StartingPrice { get; set; }
+
+        private bool _legacyWireFormat;
+
+        // starting_price is documented as a float-formatted string. Two decimals at least, like the docs'
+        // examples, plus any further digits; invariant culture so it's never "120,00". The compatibility
+        // switch sends the 5.7.x number.
+        [JsonProperty(PropertyName = "starting_price")]
+        private object StartingPriceWire
+        {
+            get
+            {
+                if (StartingPrice == null)
+                {
+                    return null;
+                }
+
+                return _legacyWireFormat
+                    ? (object)StartingPrice
+                    : ((decimal)StartingPrice.Value).ToString("0.00#####", CultureInfo.InvariantCulture);
+            }
+            set
+            {
+                // Deserializing an object-typed member yields a string or a boxed number; accept either.
+                if (value is string text)
+                {
+                    StartingPrice = float.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
+                }
+                else if (value != null)
+                {
+                    StartingPrice = Convert.ToSingle(value, CultureInfo.InvariantCulture);
+                }
+            }
+        }
+
+        [OnSerializing]
+        private void OnSerializingSeller(StreamingContext context)
+        {
+            _legacyWireFormat = WireOptions.IsLegacy(context);
+        }
 
 
     }

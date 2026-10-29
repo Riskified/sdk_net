@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -91,8 +92,40 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "pickup_longitude")]
         public float? PickupLongitude { get; set; }
 
+        // pickup_address / dropoff_address are documented as arrays. The single and array properties share
+        // one list each, and the private *Wire properties send it (see OrderBase.BillingAddress).
+        private readonly List<BasicAddress> _pickupAddresses = new List<BasicAddress>();
+        private readonly List<BasicAddress> _dropoffAddresses = new List<BasicAddress>();
+        private bool _legacyWireFormat;
+
+        /// <summary>
+        /// The pickup address: the first of <see cref="PickupAddresses"/>. Setting it replaces the first
+        /// pickup address; null removes it.
+        /// </summary>
+        [JsonIgnore]
+        public BasicAddress PickupAddress
+        {
+            get { return SingleOrArray.First(_pickupAddresses); }
+            set { SingleOrArray.SetFirst(_pickupAddresses, value); }
+        }
+
+        /// <summary>
+        /// The pickup addresses. The getter returns a copy; assign a new array to change them.
+        /// </summary>
+        [JsonIgnore]
+        public BasicAddress[] PickupAddresses
+        {
+            get { return SingleOrArray.ToArray(_pickupAddresses); }
+            set { SingleOrArray.ReplaceAll(_pickupAddresses, value); }
+        }
+
+        // The compatibility switch sends the 5.7.x single object.
         [JsonProperty(PropertyName = "pickup_address")]
-        public BasicAddress PickupAddress { get; set; }
+        private object PickupAddressWire
+        {
+            get { return SingleOrArray.ToWire(_pickupAddresses, _legacyWireFormat); }
+            set { SingleOrArray.FromWire(_pickupAddresses, value); }
+        }
 
         [JsonProperty(PropertyName = "dropoff_date")]
         public DateTime? DropoffDate { get; set; }
@@ -100,11 +133,57 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "dropoff_latitiude")]
         public float? DropoffLatitude { get; set; }
 
+        // The documented spelling; the misspelled key above is still sent too. Not sent with the
+        // compatibility switch on (5.7.x didn't send it).
+        [JsonProperty(PropertyName = "dropoff_latitude")]
+        private float? DropoffLatitudeWire
+        {
+            get { return _legacyWireFormat ? null : DropoffLatitude; }
+            set
+            {
+                if (value != null)
+                {
+                    DropoffLatitude = value;
+                }
+            }
+        }
+
         [JsonProperty(PropertyName = "dropoff_longitude")]
         public float? DropoffLongitude { get; set; } 
 
+        /// <summary>
+        /// The drop-off address: the first of <see cref="DropoffAddresses"/>. Setting it replaces the first
+        /// drop-off address; null removes it.
+        /// </summary>
+        [JsonIgnore]
+        public BasicAddress DropoffAddress
+        {
+            get { return SingleOrArray.First(_dropoffAddresses); }
+            set { SingleOrArray.SetFirst(_dropoffAddresses, value); }
+        }
+
+        /// <summary>
+        /// The drop-off addresses. The getter returns a copy; assign a new array to change them.
+        /// </summary>
+        [JsonIgnore]
+        public BasicAddress[] DropoffAddresses
+        {
+            get { return SingleOrArray.ToArray(_dropoffAddresses); }
+            set { SingleOrArray.ReplaceAll(_dropoffAddresses, value); }
+        }
+
         [JsonProperty(PropertyName = "dropoff_address")]
-        public BasicAddress DropoffAddress { get; set; } 
+        private object DropoffAddressWire
+        {
+            get { return SingleOrArray.ToWire(_dropoffAddresses, _legacyWireFormat); }
+            set { SingleOrArray.FromWire(_dropoffAddresses, value); }
+        }
+
+        [OnSerializing]
+        private void OnSerializingRideTicketLineItem(StreamingContext context)
+        {
+            _legacyWireFormat = WireOptions.IsLegacy(context);
+        }
 
         [JsonProperty(PropertyName = "transport_method")]
         public string TransportMethod { get; set; }
@@ -135,6 +214,31 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "authorized_payments")]
         public float? AuthorizedPayments { get; set; }
+
+        /// <summary>
+        /// The authorized payment amount, sent as authorized_payment (the documented key) and
+        /// authorized_payments. Same value as <see cref="AuthorizedPayments"/>.
+        /// </summary>
+        [JsonIgnore]
+        public float? AuthorizedPayment
+        {
+            get { return AuthorizedPayments; }
+            set { AuthorizedPayments = value; }
+        }
+
+        // Not sent with the compatibility switch on (5.7.x didn't send it).
+        [JsonProperty(PropertyName = "authorized_payment")]
+        private float? AuthorizedPaymentWire
+        {
+            get { return _legacyWireFormat ? null : AuthorizedPayments; }
+            set
+            {
+                if (value != null)
+                {
+                    AuthorizedPayments = value;
+                }
+            }
+        }
 
         [JsonProperty(PropertyName = "route_index")]
         public int? RouteIndex { get; set; }
