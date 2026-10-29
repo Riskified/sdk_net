@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
@@ -129,6 +130,19 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "verification_type")]
         public string VerificationType { get; set; }
+
+        [JsonProperty(PropertyName = "authorization_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public AuthorizationType? AuthorizationType { get; set; }
+
+        [JsonProperty(PropertyName = "billing_address_id")]
+        public string BillingAddressId { get; set; }
+
+        [JsonProperty(PropertyName = "expiry_month")]
+        public int? ExpiryMonth { get; set; }
+
+        [JsonProperty(PropertyName = "expiry_year")]
+        public int? ExpiryYear { get; set; }
 
         [JsonProperty(PropertyName = "payment_type")]
         public PaymentType PaymentType { get; } = PaymentType.Card;

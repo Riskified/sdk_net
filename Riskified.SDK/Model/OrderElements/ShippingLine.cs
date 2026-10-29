@@ -39,6 +39,18 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
+
+        /// <summary>
+        /// The name of the shipping company.
+        /// </summary>
+        [JsonProperty(PropertyName = "company")]
+        public string Company { get; set; }
+
+        /// <summary>
+        /// The id of the shipping address this line ships to. Required when an order has multiple shipping addresses.
+        /// </summary>
+        [JsonProperty(PropertyName = "shipping_address_id")]
+        public string ShippingAddressId { get; set; }
     }
 
 }

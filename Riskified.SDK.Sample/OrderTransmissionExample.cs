@@ -419,7 +419,9 @@ namespace Riskified.SDK.Sample
             OrderDecision orderDecision = new OrderDecision(p, new DecisionDetails(ExternalStatusType.ChargebackFraud, DateTime.Now, "used proxy and stolen credit card."));
             // add payment details from the gateway in pre-auth flow 
             var paymentDetails = new[] { new CreditCardPaymentDetails(null, null, null, null, null, "016225891") };
-            orderDecision.PaymentDetails = paymentDetails; 
+            orderDecision.PaymentDetails = paymentDetails;
+            // the gateway, if it was unknown when the order was submitted
+            orderDecision.Gateway = "authorize_net";
             return orderDecision;
         }
 
@@ -818,7 +820,7 @@ namespace Riskified.SDK.Sample
                     dropoffLongitude: 1, 
                     routeIndex: 1, 
                     legIndex: 1,
-                    transportMethod: "Taxi",
+                    transportMethod: RideTransportMethod.Taxi,
                     priceBy: "fixed",
                     vehicleClass: "executive",
                     carrierName: "Best darn taxi company in the world!",
@@ -865,7 +867,7 @@ namespace Riskified.SDK.Sample
                 createdAt: new DateTime(2020, 4, 18, 12, 0, 0, DateTimeKind.Local), // make sure to initialize DateTime with the correct timezone
                 updatedAt: DateTime.Now, // make sure to initialize DateTime with the correct timezone
                 discountCodes: discountCodes,
-                source: "web",
+                source: OrderSource.Web,
                 noChargeDetails: noChargeAmount,
                 decisionDetails: decisionDetails,
                 vendorId: "2",
@@ -877,6 +879,34 @@ namespace Riskified.SDK.Sample
                 groupFounderOrderID: "2222",
                 submissionReason: "Manual Decision"
                 );
+
+            // Optional fields added in 5.7.0
+            order.InvoiceId = "inv-" + orderNum;
+
+            customer.Phone = "5554321234";
+            customer.UserName = "johnd";
+            customer.AcceptsMarketing = true;
+            customer.Gender = Gender.Male;
+            customer.CryptoWallets = new[] { new CryptoWallet("0xc0ffee254729296a45a3885639AC7E10F9d54979", "ethereum") { Type = CryptoWalletType.Primary } };
+
+            billing.Id = "billing-1";
+            billing.Neighborhood = "Chelsea";
+            billing.Latitude = 40.74642;
+            billing.Longitude = -74.00149;
+
+            payments[0].AuthorizationType = AuthorizationType.Authorization;
+            payments[0].ExpiryMonth = 12;
+            payments[0].ExpiryYear = 2030;
+            payments[0].BillingAddressId = billing.Id;
+
+            lines[0].Company = "UPS";
+            items[0].Size = "M";
+            items[0].Vendor = new Vendor { VendorId = "vendor-7", VendorName = "Acme Outlet" };
+            ((EventTicketLineItem)items[2]).CancellationPolicy = "Refundable until 48 hours before the event";
+            ((RideTicketLineItem)items[6]).DamageExcess = 500;
+
+            // Part of the order paid with a gift card. Buy now, pay later payments use BuyNowPayLaterPaymentDetails.
+            order.PaymentDetails = new IPaymentDetails[] { payments[0], new NonChbPaymentDetails(PaymentType.GiftCard) };
 
             return order;
         }

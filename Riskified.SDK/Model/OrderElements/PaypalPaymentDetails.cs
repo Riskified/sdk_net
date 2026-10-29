@@ -1,10 +1,14 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Model.OrderCheckoutElements;
 using Riskified.SDK.Utils;
 
 namespace Riskified.SDK.Model.OrderElements
 {
+    // Opt-in: only [JsonProperty] members are serialized, so AuthorizationResult and
+    // AuthenticationResult (no attribute) go out only through AuthenticationResultWire.
+    [JsonObject(MemberSerialization.OptIn)]
     public class PaypalPaymentDetails : IPaymentDetails
     {
         /// <summary>
@@ -67,11 +71,52 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "authorization_error")]
         public AuthorizationError AuthorizationError { get; set; }
 
-        [JsonProperty(PropertyName = "authentication_result")]
+        /// <summary>
+        /// Sent as authentication_result. Use <see cref="AuthenticationResult"/> instead, which has the documented shape; this one is sent only when AuthenticationResult isn't set.
+        /// </summary>
         public AuthorizationError AuthorizationResult { get; set; }
+
+        /// <summary>
+        /// The 3D Secure authentication result, sent as authentication_result.
+        /// </summary>
+        public AuthenticationResult AuthenticationResult { get; set; }
+
+        // Both public properties map to authentication_result, which Newtonsoft allows only once per class.
+        [JsonProperty(PropertyName = "authentication_result")]
+        private object AuthenticationResultWire
+        {
+            get { return (object)AuthenticationResult ?? AuthorizationResult; }
+            set
+            {
+                // Deserializing an object-typed member yields a JObject; an authorization error has error_code.
+                var json = value as JObject;
+                if (json == null)
+                {
+                    return;
+                }
+
+                if (json["error_code"] != null)
+                {
+                    AuthorizationResult = json.ToObject<AuthorizationError>();
+                }
+                else
+                {
+                    AuthenticationResult = json.ToObject<AuthenticationResult>();
+                }
+            }
+        }
 
         [JsonProperty(PropertyName = "payment_type")]
         public PaymentType PaymentType { get; } = PaymentType.Paypal;
+
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        [JsonProperty(PropertyName = "mid")]
+        public string Mid { get; set; }
+
+        [JsonProperty(PropertyName = "acquirer_bin")]
+        public string AcquirerBin { get; set; }
 
     }
 }

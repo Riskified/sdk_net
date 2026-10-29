@@ -13,7 +13,7 @@ namespace Riskified.SDK.Model.OrderCheckoutElements
     {
         public enum TranStatus
         {
-            Y, N, U, A, C, D, R, I
+            Y, N, U, A, C, D, R, I, S
         }
 
         public AuthenticationResult(string eci)

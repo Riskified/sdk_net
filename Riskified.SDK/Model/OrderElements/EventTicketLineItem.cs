@@ -91,5 +91,11 @@ namespace Riskified.SDK.Model.OrderElements
         /// </summary>
         [JsonProperty(PropertyName = "longitude")]
         public float? Longitude { get; set; }
+
+        /// <summary>
+        /// The booking cancellation policy.
+        /// </summary>
+        [JsonProperty(PropertyName = "cancellation_policy")]
+        public string CancellationPolicy { get; set; }
     }
 }
