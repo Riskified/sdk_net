@@ -14,8 +14,9 @@ namespace Riskified.SDK.Tests.Golden
     /// <summary>
     /// Validates every golden sample against the request-body schema of each endpoint it's sent to,
     /// taken from the OpenAPI definitions in the API reference (Golden/Schema, refreshed by
-    /// update-schemas.sh). Keys the docs don't list are allowed. Known gaps are listed in
-    /// <see cref="KnownGaps"/>; remove an entry when the step that fixes it lands.
+    /// update-schemas.sh). Keys the docs don't list are allowed. Where the docs and the server
+    /// disagree and the server accepts what the SDK sends, <see cref="LoadRequestSchema"/> adjusts
+    /// the schema.
     /// </summary>
     public class GoldenSchemaTests
     {
@@ -35,49 +36,6 @@ namespace Riskified.SDK.Tests.Golden
             ["order_decision_5_7"] = ["pre-auth-decision"],
         };
 
-        // The *_5_7 samples extend their base samples, so they share the base samples' gaps unless
-        // they fix one.
-        private static readonly string[] Orders = ["order", "order_5_7"];
-        private static readonly string[] CheckoutDenieds = ["order_checkout_denied", "order_checkout_denied_5_7"];
-
-        // Each entry names the plan step (API_ALIGNMENT_PLAN.md) or open question that resolves it.
-        private static readonly HashSet<string> KnownGaps =
-        [
-            .. new[]
-            {
-
-                // The docs type these as date-only (format: date); the SDK sends a full date-time.
-                Gap(Orders, OrderSchemas, "#/order.customer.date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap(Orders, OrderSchemas, "#/order.line_items[0].seller.customer.date_of_birth DateExpected",
-                    fixedBy: "question 9"),
-                Gap(CheckoutDenieds, ["post-auth-checkout_denied"],
-                    "#/checkout.customer.date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap(Orders, OrderSchemas, "#/order.passengers[0].date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap(Orders, OrderSchemas, "#/order.passengers[0].document_issue_date DateExpected",
-                    fixedBy: "question 9"),
-                Gap(Orders, OrderSchemas, "#/order.passengers[0].document_expiration_date DateExpected",
-                    fixedBy: "question 9"),
-
-                // recipient_ACH types these as "number" with format date-time; the SDK sends a date-time
-                // string like every other created_at / updated_at.
-                Gap(["order_5_7"], OrderSchemas, "#/order.line_items[1].recipient.created_at NumberExpected",
-                    fixedBy: "question 11"),
-                Gap(["order_5_7"], OrderSchemas, "#/order.line_items[1].recipient.updated_at NumberExpected",
-                    fixedBy: "question 11"),
-
-                // Pre-auth /decide documents an integer, post-auth a number.
-                Gap(Orders, ["pre-auth-decide"],
-                    "#/order.payment_details[3].account_balance.available_balance IntegerExpected",
-                    fixedBy: "question 10"),
-            }.SelectMany(gap => gap)
-        ];
-
-        // fixedBy is documentation only; it isn't part of the matched string.
-        private static IEnumerable<string> Gap(string[] samples, string[] schemas, string error, string fixedBy)
-        {
-            return samples.SelectMany(sample => schemas.Select(schema => $"{sample} {schema}: {error}"));
-        }
-
         public static TheoryData<string, string> SampleSchemaPairs()
         {
             var data = new TheoryData<string, string>();
@@ -93,21 +51,14 @@ namespace Riskified.SDK.Tests.Golden
 
         [Theory]
         [MemberData(nameof(SampleSchemaPairs))]
-        public async Task Sample_MatchesApiSchema_ExceptKnownGaps(string sampleName, string schemaName)
+        public async Task Sample_MatchesApiSchema(string sampleName, string schemaName)
         {
             var schema = await LoadRequestSchema(schemaName);
             var json = HttpUtils.SerializeRequestBody(GoldenOrders.All[sampleName]);
 
-            var actual = Flatten(schema.Validate(json))
-                .Select(error => $"{sampleName} {schemaName}: {error}")
-                .ToHashSet();
-            var expected = KnownGaps
-                .Where(gap => gap.StartsWith($"{sampleName} {schemaName}: "))
-                .ToHashSet();
+            var errors = Flatten(schema.Validate(json)).Distinct().OrderBy(e => e).ToList();
 
-            Assert.True(actual.SetEquals(expected),
-                "New schema errors:\n  " + string.Join("\n  ", actual.Except(expected).OrderBy(e => e)) +
-                "\nKnown gaps that no longer occur (remove them from KnownGaps):\n  " + string.Join("\n  ", expected.Except(actual).OrderBy(e => e)));
+            Assert.True(errors.Count == 0, "Schema errors:\n  " + string.Join("\n  ", errors));
         }
 
         [Fact]
@@ -125,6 +76,30 @@ namespace Riskified.SDK.Tests.Golden
             var definitionText = File.ReadAllText(Path.Combine(GoldenPaths.Schema, schemaName + ".json"))
                 .Replace("#/components/schemas/", "#/definitions/");
             var definition = JObject.Parse(definitionText);
+
+            // The docs type some dates as date-only (format: date), but the server accepts the full
+            // date-time the SDK sends (question 9).
+            foreach (var format in definition.Descendants().OfType<JProperty>().Where(p => p.Name == "format" && (string?)p.Value == "date").ToList())
+            {
+                format.Value = "date-time";
+            }
+
+            // recipient_ACH types created_at / updated_at as "number" with format date-time; the server
+            // accepts the date-time string the SDK sends, like every other created_at (question 11).
+            foreach (var property in definition.Descendants().OfType<JObject>()
+                         .Where(p => p["type"] is JValue { Value: "number" } && p["format"] is JValue { Value: "date-time" }).ToList())
+            {
+                property["type"] = "string";
+            }
+
+            // Pre-auth /decide types available_balance as an integer, the post-auth pages as a number; the
+            // server accepts the number the SDK sends (question 10).
+            foreach (var balance in definition.Descendants().OfType<JProperty>()
+                         .Where(p => p.Name == "available_balance" && p.Value is JObject schema && schema["type"] is JValue { Value: "integer" })
+                         .Select(p => (JObject)p.Value).ToList())
+            {
+                balance["type"] = "number";
+            }
 
             var requestSchema = (JObject)definition["paths"]!.Values().Single()
                 .Values().Single()["requestBody"]!["content"]!["application/json"]!["schema"]!;

@@ -59,11 +59,11 @@ namespace Riskified.SDK.Model.OrderElements
             PickupDate = pickupDate;
             PickupLatitude = pickupLatitude;
             PickupLongitude = pickupLongitude;
-            PickupAddress = pickupAddress;
+            SingleOrArray.SetFirst(_pickupAddresses, pickupAddress);
             DropoffDate = dropoffDate;
             DropoffLatitude = dropoffLatitude;
             DropoffLongitude = dropoffLongitude;
-            DropoffAddress = dropoffAddress;
+            SingleOrArray.SetFirst(_dropoffAddresses, dropoffAddress);
             TransportMethod = transportMethod;
             PriceBy = priceBy;
             VehicleClass = vehicleClass;
@@ -73,7 +73,7 @@ namespace Riskified.SDK.Model.OrderElements
             NoteToDriver = noteToDriver;
             MeetNGreet = meetNGreet;
             CancellationPolicy = cancellationPolicy;
-            AuthorizedPayments = authorizedPayments;
+            AuthorizedPayment = authorizedPayments;
             RouteIndex = routeIndex;
             LegIndex = legIndex;
         }
@@ -103,6 +103,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// pickup address; null removes it.
         /// </summary>
         [JsonIgnore]
+        [Obsolete("Use PickupAddresses. PickupAddress is the first pickup address; it's removed in 6.0.0.")]
         public BasicAddress PickupAddress
         {
             get { return SingleOrArray.First(_pickupAddresses); }
@@ -156,6 +157,7 @@ namespace Riskified.SDK.Model.OrderElements
         /// drop-off address; null removes it.
         /// </summary>
         [JsonIgnore]
+        [Obsolete("Use DropoffAddresses. DropoffAddress is the first drop-off address; it's removed in 6.0.0.")]
         public BasicAddress DropoffAddress
         {
             get { return SingleOrArray.First(_dropoffAddresses); }
@@ -213,7 +215,14 @@ namespace Riskified.SDK.Model.OrderElements
         public string CancellationPolicy { get; set; }
 
         [JsonProperty(PropertyName = "authorized_payments")]
-        public float? AuthorizedPayments { get; set; }
+        [Obsolete("Use AuthorizedPayment, the documented name (same value); AuthorizedPayments is removed in 6.0.0.")]
+        public float? AuthorizedPayments
+        {
+            get { return _authorizedPayment; }
+            set { _authorizedPayment = value; }
+        }
+
+        private float? _authorizedPayment;
 
         /// <summary>
         /// The authorized payment amount, sent as authorized_payment (the documented key) and
@@ -222,20 +231,20 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonIgnore]
         public float? AuthorizedPayment
         {
-            get { return AuthorizedPayments; }
-            set { AuthorizedPayments = value; }
+            get { return _authorizedPayment; }
+            set { _authorizedPayment = value; }
         }
 
         // Not sent with the compatibility switch on (5.7.x didn't send it).
         [JsonProperty(PropertyName = "authorized_payment")]
         private float? AuthorizedPaymentWire
         {
-            get { return _legacyWireFormat ? null : AuthorizedPayments; }
+            get { return _legacyWireFormat ? null : _authorizedPayment; }
             set
             {
                 if (value != null)
                 {
-                    AuthorizedPayments = value;
+                    _authorizedPayment = value;
                 }
             }
         }

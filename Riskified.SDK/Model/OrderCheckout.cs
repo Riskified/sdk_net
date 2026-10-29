@@ -20,6 +20,7 @@ namespace Riskified.SDK.Model
 
         }
 
+#pragma warning disable CS0618 // Validation is out of scope for the alignment; it still reads the first address.
         public override void Validate(Validations validationType = Validations.Weak)
         {
             base.Validate(validationType);
@@ -123,6 +124,7 @@ namespace Riskified.SDK.Model
             }
 
         }
+#pragma warning restore CS0618
 
     }
 }
