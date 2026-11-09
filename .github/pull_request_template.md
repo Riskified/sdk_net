@@ -32,7 +32,6 @@ Plan step:
 ```diff
 ```
 
-## Schema adjustments
+## Schema known gaps
 
-<!-- Changes to how LoadRequestSchema in Golden/GoldenSchemaTests.cs adjusts the API schema (a field
-     the server accepts in a form the docs don't describe), with the API team's answer, or "None". -->
+<!-- Entries added to or removed from KnownGaps in Golden/GoldenSchemaTests.cs, or "None". -->
