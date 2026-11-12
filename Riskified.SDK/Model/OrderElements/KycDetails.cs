@@ -18,6 +18,17 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "updated_at")]
         public DateTimeOffset? UpdatedAt { get; set; }
 
+        /// <summary>
+        /// The documented spelling of <see cref="UpdatedAt"/>. Both properties share one value, and both
+        /// <c>update_at</c> and <c>updated_at</c> are sent.
+        /// </summary>
+        [JsonIgnore]
+        public DateTimeOffset? UpdateAt
+        {
+            get { return UpdatedAt; }
+            set { UpdatedAt = value; }
+        }
+
         // The docs spell this key update_at; updated_at is still sent too. Not sent with the
         // compatibility switch on (5.6.x didn't send it).
         [JsonProperty(PropertyName = "update_at")]

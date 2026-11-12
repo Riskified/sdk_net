@@ -98,8 +98,21 @@ namespace Riskified.SDK.Tests.Model.OrderElements
             Assert.Equal(74, ride.AuthorizedPayment);
         }
 
+        [Fact]
+        public void Kyc_UpdateAtSharesTheValueWithUpdatedAt()
+        {
+            var kyc = new KycDetails { UpdateAt = UpdatedAt };
+
+            Assert.Equal(UpdatedAt, kyc.UpdatedAt);
+
+            var json = Serialize(kyc);
+
+            Assert.Equal("2025-11-01T10:00:00-05:00", json["update_at"]!.Value<string>());
+            Assert.Equal("2025-11-01T10:00:00-05:00", json["updated_at"]!.Value<string>());
+        }
+
         [Theory]
-        [InlineData("{\"update_at\": \"2025-11-01T10:00:00-05:00\"}")]
+        [InlineData("{\"update_at\":\"2025-11-01T10:00:00-05:00\"}")]
         [InlineData("{\"updated_at\": \"2025-11-01T10:00:00-05:00\"}")]
         public void Deserialize_KycEitherSpelling_SetsUpdatedAt(string json)
         {
