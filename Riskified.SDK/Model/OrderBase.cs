@@ -123,6 +123,7 @@ namespace Riskified.SDK.Model
         /// Setting it replaces the first billing address; null removes it.
         /// </summary>
         [JsonIgnore]
+        [Obsolete("Use BillingAddresses. BillingAddress is the first billing address; it's removed in 6.0.0.")]
         public AddressInformation BillingAddress
         {
             get { return SingleOrArray.First(_billingAddresses); }
@@ -145,6 +146,7 @@ namespace Riskified.SDK.Model
         /// Setting it replaces the first shipping address; null removes it.
         /// </summary>
         [JsonIgnore]
+        [Obsolete("Use ShippingAddresses. ShippingAddress is the first shipping address; it's removed in 6.0.0.")]
         public AddressInformation ShippingAddress
         {
             get { return SingleOrArray.First(_shippingAddresses); }
@@ -257,6 +259,7 @@ namespace Riskified.SDK.Model
         /// Setting it replaces the first one; null removes it.
         /// </summary>
         [JsonIgnore]
+        [Obsolete("Use ChargeFreePaymentDetailsList. ChargeFreePaymentDetails is the first entry; it's removed in 6.0.0.")]
         public ChargeFreePaymentDetails ChargeFreePaymentDetails
         {
             get { return SingleOrArray.First(_chargeFreePaymentDetails); }

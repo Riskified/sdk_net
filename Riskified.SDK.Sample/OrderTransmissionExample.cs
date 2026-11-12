@@ -504,8 +504,8 @@ namespace Riskified.SDK.Sample
             orderCheckout.ShippingLines = lines;
             orderCheckout.PaymentDetails = payments;
             orderCheckout.Customer = customer;
-            orderCheckout.BillingAddress = address;
-            orderCheckout.ShippingAddress = address;
+            orderCheckout.BillingAddresses = new[] { address };
+            orderCheckout.ShippingAddresses = new[] { address };
             orderCheckout.ClientDetails = clientDetails;
 
             return orderCheckout;
@@ -640,8 +640,8 @@ namespace Riskified.SDK.Sample
             orderCheckout.ShippingLines = lines;
             orderCheckout.PaymentDetails = payments;
             orderCheckout.Customer = customer;
-            orderCheckout.BillingAddress = address;
-            orderCheckout.ShippingAddress = address;
+            orderCheckout.BillingAddresses = new[] { address };
+            orderCheckout.ShippingAddresses = new[] { address };
             orderCheckout.ClientDetails = clientDetails;
 
             return orderCheckout;
