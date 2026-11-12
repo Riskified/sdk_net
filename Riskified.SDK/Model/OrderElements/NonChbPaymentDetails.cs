@@ -13,7 +13,8 @@ namespace Riskified.SDK.Model.OrderElements
         /// <summary>
         /// Creates a non-chargeback payment details object.
         /// </summary>
-        /// <param name="paymentType">The payment type. The documented values are gift_card, store_credit and rewards_points.</param>
+        /// <param name="paymentType">The payment type. The documented values are <see cref="PaymentType.GiftCard"/>,
+        /// <see cref="PaymentType.StoreCredit"/> and <see cref="PaymentType.RewardsPoints"/>.</param>
         public NonChbPaymentDetails(PaymentType paymentType)
         {
             PaymentType = paymentType;

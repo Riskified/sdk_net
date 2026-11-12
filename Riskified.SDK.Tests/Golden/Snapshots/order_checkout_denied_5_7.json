@@ -104,21 +104,6 @@
         }
       }
     ],
-    "billing_address": {
-      "first_name": "Ben",
-      "last_name": "Rolling",
-      "name": "Ben Philip Rolling",
-      "address1": "27 5th avenue",
-      "address2": "Apartment 5",
-      "city": "Manhattan",
-      "company": "IBM",
-      "country": "United States",
-      "country_code": "US",
-      "phone": "5554321234",
-      "province": "New York",
-      "province_code": "NY",
-      "zip": "10001"
-    },
     "customer": {
       "created_at": "2013-12-08T14:12:12-05:00",
       "updated_at": "2026-01-15T09:30:00-05:00",
@@ -176,6 +161,7 @@
         {
           "vendor_name": "Onfido",
           "updated_at": "2025-11-01T10:00:00-05:00",
+          "update_at": "2025-11-01T10:00:00-05:00",
           "kyc_verified": true,
           "kyc_type": "strong"
         }
@@ -186,6 +172,21 @@
       "accept_language": "en-US",
       "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)"
     },
-    "id": "golden-5702"
+    "id": "golden-5702",
+    "billing_address": {
+      "first_name": "Ben",
+      "last_name": "Rolling",
+      "name": "Ben Philip Rolling",
+      "address1": "27 5th avenue",
+      "address2": "Apartment 5",
+      "city": "Manhattan",
+      "company": "IBM",
+      "country": "United States",
+      "country_code": "US",
+      "phone": "5554321234",
+      "province": "New York",
+      "province_code": "NY",
+      "zip": "10001"
+    }
   }
 }

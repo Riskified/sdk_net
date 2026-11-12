@@ -1,0 +1,550 @@
+{
+  "order": {
+    "submission_reason": "manual_decision",
+    "name": "#1001",
+    "cart_token": "68778783ad298f1c80c3bafcddeea02f",
+    "device_id": "01234567-89ABCDEF-01234567-89ABCDEF",
+    "closed_at": "2026-03-01T11:00:00-05:00",
+    "created_at": "2026-03-01T10:00:00-05:00",
+    "currency": "USD",
+    "email": "john.doe@example.com",
+    "gateway": "authorize_net",
+    "total_discounts": 7.0,
+    "total_price": 1205.5,
+    "total_price_usd": 1205.5,
+    "updated_at": "2026-03-01T10:05:00-05:00",
+    "browser_ip": "165.12.1.1",
+    "discount_codes": [
+      {
+        "amount": 7.0,
+        "code": "SPRING7",
+        "policy": {
+          "evaluate": true
+        }
+      }
+    ],
+    "line_items": [
+      {
+        "title": "Bag",
+        "price": 55.44,
+        "product_id": "48484",
+        "quantity": 1,
+        "requires_shipping": true,
+        "sku": "1272727",
+        "condition": "new",
+        "seller": {
+          "customer": {
+            "created_at": "2013-12-08T14:12:12-05:00",
+            "updated_at": "2026-01-15T09:30:00-05:00",
+            "email": "john.doe@example.com",
+            "first_name": "John",
+            "id": "405050606",
+            "last_name": "Doe",
+            "note": "No additional info",
+            "orders_count": 4,
+            "total_spent": 1500.5,
+            "verified_email": true,
+            "verified_email_at": "2020-02-28T00:00:00-05:00",
+            "verified_phone": true,
+            "verified_phone_at": "2019-08-28T12:00:00-05:00",
+            "social": [
+              {
+                "network": "facebook",
+                "public_username": "john.doe",
+                "community_score": 12,
+                "profile_picture": "https://example.com/john.png",
+                "email": "john.doe@example.com",
+                "bio": "Hello",
+                "account_url": "https://www.facebook.com/john.doe",
+                "following": 10,
+                "followed": 20,
+                "posts": 30
+              }
+            ],
+            "buyer_anonymous_id": "anon-42",
+            "address": {
+              "first_name": "John",
+              "last_name": "Doe",
+              "address1": "27 5th avenue",
+              "address2": "Apartment 5",
+              "city": "Manhattan",
+              "company": "IBM",
+              "country": "United States",
+              "country_code": "US",
+              "phone": "5554321234",
+              "additional_phone": "5554321235",
+              "verified_phone": true,
+              "province": "New York",
+              "province_code": "NY",
+              "zip": "10001"
+            },
+            "account_type": "premium",
+            "linked_accounts": 2,
+            "first_purchase_at": "2013-06-18T00:00:00-05:00",
+            "document_type": "passport",
+            "document_id": "123456789",
+            "spending_limit": 5000.0,
+            "has_defaulted": false,
+            "date_of_birth": "1985-05-20T00:00:00+00:00",
+            "kyc_details": [
+              {
+                "vendor_name": "Onfido",
+                "updated_at": "2025-11-01T10:00:00-05:00",
+                "kyc_verified": true,
+                "kyc_type": "strong"
+              }
+            ]
+          },
+          "correspondence": 1,
+          "price_negotiated": true,
+          "starting_price": 120.0
+        },
+        "sub_category": "Backpacks",
+        "category": "Bags",
+        "product_type": "physical",
+        "brand": "Acme",
+        "delivered_to": "store_pickup",
+        "delivered_at": "2026-03-05T14:00:00Z",
+        "policy": {
+          "evaluate": true
+        },
+        "registry_type": "wedding"
+      },
+      {
+        "title": "Money transfer",
+        "price": 200.0,
+        "product_id": "remit-1",
+        "quantity": 1,
+        "requires_shipping": true,
+        "category": "Remittance",
+        "product_type": "remittance",
+        "recipient": {
+          "email": "recipient@example.com",
+          "phone": "96522444221",
+          "social": {
+            "network": "facebook",
+            "public_username": "jane.smith",
+            "account_url": "https://www.facebook.com/jane.smith"
+          },
+          "account_number": "000987654321",
+          "routing_number": "110000000",
+          "bank_name": "Chase",
+          "fingerprint": "fingerprint-1",
+          "wallet": {
+            "id": "57",
+            "type": "apple_pay"
+          }
+        }
+      },
+      {
+        "section": "Section A",
+        "country_code": "US",
+        "city": "New York",
+        "event_date": "2026-07-12T19:30:00Z",
+        "latitude": 40.75,
+        "longitude": -73.5,
+        "title": "Concert",
+        "price": 123.0,
+        "product_id": "event-1",
+        "quantity": 1,
+        "requires_shipping": false,
+        "sub_category": "Rock",
+        "category": "Singers",
+        "product_type": "event"
+      },
+      {
+        "sender_name": "John",
+        "sender_email": "john.doe@example.com",
+        "display_name": "JohnJohn",
+        "photo_uploaded": true,
+        "photo_url": "https://example.com/photo.png",
+        "greeting_photo_url": "https://example.com/greeting.png",
+        "greeting_message": "Happy Birthday from John",
+        "card_type": "regular",
+        "card_subtype": "birthday",
+        "recipient": {
+          "email": "recipient@example.com",
+          "phone": "96522444221",
+          "social": {
+            "network": "facebook",
+            "public_username": "jane.smith",
+            "account_url": "https://www.facebook.com/jane.smith"
+          },
+          "account_number": "000987654321",
+          "routing_number": "110000000",
+          "bank_name": "Chase",
+          "fingerprint": "fingerprint-1",
+          "wallet": {
+            "id": "57",
+            "type": "apple_pay"
+          }
+        },
+        "title": "Gift card",
+        "price": 50.0,
+        "product_id": "digital-1",
+        "quantity": 1,
+        "requires_shipping": false,
+        "category": "Gift cards",
+        "product_type": "digital"
+      },
+      {
+        "leg_id": "leg-1",
+        "departure_port_code": "TLV",
+        "departure_city": "Tel Aviv",
+        "departure_country_code": "IL",
+        "arrival_port_code": "JFK",
+        "arrival_city": "New York",
+        "arrival_country_code": "US",
+        "departure_date": "2026-06-01T06:00:00Z",
+        "arrival_date": "2026-06-01T18:00:00Z",
+        "carrier_name": "El Al",
+        "carrier_code": "LY",
+        "route_index": 0,
+        "leg_index": 0,
+        "ticket_class": "economy",
+        "transport_method": "plane",
+        "title": "Flight TLV-JFK",
+        "price": 600.0,
+        "product_id": "flight-1",
+        "quantity": 1,
+        "requires_shipping": false,
+        "category": "Flights",
+        "product_type": "travel"
+      },
+      {
+        "room_type": "standard",
+        "city": "London",
+        "country_code": "GB",
+        "check_in_date": "2026-06-02T15:00:00Z",
+        "check_out_date": "2026-06-05T11:00:00Z",
+        "rating": "5",
+        "number_of_guests": 2,
+        "cancellation_policy": "free cancellation",
+        "accommodation_type": "hotel",
+        "title": "Hotel Arcadia - Standard Room",
+        "price": 476.0,
+        "product_id": "123",
+        "quantity": 1,
+        "requires_shipping": false,
+        "category": "Hotels",
+        "product_type": "accommodation"
+      },
+      {
+        "pickup_date": "2026-06-01T03:00:00Z",
+        "pickup_latitude": 40.5,
+        "pickup_longitude": -74.25,
+        "pickup_address": {
+          "first_name": "Luke",
+          "last_name": "Rolling",
+          "address1": "4 Bermingham street",
+          "city": "Cherry Hill",
+          "country": "United States",
+          "country_code": "US",
+          "phone": "55546665",
+          "province": "New Jersey",
+          "province_code": "NJ",
+          "zip": "08002"
+        },
+        "dropoff_date": "2026-06-01T04:00:00Z",
+        "dropoff_latitiude": 40.75,
+        "dropoff_longitude": -73.75,
+        "dropoff_address": {
+          "first_name": "Ben",
+          "last_name": "Rolling",
+          "name": "Ben Philip Rolling",
+          "address1": "27 5th avenue",
+          "address2": "Apartment 5",
+          "city": "Manhattan",
+          "company": "IBM",
+          "country": "United States",
+          "country_code": "US",
+          "phone": "5554321234",
+          "province": "New York",
+          "province_code": "NY",
+          "zip": "10001"
+        },
+        "transport_method": "taxi",
+        "price_by": "fixed",
+        "vehicle_class": "executive",
+        "carrier_name": "Best Taxi",
+        "driver_id": "15EGT701",
+        "tariff": "day",
+        "note_to_driver": "call on arrival",
+        "meet_n_greet": "yes",
+        "cancellation_policy": "24 hours in advance",
+        "authorized_payments": 74.0,
+        "route_index": 1,
+        "leg_index": 1,
+        "title": "Ride to JFK airport",
+        "price": 74.0,
+        "product_id": "ride-1",
+        "quantity": 1,
+        "requires_shipping": false,
+        "category": "Rides",
+        "product_type": "ride"
+      }
+    ],
+    "shipping_lines": [
+      {
+        "price": 22.22,
+        "title": "Mail"
+      },
+      {
+        "code": "A22F",
+        "price": 2.0,
+        "title": "Ship"
+      }
+    ],
+    "payment_details": [
+      {
+        "avs_result_code": "Y",
+        "credit_card_bin": "424242",
+        "credit_card_company": "Visa",
+        "credit_card_number": "XXXX-XXXX-XXXX-4242",
+        "cvv_result_code": "M",
+        "credit_card_token": "2233445566778899",
+        "cardholder_name": "John Doe",
+        "authorization_id": "auth-cc-1",
+        "id": "pm-cc-1",
+        "gateway": "stripe",
+        "acquirer_bin": "411111",
+        "mid": "mid-1",
+        "authentication_result": {
+          "eci": "05",
+          "trans_status": "Y",
+          "trans_status_reason": "01",
+          "created_at": "2026-03-01T15:00:00Z",
+          "liability_shift": true,
+          "cavv": "AAABAWFlmQAAAABjRWWZEEFgFz+=",
+          "three_d_challenge": true,
+          "TRA_exemption": false
+        },
+        "stored_payment_created_at": "2024-01-01T00:00:00-05:00",
+        "stored_payment_updated_at": "2025-01-01T00:00:00-05:00",
+        "installments": 3,
+        "initial_payment_amount": 400.5,
+        "payment_frequency": 30,
+        "credit_card_country": "US",
+        "acquirer_region": "NONEU",
+        "verification_type": "3ds",
+        "payment_type": "card"
+      },
+      {
+        "authorization_id": "AFSDF332432SDF45DS5FD",
+        "payer_email": "payer@example.com",
+        "payer_status": "verified",
+        "payer_address_status": "unconfirmed",
+        "protection_eligibility": "Eligible",
+        "payment_status": "Authorized",
+        "pending_reason": "authorization",
+        "payment_type": "paypal"
+      },
+      {
+        "payment_type": "apple_pay",
+        "authorization_id": "auth-wallet-1",
+        "avs_result_code": "Y",
+        "credit_card_company": "Mastercard",
+        "credit_card_country": "US",
+        "credit_card_token": "wallet-token-1",
+        "cardholder_name": "John Doe",
+        "mid": "mid-2",
+        "id": "pm-wallet-1",
+        "stored_payment_created_at": "2024-02-01T00:00:00-05:00",
+        "stored_payment_updated_at": "2025-02-01T00:00:00-05:00",
+        "installments": 1,
+        "acquirer_bin": "522222",
+        "acquirer_region": "EU",
+        "authorization_type": "authorization",
+        "expiry_month": 12,
+        "expiry_year": 2030,
+        "initial_payment_amount": 100.25,
+        "payment_frequency": 0,
+        "billing_address_id": "addr-1",
+        "authentication_result": {
+          "eci": "05",
+          "trans_status": "Y",
+          "trans_status_reason": "01",
+          "created_at": "2026-03-01T15:00:00Z",
+          "liability_shift": true,
+          "cavv": "AAABAWFlmQAAAABjRWWZEEFgFz+=",
+          "three_d_challenge": true,
+          "TRA_exemption": false
+        }
+      },
+      {
+        "account_number": "000123456789",
+        "routing_number": "110000000",
+        "issuer": "Chase",
+        "recipient_name": "Acme Inc",
+        "payment_type": "bank_transfer",
+        "account_identity": {
+          "names": [
+            "John Doe"
+          ],
+          "addresses": [
+            {
+              "address1": "27 5th avenue",
+              "city": "Manhattan",
+              "country_code": "US"
+            }
+          ],
+          "phone_numbers": [
+            "5554321234"
+          ],
+          "emails": [
+            "john.doe@example.com"
+          ]
+        },
+        "account_balance": {
+          "available_balance": 2500.75,
+          "service_name": "plaid",
+          "updated_at": "2026-02-28T18:00:00-05:00",
+          "currency_code": "USD"
+        }
+      }
+    ],
+    "billing_address": {
+      "first_name": "Ben",
+      "last_name": "Rolling",
+      "name": "Ben Philip Rolling",
+      "address1": "27 5th avenue",
+      "address2": "Apartment 5",
+      "city": "Manhattan",
+      "company": "IBM",
+      "country": "United States",
+      "country_code": "US",
+      "phone": "5554321234",
+      "province": "New York",
+      "province_code": "NY",
+      "zip": "10001"
+    },
+    "shipping_address": {
+      "first_name": "Luke",
+      "last_name": "Rolling",
+      "address1": "4 Bermingham street",
+      "city": "Cherry Hill",
+      "country": "United States",
+      "country_code": "US",
+      "phone": "55546665",
+      "province": "New Jersey",
+      "province_code": "NJ",
+      "zip": "08002"
+    },
+    "passengers": [
+      {
+        "first_name": "John",
+        "last_name": "Doe",
+        "date_of_birth": "1985-05-20T00:00:00Z",
+        "nationality_code": "US",
+        "insurance_type": "full",
+        "insurance_price": 12.5,
+        "document_number": "X1234567",
+        "document_type": "passport",
+        "document_issue_date": "2020-01-01T00:00:00Z",
+        "document_expiration_date": "2030-01-01T00:00:00Z",
+        "passenger_type": "adult"
+      }
+    ],
+    "customer": {
+      "created_at": "2013-12-08T14:12:12-05:00",
+      "updated_at": "2026-01-15T09:30:00-05:00",
+      "email": "john.doe@example.com",
+      "first_name": "John",
+      "id": "405050606",
+      "last_name": "Doe",
+      "note": "No additional info",
+      "orders_count": 4,
+      "total_spent": 1500.5,
+      "verified_email": true,
+      "verified_email_at": "2020-02-28T00:00:00-05:00",
+      "verified_phone": true,
+      "verified_phone_at": "2019-08-28T12:00:00-05:00",
+      "social": [
+        {
+          "network": "facebook",
+          "public_username": "john.doe",
+          "community_score": 12,
+          "profile_picture": "https://example.com/john.png",
+          "email": "john.doe@example.com",
+          "bio": "Hello",
+          "account_url": "https://www.facebook.com/john.doe",
+          "following": 10,
+          "followed": 20,
+          "posts": 30
+        }
+      ],
+      "buyer_anonymous_id": "anon-42",
+      "address": {
+        "first_name": "John",
+        "last_name": "Doe",
+        "address1": "27 5th avenue",
+        "address2": "Apartment 5",
+        "city": "Manhattan",
+        "company": "IBM",
+        "country": "United States",
+        "country_code": "US",
+        "phone": "5554321234",
+        "additional_phone": "5554321235",
+        "verified_phone": true,
+        "province": "New York",
+        "province_code": "NY",
+        "zip": "10001"
+      },
+      "account_type": "premium",
+      "linked_accounts": 2,
+      "first_purchase_at": "2013-06-18T00:00:00-05:00",
+      "document_type": "passport",
+      "document_id": "123456789",
+      "spending_limit": 5000.0,
+      "has_defaulted": false,
+      "date_of_birth": "1985-05-20T00:00:00+00:00",
+      "kyc_details": [
+        {
+          "vendor_name": "Onfido",
+          "updated_at": "2025-11-01T10:00:00-05:00",
+          "kyc_verified": true,
+          "kyc_type": "strong"
+        }
+      ]
+    },
+    "financial_status": "paid",
+    "fulfillment_status": "fulfilled",
+    "source": "web",
+    "nocharge_amount": {
+      "refund_id": "refund-1",
+      "amount": 20.5,
+      "currency": "USD",
+      "reason": "giftcard"
+    },
+    "vendor_id": "vendor-2",
+    "vendor_name": "domestic",
+    "vendor_integration_type": "api",
+    "decision": {
+      "external_status": "approved",
+      "decided_at": "2026-03-01T10:01:00-05:00",
+      "reason": "trusted customer"
+    },
+    "referring_site": "example.com",
+    "ai_agent": "chatgpt",
+    "note": "leave at the door",
+    "decision_timeout": 30,
+    "additional_emails": [
+      "a@example.com",
+      "b@example.com"
+    ],
+    "client_details": {
+      "accept_language": "en-US",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0)"
+    },
+    "charge_free_payment_details": {
+      "gateway": "giftcard",
+      "amount": 45.0
+    },
+    "group_founder_order_id": "golden-1000",
+    "order_type": "test",
+    "custom": {
+      "app_dom_id": "D2C"
+    },
+    "id": "golden-1001"
+  }
+}

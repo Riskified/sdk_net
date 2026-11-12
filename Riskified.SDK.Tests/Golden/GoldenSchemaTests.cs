@@ -45,23 +45,6 @@ namespace Riskified.SDK.Tests.Golden
         [
             .. new[]
             {
-                Gap(Orders, OrderSchemas, "#/order.billing_address ArrayExpected", fixedBy: "step 3.1"),
-                Gap(Orders, OrderSchemas, "#/order.shipping_address ArrayExpected", fixedBy: "step 3.1"),
-                Gap(Orders, OrderSchemas, "#/order.charge_free_payment_details ArrayExpected", fixedBy: "step 3.2"),
-                Gap(Orders, OrderSchemas, "#/order.line_items[6].pickup_address ArrayExpected", fixedBy: "step 3.3"),
-                Gap(Orders, OrderSchemas, "#/order.line_items[6].dropoff_address ArrayExpected", fixedBy: "step 3.3"),
-                // order_checkout_denied_5_7 sets the wallet's own error (step 2.1); this one relies on the root error.
-                Gap(["order_checkout_denied"], CheckoutDeniedSchemas,
-                    "#/checkout.payment_details[1].authorization_error PropertyRequired", fixedBy: "step 3.4"),
-                Gap(Orders, OrderSchemas, "#/order.customer.kyc_details[0].update_at PropertyRequired",
-                    fixedBy: "step 3.5"),
-                Gap(Orders, OrderSchemas,
-                    "#/order.line_items[0].seller.customer.kyc_details[0].update_at PropertyRequired",
-                    fixedBy: "step 3.5"),
-                Gap(CheckoutDenieds, ["post-auth-checkout_denied"],
-                    "#/checkout.customer.kyc_details[0].update_at PropertyRequired", fixedBy: "step 3.5"),
-                Gap(Orders, OrderSchemas, "#/order.line_items[0].seller.starting_price StringExpected",
-                    fixedBy: "step 3.8"),
 
                 // The docs type these as date-only (format: date); the SDK sends a full date-time.
                 Gap(Orders, OrderSchemas, "#/order.customer.date_of_birth DateExpected", fixedBy: "question 9"),
@@ -113,7 +96,7 @@ namespace Riskified.SDK.Tests.Golden
         public async Task Sample_MatchesApiSchema_ExceptKnownGaps(string sampleName, string schemaName)
         {
             var schema = await LoadRequestSchema(schemaName);
-            var json = JsonConvert.SerializeObject(GoldenOrders.All[sampleName], HttpUtils.CreateSerializerSettings());
+            var json = HttpUtils.SerializeRequestBody(GoldenOrders.All[sampleName]);
 
             var actual = Flatten(schema.Validate(json))
                 .Select(error => $"{sampleName} {schemaName}: {error}")

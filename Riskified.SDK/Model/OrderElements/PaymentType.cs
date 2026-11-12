@@ -34,6 +34,9 @@ namespace Riskified.SDK.Model.OrderElements
         CashOnDelivery,
         [EnumMember(Value = "invoice")]
         Invoice,
+        /// <summary>
+        /// Sent as reward_points. The API reference documents rewards_points; see <see cref="RewardsPoints"/>.
+        /// </summary>
         [EnumMember(Value = "reward_points")]
         RewardPoints,
         [EnumMember(Value = "mobile_carrier")]
@@ -49,6 +52,11 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "alipay")]
         Alipay,
         [EnumMember(Value = "other")]
-        Other
+        Other,
+        /// <summary>
+        /// Reward points, sent as rewards_points (the documented value, e.g. for <see cref="NonChbPaymentDetails"/>).
+        /// </summary>
+        [EnumMember(Value = "rewards_points")]
+        RewardsPoints
     }
 }
