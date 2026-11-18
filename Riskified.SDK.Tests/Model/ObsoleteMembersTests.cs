@@ -18,7 +18,6 @@ namespace Riskified.SDK.Tests.Model
             { typeof(OrderBase), nameof(OrderBase.BillingAddress), nameof(OrderBase.BillingAddresses) },
             { typeof(OrderBase), nameof(OrderBase.ShippingAddress), nameof(OrderBase.ShippingAddresses) },
             { typeof(OrderBase), nameof(OrderBase.ChargeFreePaymentDetails), nameof(OrderBase.ChargeFreePaymentDetailsList) },
-            { typeof(RideTicketLineItem), nameof(RideTicketLineItem.PickupAddress), nameof(RideTicketLineItem.PickupAddresses) },
             { typeof(RideTicketLineItem), nameof(RideTicketLineItem.DropoffAddress), nameof(RideTicketLineItem.DropoffAddresses) },
             { typeof(RideTicketLineItem), nameof(RideTicketLineItem.AuthorizedPayments), nameof(RideTicketLineItem.AuthorizedPayment) },
             { typeof(OrderCheckoutDenied), nameof(OrderCheckoutDenied.AuthorizationError), "payment details" },

@@ -111,6 +111,15 @@ namespace Riskified.SDK.Tests.Golden
                 startingPrice.Remove("format");
             }
 
+            // The docs type a ride's pickup_address as an array of addresses, but the server expects the
+            // single address object the SDK sends (question 1).
+            foreach (var pickupAddress in definition.Descendants().OfType<JProperty>()
+                         .Where(p => p.Name == "pickup_address" && p.Value is JObject schema && schema["type"] is JValue { Value: "array" })
+                         .ToList())
+            {
+                pickupAddress.Value = pickupAddress.Value["items"]!.DeepClone();
+            }
+
             var requestSchema = (JObject)definition["paths"]!.Values().Single()
                 .Values().Single()["requestBody"]!["content"]!["application/json"]!["schema"]!;
 

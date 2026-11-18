@@ -10,8 +10,8 @@ using Xunit;
 namespace Riskified.SDK.Tests.Model.OrderElements
 {
     /// <summary>
-    /// Step 3.3: pickup_address / dropoff_address are sent as arrays, bridged from the existing single
-    /// PickupAddress / DropoffAddress properties. The list rules are covered by OrderBaseAddressesTests.
+    /// Step 3.3: dropoff_address is sent as an array, bridged from the existing single DropoffAddress
+    /// property; pickup_address stays a single object. The list rules are covered by OrderBaseAddressesTests.
     /// </summary>
     public class RideTicketLineItemAddressesTests
     {
@@ -26,24 +26,24 @@ namespace Riskified.SDK.Tests.Model.OrderElements
         }
 
         [Fact]
-        public void Serialize_ConstructorAddresses_SendArrays()
+        public void Serialize_ConstructorAddresses_SendsPickupAsAnObjectAndDropoffAsAnArray()
         {
             var ride = new RideTicketLineItem("Ride", 74, 1, pickupAddress: Address("Queens"), dropoffAddress: Address("Manhattan"));
 
             var json = JObject.Parse(JsonConvert.SerializeObject(ride, Settings(legacy: false)));
 
-            Assert.Equal("Queens", Assert.Single((JArray)json["pickup_address"]!)["city"]!.Value<string>());
+            Assert.Equal("Queens", ((JObject)json["pickup_address"]!)["city"]!.Value<string>());
             Assert.Equal("Manhattan", Assert.Single((JArray)json["dropoff_address"]!)["city"]!.Value<string>());
         }
 
         [Fact]
         public void Serialize_SeveralAddresses_SendsAllOfThem()
         {
-            var ride = new RideTicketLineItem("Ride", 74, 1) { PickupAddresses = new[] { Address("Queens"), Address("Brooklyn") } };
+            var ride = new RideTicketLineItem("Ride", 74, 1) { DropoffAddresses = new[] { Address("Queens"), Address("Brooklyn") } };
 
-            var pickup = (JArray)JObject.Parse(JsonConvert.SerializeObject(ride, Settings(legacy: false)))["pickup_address"]!;
+            var dropoff = (JArray)JObject.Parse(JsonConvert.SerializeObject(ride, Settings(legacy: false)))["dropoff_address"]!;
 
-            Assert.Equal(new[] { "Queens", "Brooklyn" }, pickup.Select(a => a["city"]!.Value<string>()));
+            Assert.Equal(new[] { "Queens", "Brooklyn" }, dropoff.Select(a => a["city"]!.Value<string>()));
         }
 
         [Fact]

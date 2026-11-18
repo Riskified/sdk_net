@@ -295,20 +295,18 @@
         "pickup_date": "2026-06-01T03:00:00Z",
         "pickup_latitude": 40.5,
         "pickup_longitude": -74.25,
-        "pickup_address": [
-          {
-            "first_name": "Luke",
-            "last_name": "Rolling",
-            "address1": "4 Bermingham street",
-            "city": "Cherry Hill",
-            "country": "United States",
-            "country_code": "US",
-            "phone": "55546665",
-            "province": "New Jersey",
-            "province_code": "NJ",
-            "zip": "08002"
-          }
-        ],
+        "pickup_address": {
+          "first_name": "Luke",
+          "last_name": "Rolling",
+          "address1": "4 Bermingham street",
+          "city": "Cherry Hill",
+          "country": "United States",
+          "country_code": "US",
+          "phone": "55546665",
+          "province": "New Jersey",
+          "province_code": "NJ",
+          "zip": "08002"
+        },
         "dropoff_date": "2026-06-01T04:00:00Z",
         "dropoff_latitiude": 40.75,
         "dropoff_latitude": 40.75,
