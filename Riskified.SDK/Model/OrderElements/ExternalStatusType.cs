@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Riskified.SDK.Model
 {
@@ -7,6 +8,7 @@ namespace Riskified.SDK.Model
         [EnumMember(Value = "approved")]
         Approved,
         [EnumMember(Value = "checkout")]
+        [Obsolete("Checkout is removed in 6.0.0")]
         Checkout,
         [EnumMember(Value = "cancelled")]
         Cancelled,
@@ -19,6 +21,12 @@ namespace Riskified.SDK.Model
         [EnumMember(Value = "chargeback_fraud")]
         ChargebackFraud,
         [EnumMember(Value = "chargeback_not_fraud")]
-        ChargebackNotFraud
+        ChargebackNotFraud,
+        [EnumMember(Value = "suspected_fraud")]
+        SuspectedFraud,
+        [EnumMember(Value = "checkout_denied")]
+        CheckoutDenied,
+        [EnumMember(Value = "chargeback")]
+        Chargeback
     }
 }

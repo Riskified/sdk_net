@@ -48,5 +48,15 @@ namespace Riskified.SDK.Tests.Model
             Assert.False(obsolete!.IsError);
             Assert.Contains("6.0.0", obsolete.Message);
         }
+
+        [Fact]
+        public void ExternalStatusCheckout_IsObsoleteAsAWarning()
+        {
+            var obsolete = typeof(ExternalStatusType).GetField(nameof(ExternalStatusType.Checkout))!.GetCustomAttribute<ObsoleteAttribute>();
+
+            Assert.NotNull(obsolete);
+            Assert.False(obsolete!.IsError);
+            Assert.Contains("6.0.0", obsolete.Message);
+        }
     }
 }
