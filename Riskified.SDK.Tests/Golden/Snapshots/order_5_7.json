@@ -571,9 +571,6 @@
         "initial_payment_amount": 250.5,
         "installments": 4,
         "payment_frequency": 14
-      },
-      {
-        "payment_type": "gift_card"
       }
     ],
     "passengers": [

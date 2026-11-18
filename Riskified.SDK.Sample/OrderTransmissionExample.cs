@@ -909,9 +909,6 @@ namespace Riskified.SDK.Sample
             ((EventTicketLineItem)items[2]).CancellationPolicy = "Refundable until 48 hours before the event";
             ((RideTicketLineItem)items[6]).DamageExcess = 500;
 
-            // Part of the order paid with a gift card. Buy now, pay later payments use BuyNowPayLaterPaymentDetails.
-            order.PaymentDetails = new IPaymentDetails[] { payments[0], new NonChbPaymentDetails(PaymentType.GiftCard) };
-
             // Since 5.7.0 addresses and charge-free payments are sent as arrays. The single properties
             // (ShippingAddress, ChargeFreePaymentDetails, ...) set the first entry; use the plural ones for more.
             var secondShipping = new AddressInformation(

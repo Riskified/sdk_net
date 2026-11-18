@@ -28,18 +28,17 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "crypto")]
         Crypto,
         [EnumMember(Value = "gift_card")]
+        [Obsolete("GiftCard is removed in 6.0.0")]
         GiftCard,
         [EnumMember(Value = "store_credit")]
+        [Obsolete("StoreCredit is removed in 6.0.0")]
         StoreCredit,
         [EnumMember(Value = "cash_on_delivery")]
         CashOnDelivery,
         [EnumMember(Value = "invoice")]
         Invoice,
-        /// <summary>
-        /// Sent as reward_points. The API expects rewards_points; use <see cref="RewardsPoints"/>.
-        /// </summary>
         [EnumMember(Value = "reward_points")]
-        [Obsolete("Use RewardsPoints, which sends the documented rewards_points; RewardPoints sends reward_points and is removed in 6.0.0.")]
+        [Obsolete("RewardPoints is removed in 6.0.0")]
         RewardPoints,
         [EnumMember(Value = "mobile_carrier")]
         MobileCarrier,
@@ -54,11 +53,6 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "alipay")]
         Alipay,
         [EnumMember(Value = "other")]
-        Other,
-        /// <summary>
-        /// Reward points, sent as rewards_points (the documented value, e.g. for <see cref="NonChbPaymentDetails"/>).
-        /// </summary>
-        [EnumMember(Value = "rewards_points")]
-        RewardsPoints
+        Other
     }
 }

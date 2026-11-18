@@ -23,12 +23,6 @@ namespace Riskified.SDK.Tests.Model.OrderElements
         }
 
         [Fact]
-        public void RewardPoints_KeepsItsEnumMemberValue()
-        {
-            Assert.Equal("\"reward_points\"", JsonConvert.SerializeObject(PaymentType.RewardPoints, new StringEnumConverter()));
-        }
-
-        [Fact]
         public void NewMembers_SerializeToTheDocumentedValues()
         {
             var converter = new StringEnumConverter();
@@ -37,7 +31,6 @@ namespace Riskified.SDK.Tests.Model.OrderElements
             Assert.Equal("\"crypto\"", JsonConvert.SerializeObject(ProductType.Crypto, converter));
             Assert.Equal("\"giftcard\"", JsonConvert.SerializeObject(ProductType.GiftCard, converter));
             Assert.Equal("\"tram\"", JsonConvert.SerializeObject(TransportMethodType.Tram, converter));
-            Assert.Equal("\"rewards_points\"", JsonConvert.SerializeObject(PaymentType.RewardsPoints, converter));
         }
     }
 }

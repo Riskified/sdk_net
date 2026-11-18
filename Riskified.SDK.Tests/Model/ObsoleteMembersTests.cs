@@ -38,14 +38,16 @@ namespace Riskified.SDK.Tests.Model
             Assert.Contains("6.0.0", obsolete.Message);
         }
 
-        [Fact]
-        public void RewardPoints_IsObsoleteAsAWarningNamingRewardsPoints()
+        [Theory]
+        [InlineData(nameof(PaymentType.GiftCard))]
+        [InlineData(nameof(PaymentType.StoreCredit))]
+        [InlineData(nameof(PaymentType.RewardPoints))]
+        public void UnsupportedPaymentType_IsObsoleteAsAWarning(string member)
         {
-            var obsolete = typeof(PaymentType).GetField(nameof(PaymentType.RewardPoints))!.GetCustomAttribute<ObsoleteAttribute>();
+            var obsolete = typeof(PaymentType).GetField(member)!.GetCustomAttribute<ObsoleteAttribute>();
 
             Assert.NotNull(obsolete);
             Assert.False(obsolete!.IsError);
-            Assert.Contains(nameof(PaymentType.RewardsPoints), obsolete.Message);
             Assert.Contains("6.0.0", obsolete.Message);
         }
     }
