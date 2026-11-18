@@ -24,7 +24,6 @@ If you wish to send your own data, change the model object (Order) in the `Gener
 * `charge_free_payment_details` and a ride's `pickup_address` / `dropoff_address` are arrays, with the new `ChargeFreePaymentDetailsList`, `PickupAddresses` and `DropoffAddresses`.
 * On `/checkout_denied`, an order-level `AuthorizationError` is also sent inside card and wallet payment details that have none of their own.
 * `dropoff_latitude`, `authorized_payment` and KYC `update_at` are sent alongside the old `dropoff_latitiude`, `authorized_payments` and `updated_at`.
-* `seller.starting_price` is sent as a string (`"120.00"`).
 * The `Accept` header is `application/vnd.riskified.com; version=2` again (the OTP endpoint keeps `application/json`).
 
 If your integration depends on the 5.6.x format, set `gateway.UseLegacyWireFormat = true` on your `OrdersGateway` while you move over. It's obsolete and will be removed in 6.0.0.

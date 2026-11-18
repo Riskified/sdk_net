@@ -98,7 +98,7 @@
           },
           "correspondence": 1,
           "price_negotiated": true,
-          "starting_price": "120.00"
+          "starting_price": 120.0
         },
         "sub_category": "Backpacks",
         "category": "Bags",
