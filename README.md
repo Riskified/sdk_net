@@ -21,7 +21,7 @@ If you wish to send your own data, change the model object (Order) in the `Gener
 5.7.0 sends the JSON shapes the [API reference](https://developers.riskified.com/reference/api-overview) documents. Your code keeps compiling, but some requests look different:
 
 * `billing_address` and `shipping_address` are arrays (except on `/checkout_denied`, which documents a single object). Use the new `BillingAddresses` / `ShippingAddresses` for more than one address; `BillingAddress` / `ShippingAddress` set the first one.
-* `charge_free_payment_details` and a ride's `dropoff_address` are arrays, with the new `ChargeFreePaymentDetailsList` and `DropoffAddresses`.
+* `charge_free_payment_details` is an array, with the new `ChargeFreePaymentDetailsList`.
 * On `/checkout_denied`, an order-level `AuthorizationError` is also sent inside card and wallet payment details that have none of their own.
 * `dropoff_latitude`, `authorized_payment` and KYC `update_at` are sent alongside the old `dropoff_latitiude`, `authorized_payments` and `updated_at`.
 * The `Accept` header is `application/vnd.riskified.com; version=2` again (the OTP endpoint keeps `application/json`).

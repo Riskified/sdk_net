@@ -63,7 +63,7 @@ namespace Riskified.SDK.Model.OrderElements
             DropoffDate = dropoffDate;
             DropoffLatitude = dropoffLatitude;
             DropoffLongitude = dropoffLongitude;
-            SingleOrArray.SetFirst(_dropoffAddresses, dropoffAddress);
+            DropoffAddress = dropoffAddress;
             TransportMethod = transportMethod;
             PriceBy = priceBy;
             VehicleClass = vehicleClass;
@@ -95,9 +95,6 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "pickup_address")]
         public BasicAddress PickupAddress { get; set; }
 
-        // dropoff_address is documented as an array. The single and array properties share one list, and
-        // the private DropoffAddressWire property sends it (see OrderBase.BillingAddress).
-        private readonly List<BasicAddress> _dropoffAddresses = new List<BasicAddress>();
         private bool _legacyWireFormat;
 
         [JsonProperty(PropertyName = "dropoff_date")]
@@ -124,34 +121,8 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "dropoff_longitude")]
         public float? DropoffLongitude { get; set; } 
 
-        /// <summary>
-        /// The drop-off address: the first of <see cref="DropoffAddresses"/>. Setting it replaces the first
-        /// drop-off address; null removes it.
-        /// </summary>
-        [JsonIgnore]
-        [Obsolete("Use DropoffAddresses. DropoffAddress is the first drop-off address; it's removed in 6.0.0.")]
-        public BasicAddress DropoffAddress
-        {
-            get { return SingleOrArray.First(_dropoffAddresses); }
-            set { SingleOrArray.SetFirst(_dropoffAddresses, value); }
-        }
-
-        /// <summary>
-        /// The drop-off addresses. The getter returns a copy; assign a new array to change them.
-        /// </summary>
-        [JsonIgnore]
-        public BasicAddress[] DropoffAddresses
-        {
-            get { return SingleOrArray.ToArray(_dropoffAddresses); }
-            set { SingleOrArray.ReplaceAll(_dropoffAddresses, value); }
-        }
-
         [JsonProperty(PropertyName = "dropoff_address")]
-        private object DropoffAddressWire
-        {
-            get { return SingleOrArray.ToWire(_dropoffAddresses, _legacyWireFormat); }
-            set { SingleOrArray.FromWire(_dropoffAddresses, value); }
-        }
+        public BasicAddress DropoffAddress { get; set; } 
 
         [OnSerializing]
         private void OnSerializingRideTicketLineItem(StreamingContext context)

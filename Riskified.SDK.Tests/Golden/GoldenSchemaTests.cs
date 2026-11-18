@@ -111,13 +111,14 @@ namespace Riskified.SDK.Tests.Golden
                 startingPrice.Remove("format");
             }
 
-            // The docs type a ride's pickup_address as an array of addresses, but the server expects the
-            // single address object the SDK sends (question 1).
-            foreach (var pickupAddress in definition.Descendants().OfType<JProperty>()
-                         .Where(p => p.Name == "pickup_address" && p.Value is JObject schema && schema["type"] is JValue { Value: "array" })
+            // The docs type a ride's pickup_address and dropoff_address as arrays of addresses, but the
+            // server expects the single address object the SDK sends (question 1).
+            foreach (var rideAddress in definition.Descendants().OfType<JProperty>()
+                         .Where(p => (p.Name == "pickup_address" || p.Name == "dropoff_address")
+                                     && p.Value is JObject schema && schema["type"] is JValue { Value: "array" })
                          .ToList())
             {
-                pickupAddress.Value = pickupAddress.Value["items"]!.DeepClone();
+                rideAddress.Value = rideAddress.Value["items"]!.DeepClone();
             }
 
             var requestSchema = (JObject)definition["paths"]!.Values().Single()
