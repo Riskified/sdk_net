@@ -18,6 +18,9 @@ namespace Riskified.SDK.Model
             Category = notificationInfo.Order.Category;
             DecisionCode = notificationInfo.Order.DecisionCode;
             Warnings = notificationInfo.Warnings;
+            Score = notificationInfo.Order.Score;
+            Action = notificationInfo.Order.Action;
+            AuthenticationType = notificationInfo.Order.AuthenticationType;
             PolicyProtect = notificationInfo.Order.PolicyProtect;
             RecoveryEligibility = notificationInfo.Order.RecoveryEligibility;
             RiskScore = notificationInfo.Order.RiskScore;
@@ -34,6 +37,7 @@ namespace Riskified.SDK.Model
             Description = notificationInfo.Order.Description;
             Custom = notificationInfo.Order.Custom;
             Category = notificationInfo.Order.Category;
+            DecisionCode = notificationInfo.Order.DecisionCode;
             Warnings = notificationInfo.Warnings;
             Score = notificationInfo.Order.Score;
             Advice = notificationInfo.Order.Advice;

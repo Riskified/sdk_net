@@ -1,0 +1,4868 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Chargeback Guarantee - Post Auth",
+    "description": "# Riskified API for Fraud Prevention and Risk Management\n\nThis API allows merchants to submit orders for review, check order status, and manage the complete order lifecycle.\n\n## Authentication\nAll API requests must include the following headers:\n- `X-RISKIFIED-SHOP-DOMAIN`: Your shop domain registered with Riskified\n- `X-RISKIFIED-HMAC-SHA256`: HMAC-SHA256 signature of the request body using your authentication token\n- `Accept`: `application/vnd.riskified.com; version=2`\n- `Content-Type`: `application/json`\n\n## Environments\n- Sandbox: Used for testing and integration\n- Production: Used for live transactions\n\n## Integration Types\nRiskified supports different integration types:\n- **Pre-authorization Synchronous**: Review orders before payment authorization\n- **Post-authorization Synchronous**: Review orders after payment authorization with synchronous response\n- **Post-authorization Asynchronous**: Review orders after payment authorization with asynchronous response\n",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Riskified Support",
+      "url": "http://apiref.riskified.com/",
+      "email": "support@riskified.com"
+    },
+    "x-explorer-enabled": false,
+    "x-conventions": {
+      "dateTime": "All date-time fields are RFC 3339 (ISO 8601)."
+    }
+  },
+  "x-samples-languages": [
+    "json",
+    "shell",
+    "javascript",
+    "python",
+    "node"
+  ],
+  "servers": [
+    {
+      "url": "https://sandbox.riskified.com",
+      "description": "Sandbox environment for testing and integration"
+    },
+    {
+      "url": "https://wh.riskified.com",
+      "description": "Production environment for live transactions"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Post-Authorization Flow",
+      "description": "Operations that allow you to send orders to Riskified for fraud review after payment authorization"
+    }
+  ],
+  "paths": {
+    "/api/decide": {
+      "post": {
+        "summary": "Authorized Order Review (Synchronous)",
+        "description": "The `/decide` endpoint is used to request that Riskified review an order for fraud after the customer has input their payment data and completed the purchase. This allows us to analyze the full order data when providing a decision. Riskified's decision is returned synchronously in the response to the `/decide` API request. If order data changes after an initial approved decision, the `/decide` API is called to update Riskified and receive a decision based on the new order data.\n\nWhen the `/decide` API is used to send Riskified updated order details, be sure to pass the same order ID in the payload as was used in the initial decide request.",
+        "operationId": "decide",
+        "tags": [
+          "Post-Authorization Flow"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/RiskifiedShopDomain"
+          },
+          {
+            "$ref": "#/components/parameters/RiskifiedSignature"
+          },
+          {
+            "$ref": "#/components/parameters/ContentType"
+          },
+          {
+            "$ref": "#/components/parameters/Accept"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/order_wrapper"
+              },
+              "examples": {
+                "events_&_digital_goods_card_order": {
+                  "$ref": "#/components/examples/event_digital_good_CC_post_order"
+                },
+                "travel_&_digital_good_paypal_order": {
+                  "$ref": "#/components/examples/travel_digital_good_paypal_order"
+                },
+                "accommodation_credit_card_order": {
+                  "$ref": "#/components/examples/accommodation_CC_order"
+                },
+                "physical_&_digital_goods_card_order": {
+                  "$ref": "#/components/examples/physical_digital_CC_order"
+                },
+                "money_transfer_ACH_order": {
+                  "$ref": "#/components/examples/money_transfer_ACH_payment"
+                },
+                "crypto_good_credit_card": {
+                  "$ref": "#/components/examples/crypto_good_credit_card"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/decide_response_approve"
+                    },
+                    {
+                      "$ref": "#/components/schemas/decide_response_decline"
+                    },
+                    {
+                      "$ref": "#/components/schemas/decide_response_captured"
+                    }
+                  ]
+                },
+                "examples": {
+                  "decide_approved_response_200": {
+                    "value": {
+                      "order": {
+                        "id": "checkout-cc-123456",
+                        "status": "approved",
+                        "description": "Reviewed and approved by Riskified",
+                        "old_status": "submitted"
+                      }
+                    }
+                  },
+                  "decide_declined_response_200": {
+                    "value": {
+                      "order": {
+                        "id": "checkout-cc-123456",
+                        "status": "declined",
+                        "description": "Order exhibits data points that are highly correlated with fraudulent activity",
+                        "old_status": "submitted",
+                        "category": "High-Risk"
+                      }
+                    }
+                  },
+                  "decide_captured_response_200": {
+                    "value": {
+                      "order": {
+                        "id": "checkout-cc-123456",
+                        "status": "captured",
+                        "description": "Received by Riskified"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decide_bad_response_400": {
+                    "value": {
+                      "error": {
+                        "message": "JSON malformed - only UTF-8 well formatted JSON payload allowed (RFC 4627)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decide_unauthorized_response_401": {
+                    "value": {
+                      "error": {
+                        "message": "Failed verifying request: 'X-RISKIFIED-HMAC-SHA256' header is either missing or incorrect"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error_response"
+                },
+                "examples": {
+                  "decide_too_many_requests_response_429": {
+                    "value": {
+                      "error": {
+                        "message": "Too many update requests for this order. Please try again later."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Contact Riskified support"
+          },
+          "504": {
+            "description": "Temporary error, please retry"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "account_balance": {
+        "type": "object",
+        "description": "An object containing account balance information as provided by the Payment Service Provider or bank. If provided, this object should contain all required fields.",
+        "properties": {
+          "available_balance": {
+            "type": "number",
+            "format": "float",
+            "description": "The amount in the customer’s bank account."
+          },
+          "service_name": {
+            "type": "string",
+            "enum": [
+              "plaid",
+              "mx",
+              "stripe",
+              "truelayer",
+              "klarna",
+              "visa",
+              "mastercard",
+              "yodlee"
+            ],
+            "description": "The service used to complete the transaction and to request the bank account balance."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601) when the account balance was queried."
+          },
+          "currency_code": {
+            "type": "string",
+            "description": "The three letter code (ISO 4217) for the currency of the account balance."
+          }
+        },
+        "required": [
+          "available_balance",
+          "service_name",
+          "updated_at",
+          "currency_code"
+        ],
+        "example": {
+          "available_balance": 2450,
+          "service_name": "plaid",
+          "updated_at": "2025-03-11T09:42:11Z",
+          "currency_code": "USD"
+        }
+      },
+      "account_identity_address": {
+        "type": "object",
+        "properties": {
+          "address1": {
+            "type": "string",
+            "description": "The street name of the address."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "province_code": {
+            "type": "string",
+            "description": "The two-letter ISO 3166-2 alpha-2 code for the state or province of the address."
+          },
+          "zip": {
+            "type": "string",
+            "description": "The zip or postal code of the address."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) of the country address."
+          }
+        },
+        "example": {
+          "address1": "123 Smart St",
+          "city": "Los Angeles",
+          "province_code": "CA",
+          "zip": "90210",
+          "country_code": "US"
+        }
+      },
+      "account_identity": {
+        "type": "object",
+        "description": "An object containing identity information about the purchasing customer as provided by the Payment Service Provider or bank.",
+        "properties": {
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of names associated with the bank account."
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/account_identity_address"
+            },
+            "description": "A list of addresses associated with the customer bank account."
+          },
+          "phone_numbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of phone numbers associated with the customer bank account."
+          },
+          "emails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of emails associated with the customer bank account."
+          }
+        },
+        "example": {
+          "names": [
+            "John Test"
+          ],
+          "addresses": [
+            {
+              "address1": "123 Smart St",
+              "city": "Los Angeles",
+              "province_code": "CA",
+              "zip": "90210",
+              "country_code": "US"
+            }
+          ],
+          "phone_numbers": [
+            "+143873984567290"
+          ],
+          "emails": [
+            "test@mailmail.com"
+          ]
+        }
+      },
+      "kyc_details": {
+        "type": "object",
+        "description": "The details of Know Your Customer (KYC) checks for the customer. Each check corresponds to a new object in the array. If kyc_details[] is provided, objects should contain all required fields.",
+        "properties": {
+          "vendor_name": {
+            "type": "string",
+            "description": "The name of the provider who performed the KYC check."
+          },
+          "update_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601) when KYC was attempted by the vendor"
+          },
+          "kyc_verified": {
+            "type": "boolean",
+            "description": "The result of the KYC attempt"
+          },
+          "kyc_type": {
+            "type": "string",
+            "enum": [
+              "strong",
+              "soft"
+            ],
+            "description": "If the KYC check has multiple levels, the type should be provided here."
+          }
+        },
+        "required": [
+          "vendor_name",
+          "update_at",
+          "kyc_verified"
+        ],
+        "example": {
+          "vendor_name": "Socure",
+          "update_at": "2025-11-19T16:00:00Z",
+          "kyc_verified": true,
+          "kyc_type": "soft"
+        }
+      },
+      "crypto_wallet": {
+        "type": "object",
+        "description": "A crypto wallet associated with the customer account.",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The network-specific address of the wallet.",
+            "example": "0xc0ffee254729296a45a3885639AC7E10F9d54979"
+          },
+          "network": {
+            "type": "string",
+            "description": "The name of the crypto network. Must be lowercase with underscores between words (e.g. \"bitcoin\", \"binance_smart_chain\", \"bitcoin_cash\", \"ethereum\").",
+            "example": "ethereum"
+          },
+          "type": {
+            "type": "string",
+            "description": "The wallet type.",
+            "enum": [
+              "primary",
+              "secondary",
+              "custodial",
+              "non_custodial",
+              "hardware",
+              "exchange"
+            ],
+            "example": "exchange"
+          }
+        },
+        "required": [
+          "address",
+          "network"
+        ]
+      },
+      "base_order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the order.",
+            "example": "123456"
+          },
+          "email": {
+            "type": "string",
+            "description": "The customer's email address.",
+            "example": "guest.customer@example.com"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601) when the order was first created.",
+            "example": "2022-02-20T15:09:00Z"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD",
+            "description": "The three letter code (ISO 4217) for the currency used for the payment."
+          },
+          "gateway": {
+            "type": "string",
+            "example": "authorize_net",
+            "description": "The payment gateway used. If the transaction was processed using 3D Secure (3DS), append `_3ds` to the gateway name, for example, `adyen_3ds`."
+          },
+          "browser_ip": {
+            "type": "string",
+            "example": "183.34.15.26",
+            "description": "The customer's browser IP address at the time of order checkout."
+          },
+          "total_price": {
+            "type": "number",
+            "format": "float",
+            "example": 410,
+            "description": "The sum of all the prices of all the items in the order, taxes and discounts included (must be positive). Please note, rewards (e.g. gift cards) or store credits should be reflected under the charge_free_payment_details object, but shouldn't be subtracted from the total price."
+          },
+          "total_discounts": {
+            "type": "number",
+            "format": "float",
+            "example": 10,
+            "description": "The total amount of the discounts to be applied to the price of the order."
+          },
+          "referring_site": {
+            "type": "string",
+            "example": "https://www.google.com/search?q=my+store",
+            "description": "The webpage from which the customer accessed the shop."
+          },
+          "line_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/line_item"
+            },
+            "example": [
+              {
+                "brand": "Ticket Seller",
+                "category": "Concerts",
+                "city": "Dallas",
+                "country_code": "US",
+                "event_date": "2022-05-07T00:00:00Z",
+                "price": 150,
+                "product_id": "12345",
+                "product_type": "event",
+                "quantity": 1,
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "11234567890"
+                },
+                "requires_shipping": false,
+                "section": "general",
+                "sku": "123456789",
+                "sub_category": "Rock",
+                "title": "Rock Band Concert",
+                "seller": {
+                  "customer": {
+                    "email": "test@mailmail.com",
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "id": "d8fjv234",
+                    "created_at": "2019-02-20T15:09:00Z",
+                    "updated_at": "2019-02-20T15:09:00Z",
+                    "total_spent": 1000,
+                    "orders_count": 10,
+                    "account_type": "registered",
+                    "phone": "+143873984567290"
+                  },
+                  "correspondence": 5,
+                  "price_negotiated": false,
+                  "starting_price": 150
+                }
+              }
+            ],
+            "description": "A list of line item objects, each one containing information about an item in the order."
+          },
+          "shipping_lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/shipping_line"
+            },
+            "description": "**(Conditional Requirement)** A list of shipping line objects, each of which details the shipping methods used. Required when a physical item is being shipped OR for money remittance RECIPIENT data."
+          },
+          "payment_details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/payment_details"
+            },
+            "description": "A list of payment details. Should be passed as an array of nested payment_details objects. In cases where several payment methods are sent in the array, the first payment method shall correspond to the first billing address, etc."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/customer",
+            "description": "An object containing information about the customer."
+          },
+          "billing_address": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/address"
+            },
+            "description": "The mailing address associated with the payment method."
+          },
+          "shipping_address": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/address"
+            },
+            "description": "The mailing address to where the order will be shipped. Required when a physical item is being shipped OR for money remittance RECIPIENT data.."
+          },
+          "source": {
+            "type": "string",
+            "description": "The platform that the order originated from.",
+            "enum": [
+              "desktop_web",
+              "mobile_web",
+              "mobile_app",
+              "mobile_app_android",
+              "mobile_app_ios",
+              "web",
+              "chat",
+              "third_party",
+              "phone",
+              "in_store",
+              "shopify_draft_order",
+              "unknown",
+              "subscription",
+              "ai_agent"
+            ],
+            "example": "desktop_web"
+          },
+          "ai_agent": {
+            "type": "string",
+            "enum": [
+              "chatgpt",
+              "gemini",
+              "copilot",
+              "perplexity"
+            ],
+            "description": "Should only be populated for autonomous agentic orders — i.e. where the AI agent completes the checkout end-to-end without the consumer manually interacting with the merchant site. For orders where an agent refers the consumer to the merchant site and the consumer completes checkout manually, use the existing referring_site field instead.",
+            "example": "chatgpt"
+          },
+          "client_details": {
+            "$ref": "#/components/schemas/client_details",
+            "description": "An object containing information about the browsing session."
+          },
+          "name": {
+            "type": "string",
+            "example": "#1001-C",
+            "description": "A secondary identifier for the order (if exists)."
+          },
+          "cart_token": {
+            "type": "string",
+            "example": "dsh1298sdfvjn123487",
+            "description": "Session ID for this order. Must match the `session_details.cart_token` value set by the Beacon JavaScript snippet. For standard integrations, this value is automatically generated by Beacon. For merchants who manage their own sessions, the same session ID must be passed to both the Beacon and this field. Must remain consistent throughout a purchase flow. Max 100 characters."
+          },
+          "checkout_id": {
+            "type": "string",
+            "example": "chkt_e8g4h6k2",
+            "description": "The unique identifier of the Checkout that created this order. Use if checkout has previously been created for this order."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-20T15:09:00Z",
+            "description": "The date and time (ISO8601) when the order was last modified."
+          },
+          "note": {
+            "type": "string",
+            "example": "Customer requested expedited shipping.",
+            "description": "The text of an optional note that a shop owner can attach to the order."
+          },
+          "passengers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/passenger"
+            },
+            "description": "A list of passenger objects, each one containing information about a passenger in the order. Required only for Merchants from the travel industry."
+          },
+          "discount_codes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/discount_code"
+            },
+            "description": "A list of discount code objects, each one containing information about an item in the order."
+          },
+          "vendor_id": {
+            "type": "string",
+            "example": "VNDR7890",
+            "description": "A unique id representing the selling vendor."
+          },
+          "vendor_name": {
+            "type": "string",
+            "example": "Vendor",
+            "description": "The name of the selling vendor. Examples of affiliated partners include: metasearch engine, white label partner. Required if there is an affiliated partner."
+          },
+          "vendor_integration_type": {
+            "type": "string",
+            "description": "Refers to the method by which data is sent from an affiliated partner to the merchant system. Required to indicate an affiliated partner.",
+            "enum": [
+              "api",
+              "ui_redirect"
+            ],
+            "example": "api"
+          },
+          "order_type": {
+            "type": "string",
+            "description": "Usually omitted, set to 'test' when sending test orders (will be excluded from review). Required when sending test orders.",
+            "enum": [
+              "test"
+            ],
+            "example": "test"
+          },
+          "submission_reason": {
+            "type": "string",
+            "description": "The underlying reason for submitting the order to review. Required if there are different segments for review.",
+            "enum": [
+              "failed_verification",
+              "rule_decision",
+              "third_party",
+              "manual_decision",
+              "policy_decision"
+            ],
+            "example": "rule_decision"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/decision_details",
+            "description": "The merchant decision details for the order. Required for pre-authentication merchants."
+          },
+          "charge_free_payment_details": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/charge_free_payment_details"
+            },
+            "example": [
+              {
+                "gateway": "giftcard",
+                "amount": 50
+              }
+            ],
+            "description": "**(Conditional Requirement)** A partial sum of an order as non risk (e.g. gift card amount). Required for credit card and gift card/store credit payments, for Travel/Flights industries"
+          },
+          "partner_sub_merchant_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)**: Required only for Resell Partners. A unique id representing a specific merchant onboarded by a Riskified Resell Partner. The value in this field serves to identify the merchant, and therefore must be unique. This value will be presented in Riskified’s UI, and therefore it is recommended to be human readable.",
+            "example": "Merchant1"
+          },
+          "invoice_id": {
+            "type": "string",
+            "nullable": true,
+            "example": "europe",
+            "description": "ID of the invoice associated with the order. Merchants who want to split orders across separate invoices can use this field to assign each order to the relevant invoice.\n\nFor example: all orders with invoice_id = \"europe\" go to Invoice A, and all orders with invoice_id = \"north-america\" go to Invoice B.\n\n**Note:** To use this field, merchants must coordinate with Riskified to ensure invoices are set up correctly in Riskified's Billing system. Alternatively, existing order fields (e.g., shipping country) can be used to split orders across invoices — coordinate with your Account Manager to set this up."
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "created_at",
+          "currency",
+          "gateway",
+          "browser_ip",
+          "total_price",
+          "total_discounts",
+          "line_items",
+          "payment_details",
+          "customer",
+          "billing_address",
+          "source",
+          "client_details",
+          "cart_token"
+        ]
+      },
+      "order": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/base_order"
+          }
+        ]
+      },
+      "order_wrapper": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/order"
+          }
+        },
+        "required": [
+          "order"
+        ]
+      },
+      "customer": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The customer's email address."
+          },
+          "verified_email": {
+            "type": "boolean",
+            "description": "Indicates whether the merchant verified the customer’s email."
+          },
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the customer."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The first name of the customer."
+          },
+          "id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** The customer’s unique ID in the merchant’s system.\nRequired in the case of a registered customer."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp (ISO8601) of the initial registration of the customer's account in the merchant's systems."
+          },
+          "verified_email_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time (ISO8601) of customer email verification."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp (ISO8601) of the most recent update to the customers account."
+          },
+          "note": {
+            "type": "string",
+            "description": "Any notes related to the customer in the merchant's system."
+          },
+          "total_spent": {
+            "type": "number",
+            "format": "float",
+            "description": "The total amount spent by the customer across all their orders in the merchant's system."
+          },
+          "group_name": {
+            "type": "string",
+            "description": "The name of the group the customer belongs to in the merchant's system."
+          },
+          "accepts_marketing": {
+            "type": "boolean",
+            "description": "Indicates whether the customer accepts marketing."
+          },
+          "last_order_id": {
+            "type": "string",
+            "description": "The ID of the last order purchased by the customer."
+          },
+          "tags": {
+            "type": "string",
+            "description": "Any tags related to the customer in the merchant's system"
+          },
+          "buy_attempts": {
+            "type": "integer",
+            "description": "The number of attempts the customer has made to purchase an item in the merchant's system."
+          },
+          "sell_attempts": {
+            "type": "integer",
+            "description": "The number of attempts the customer has made to sell an item in the merchant's system."
+          },
+          "first_purchase_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp (ISO8601) for the first purchase of this user on the merchant’s website."
+          },
+          "orders_count": {
+            "type": "integer",
+            "description": "The number of orders made by the customer on the site in the past."
+          },
+          "account_type": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required if there are multiple account types. The customer’s account type. Recommended values include:\n* guest\n* registered\n* premium\n* business"
+          },
+          "phone": {
+            "type": "string",
+            "description": "The customer’s phone number."
+          },
+          "verified_phone": {
+            "type": "boolean",
+            "description": "Indicates whether the customer's phone number was verified."
+          },
+          "verified_phone_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time (ISO8601) of customer phone number verification."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "description": "Customer’s date of birth. Date part only (ISO8601)."
+          },
+          "gender": {
+            "type": "string",
+            "enum": [
+              "male",
+              "female"
+            ],
+            "description": "The customer's gender:"
+          },
+          "user_name": {
+            "type": "string",
+            "description": "Required in case the site user name is not the email address."
+          },
+          "document_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil.\nCustomer's personal identification number."
+          },
+          "document_type": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil.\nCustomer's personal identification type."
+          },
+          "social": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/social_details"
+            }
+          },
+          "linked_accounts": {
+            "type": "integer",
+            "description": "Specifies how many different accounts the customer making the order is linked to in your current database (via payment data or any other method of your choosing). This integer value can be sent to Riskified to customize into the decisioning engine and setup rules around.."
+          },
+          "phone_mandatory": {
+            "type": "boolean",
+            "description": "Required for Account Actions. Indicates whether phone was a required field during registration."
+          },
+          "referrer_customer_id": {
+            "type": "string",
+            "description": "The customer ID of the customer that referred the current customer to the merchant website. This parameter is only relevant for Account Actions."
+          },
+          "social_signup_type": {
+            "type": "string",
+            "enum": [
+              "facebook",
+              "google",
+              "linkedin",
+              "twitter",
+              "yahoo",
+              "other"
+            ],
+            "description": "Required for Account Actions. In case the user signed up with any social network. Must be one of the following.\n* facebook\n* google\n* linkedin\n* twitter\n* yahoo\n* other"
+          },
+          "address": {
+            "$ref": "#/components/schemas/address",
+            "description": "A list of addresses associated with the customer."
+          },
+          "spending_limit": {
+            "type": "number",
+            "format": "float",
+            "description": "If any, the credit limit that has been allocated or has been approved for the customer."
+          },
+          "has_defaulted": {
+            "type": "boolean",
+            "description": "If the customer has defaulted on a previous plan/loan with your business . TRUE/FALSE values."
+          },
+          "kyc_verified": {
+            "type": "boolean",
+            "description": "Indicates the outcome of a KYC check."
+          },
+          "kyc_details": {
+            "type": "array",
+            "description": "The details of Know Your Customer (KYC) checks for the customer. Each check corresponds to a new object in the array. If kyc_details[] is provided, objects should contain all required fields.",
+            "items": {
+              "$ref": "#/components/schemas/kyc_details"
+            }
+          },
+          "buyer_anonymous_id": {
+            "type": "string",
+            "description": "An alternative unique identifier for the customer."
+          },
+          "crypto_wallets": {
+            "type": "array",
+            "description": "A list of crypto wallets associated with the customer account.",
+            "items": {
+              "$ref": "#/components/schemas/crypto_wallet"
+            },
+            "example": [
+              {
+                "address": "0xc0ffee254729296a45a3885639AC7E10F9d54979",
+                "network": "ethereum",
+                "type": "primary"
+              }
+            ]
+          }
+        },
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "created_at"
+        ],
+        "example": {
+          "email": "test@mailmail.com",
+          "verified_email": true,
+          "first_name": "John",
+          "last_name": "Test",
+          "id": "d8fjv234",
+          "created_at": "2019-02-20T15:09:00Z",
+          "verified_email_at": "2019-02-21T10:00:00Z",
+          "updated_at": "2019-02-20T15:09:00Z",
+          "note": "VIP customer, high return rate.",
+          "total_spent": 1000.5,
+          "group_name": "Wholesale",
+          "accepts_marketing": true,
+          "last_order_id": "12345",
+          "tags": "wholesale, loyal_customer, new_york",
+          "buy_attempts": 15,
+          "sell_attempts": 2,
+          "first_purchase_at": "2019-03-01T12:00:00Z",
+          "orders_count": 10,
+          "account_type": "registered",
+          "phone": "+143873984567290",
+          "verified_phone": true,
+          "verified_phone_at": "2019-02-22T11:30:00Z",
+          "date_of_birth": "1985-10-25",
+          "gender": "male",
+          "user_name": "john_test_85",
+          "document_id": "123.456.789-00",
+          "document_type": "CPF",
+          "social": [
+            {
+              "network": "facebook",
+              "id": "fb_12345"
+            }
+          ],
+          "linked_accounts": 2,
+          "phone_mandatory": true,
+          "referrer_customer_id": "ref_9876",
+          "social_signup_type": "google",
+          "address": {
+            "first_name": "John",
+            "last_name": "Test",
+            "address1": "123 Smart St",
+            "country": "United States",
+            "country_code": "US",
+            "phone": "+143873984567290",
+            "city": "Los Angeles",
+            "zip": "90210",
+            "province": "California",
+            "address2": "Apt 4B",
+            "company": "My Company",
+            "additional_phone": "+14245551234",
+            "verified_phone": true,
+            "province_code": "CA",
+            "latitude": 34.0522,
+            "longitude": -118.2437,
+            "id": "addr_cust_01"
+          },
+          "spending_limit": 5000,
+          "has_defaulted": false,
+          "kyc_verified": true,
+          "kyc_details": [
+            {
+              "vendor_name": "socure",
+              "update_at": "2025-11-19T16:00:00Z",
+              "kyc_verified": true,
+              "kyc_type": "soft"
+            }
+          ],
+          "buyer_anonymous_id": "anon_b1a2c3d4"
+        }
+      },
+      "address": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the person associated with the address."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the person associated with the address."
+          },
+          "address1": {
+            "type": "string",
+            "description": "The street name of the address."
+          },
+          "country": {
+            "type": "string",
+            "description": "The name of the country address."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) of the country address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "The phone number at the address."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city of the address."
+          },
+          "zip": {
+            "type": "string",
+            "description": "The zip or postal code of the address."
+          },
+          "address2": {
+            "type": "string",
+            "description": "An optional additional field for the street address."
+          },
+          "company": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required if the address is associated to a company. The company of the person associated with the address."
+          },
+          "additional_phone": {
+            "type": "string",
+            "description": "Additional phone number at the address."
+          },
+          "verified_phone": {
+            "type": "boolean",
+            "description": "Indicates whether the provided phone number was verified."
+          },
+          "province": {
+            "type": "string",
+            "description": "The name of the state or province of the address."
+          },
+          "province_code": {
+            "type": "string",
+            "description": "The two-letter ISO 3166-2 alpha-2 code for the state or province of the address."
+          },
+          "neighborhood": {
+            "type": "string",
+            "description": "The district or city division of the address. The neighborhood should be provided if used in a country’s official postal addresses. Examples of this include the Colonia in Mexico or Bairro in Brazil."
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The latitude coordinates of the address."
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The longitude coordinates of the address."
+          },
+          "id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "address1",
+          "country",
+          "country_code",
+          "phone",
+          "city",
+          "zip",
+          "province"
+        ],
+        "example": {
+          "first_name": "John",
+          "last_name": "Test",
+          "address1": "123 Smart St",
+          "country": "United States",
+          "country_code": "US",
+          "phone": "+143873984567290",
+          "city": "Los Angeles",
+          "zip": "90210",
+          "province": "California",
+          "address2": "Apt 4B",
+          "company": "My Company",
+          "additional_phone": "+14245551234",
+          "verified_phone": true,
+          "province_code": "CA",
+          "latitude": 34.0522,
+          "longitude": -118.2437,
+          "id": "addr_cust_01"
+        }
+      },
+      "payment_details": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/credit_card_payment_details_post_auth"
+          },
+          {
+            "$ref": "#/components/schemas/paypal_payment_details_details_post_auth"
+          },
+          {
+            "$ref": "#/components/schemas/bank_wire_payment_details"
+          },
+          {
+            "$ref": "#/components/schemas/digital_wallets_payment_details"
+          },
+          {
+            "$ref": "#/components/schemas/buy_now_pay_later_payment_details"
+          },
+          {
+            "$ref": "#/components/schemas/non_chb_payment_details"
+          }
+        ]
+      },
+      "buy_now_pay_later_payment_details": {
+        "title": "Buy Now, Pay Later (BNPL)",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "bnpl"
+            ],
+            "example": "bnpl",
+            "description": "Indicates the type of payment."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "Number of days between each payment.",
+            "example": 482058180408
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Dollar amount of the first installment.",
+            "example": 134000358
+          },
+          "installments": {
+            "type": "integer",
+            "description": "Number of payment installments.",
+            "example": 3
+          }
+        },
+        "required": [
+          "payment_type"
+        ],
+        "example": {
+          "payment_type": "bnpl",
+          "installments": 3
+        }
+      },
+      "non_chb_payment_details": {
+        "title": "Store credits and gift card payments",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "gift_card",
+              "store_credit",
+              "rewards_points"
+            ],
+            "example": "gift_card",
+            "description": "Indicates the type of payment."
+          }
+        },
+        "required": [
+          "payment_type"
+        ],
+        "example": {
+          "payment_type": "gift_card"
+        }
+      },
+      "digital_wallets_payment_details": {
+        "title": "Digital Wallets",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "apple_pay",
+              "google_pay",
+              "samsung_pay",
+              "wechat_pay",
+              "amazon_pay",
+              "alipay"
+            ],
+            "example": "apple_pay",
+            "description": "Indicates the type of payment."
+          },
+          "avs_result_code": {
+            "type": "string",
+            "description": "Address Verification System response code.\nThe code is a single letter.\nRequired only in Order Model, optional on Account Actions Customer Create / Customer Update event"
+          },
+          "credit_card_company": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The company who issued the customer's credit card"
+          },
+          "credit_card_country": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The issuer 2 letter country code. These codes are used to identify the country name"
+          },
+          "credit_card_token": {
+            "type": "string",
+            "description": "The token returned from the credit card company"
+          },
+          "cardholder_name": {
+            "type": "string",
+            "description": "Name of the cardholder"
+          },
+          "authorization_id": {
+            "type": "string",
+            "description": "Unique identifier of the payment transaction as granted by the processing gateway"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "stored_payment_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time (ISO8601) when the payment method was saved to the customer's account"
+          },
+          "stored_payment_updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Most recent date and time (ISO8601) when the saved payment method was updated by the customer"
+          },
+          "installments": {
+            "type": "integer",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil\n\nNumber of payment installments"
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "acquirer_region": {
+            "type": "string",
+            "enum": [
+              "NONEU",
+              "EU"
+            ],
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation."
+          },
+          "authorization_type": {
+            "description": "The type of authorization used for the payment.",
+            "type": "string",
+            "enum": [
+              "verification",
+              "authorization"
+            ]
+          },
+          "expiry_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "The payment expiration month."
+          },
+          "expiry_year": {
+            "type": "integer",
+            "description": "The payment expiration year; a 4-digit integer formatted as YYYY"
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "The initial amount paid."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "The frequency of payments made."
+          },
+          "billing_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Unique ID, is required in case of multiple billing addresses."
+          },
+          "authentication_result": {
+            "$ref": "#/components/schemas/authentication_result",
+            "description": "**(Conditional Requirement)** Required if the transaction was processed using 3D Secure (3DS)."
+          }
+        },
+        "required": [
+          "payment_type",
+          "authorization_id",
+          "avs_result_code"
+        ],
+        "example": {
+          "payment_type": "apple_pay",
+          "avs_result_code": "X",
+          "credit_card_company": "Visa",
+          "authorization_id": "12345",
+          "initial_payment_amount": 400,
+          "payment_frequency": 1,
+          "credit_card_country": "US",
+          "credit_card_token": "tok_1A2b3C4d5E6f7G8h9I",
+          "cardholder_name": "John Test",
+          "mid": "GATEWAY_MID_123",
+          "id": "pmt_01",
+          "stored_payment_created_at": "2021-01-10T11:00:00Z",
+          "stored_payment_updated_at": "2023-05-01T15:30:00Z",
+          "installments": 1,
+          "acquirer_bin": "999999",
+          "acquirer_region": "NONEU",
+          "authorization_type": "authorization",
+          "expiry_month": 12,
+          "expiry_year": 2028,
+          "billing_address_id": "addr_bill_01",
+          "authentication_result": {
+            "eci": "05",
+            "liability_shift": true,
+            "created_at": "2025-11-19T16:00:00Z",
+            "cavv": "MDAwMDAwMDAwMDE2NTE2MzU5NDY3",
+            "trans_status": "Y",
+            "three_d_challenge": false,
+            "TRA_exemption": true,
+            "trans_status_reason": "01"
+          }
+        }
+      },
+      "credit_card_payment_details_post_auth": {
+        "title": "Credit Card",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "card"
+            ],
+            "example": "card",
+            "description": "Indicates the type of payment."
+          },
+          "credit_card_bin": {
+            "type": "string",
+            "description": "The issuer identification number (IIN), formerly known as bank identification number (BIN) of the customer's credit card.\nMade up of the first 6 or 8 digits of the credit card number (per value received from the Payment Service Providers/tokenization response)."
+          },
+          "avs_result_code": {
+            "type": "string",
+            "description": "Address Verification System response code.\nThe code is a single letter.\nRequired only in Order Model, optional on Account Actions Customer Create / Customer Update event"
+          },
+          "cvv_result_code": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for CVV recommendations.\n Card Verification Value response code.\nThe code is a single letter."
+          },
+          "credit_card_company": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The company who issued the customer's credit card"
+          },
+          "credit_card_number": {
+            "type": "string",
+            "description": "The credit card number, with leading digits redacted with Xs (only the last four digits are not hidden)"
+          },
+          "credit_card_country": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation. The issuer 2 letter country code. These codes are used to identify the country name"
+          },
+          "credit_card_token": {
+            "type": "string",
+            "description": "The token returned from the credit card company"
+          },
+          "cardholder_name": {
+            "type": "string",
+            "description": "Name of the cardholder"
+          },
+          "authorization_id": {
+            "type": "string",
+            "description": "Unique identifier of the payment transaction as granted by the processing gateway"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "stored_payment_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time (ISO8601) when the payment method was saved to the customer's account"
+          },
+          "stored_payment_updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Most recent date and time (ISO8601) when the saved payment method was updated by the customer"
+          },
+          "installments": {
+            "type": "integer",
+            "description": "**(Conditional Requirement)** Required for merchants residing in Brazil\n\nNumber of payment installments"
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "acquirer_region": {
+            "type": "string",
+            "enum": [
+              "NONEU",
+              "EU"
+            ],
+            "description": "**(Conditional Requirement)** Required for PSD2 Optimization implementation."
+          },
+          "authorization_type": {
+            "description": "The type of authorization used for the payment.",
+            "type": "string",
+            "enum": [
+              "verification",
+              "authorization"
+            ]
+          },
+          "expiry_month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12,
+            "description": "The payment expiration month."
+          },
+          "expiry_year": {
+            "type": "integer",
+            "description": "The payment expiration year; a 4-digit integer formatted as YYYY"
+          },
+          "initial_payment_amount": {
+            "type": "number",
+            "format": "float",
+            "description": "The initial amount paid."
+          },
+          "payment_frequency": {
+            "type": "integer",
+            "description": "The frequency of payments made."
+          },
+          "billing_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Unique ID, is required in case of multiple billing addresses."
+          },
+          "authentication_result": {
+            "$ref": "#/components/schemas/authentication_result",
+            "description": "**(Conditional Requirement)** Required if the transaction was processed using 3D Secure (3DS)."
+          }
+        },
+        "required": [
+          "payment_type",
+          "credit_card_bin",
+          "credit_card_number",
+          "authorization_id",
+          "avs_result_code",
+          "cvv_result_code"
+        ],
+        "example": {
+          "payment_type": "card",
+          "credit_card_bin": "482932",
+          "avs_result_code": "X",
+          "cvv_result_code": "M",
+          "credit_card_company": "Visa",
+          "credit_card_number": "9876",
+          "authorization_id": "12345",
+          "initial_payment_amount": 400,
+          "payment_frequency": 1,
+          "credit_card_country": "US",
+          "credit_card_token": "tok_1A2b3C4d5E6f7G8h9I",
+          "cardholder_name": "John Test",
+          "mid": "GATEWAY_MID_123",
+          "id": "pmt_01",
+          "stored_payment_created_at": "2021-01-10T11:00:00Z",
+          "stored_payment_updated_at": "2023-05-01T15:30:00Z",
+          "installments": 1,
+          "acquirer_bin": "999999",
+          "acquirer_region": "NONEU",
+          "authorization_type": "authorization",
+          "expiry_month": 12,
+          "expiry_year": 2028,
+          "billing_address_id": "addr_bill_01",
+          "authentication_result": {
+            "eci": "05",
+            "liability_shift": true,
+            "created_at": "2025-11-19T16:00:00Z",
+            "cavv": "MDAwMDAwMDAwMDE2NTE2MzU5NDY3",
+            "trans_status": "Y",
+            "three_d_challenge": false,
+            "TRA_exemption": true,
+            "trans_status_reason": "01"
+          }
+        }
+      },
+      "paypal_payment_details_details_post_auth": {
+        "title": "Paypal",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "paypal"
+            ],
+            "example": "paypal",
+            "description": "Indicates the type of payment."
+          },
+          "payer_email": {
+            "type": "string",
+            "description": "The payer email assigned to his paypal account as received from paypal"
+          },
+          "payer_status": {
+            "type": "string",
+            "description": "The payer status as received from paypal"
+          },
+          "payer_address_status": {
+            "type": "string",
+            "description": "The payer address status as received from paypal"
+          },
+          "protection_eligibility": {
+            "type": "string",
+            "description": "The merchants protection eligibility for the order as received from paypal"
+          },
+          "payment_status": {
+            "type": "string",
+            "description": "The payment status as recieved from paypal"
+          },
+          "pending_reason": {
+            "type": "string",
+            "description": "The pending reason received from paypal"
+          },
+          "authorization_id": {
+            "type": "string",
+            "description": "Seller transaction id received from PayPal"
+          },
+          "mid": {
+            "type": "string",
+            "description": "The merchant account id at the payment gateway"
+          },
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of the payment detail object within the array of payment details. When this is not provided, a default running number will be attached to each element in the payment details array."
+          },
+          "acquirer_bin": {
+            "type": "string",
+            "description": "The acquirer identification number (IIN), formerly known as bank identification number (BIN) of the merchant's acquirer"
+          },
+          "authorization_error": {
+            "$ref": "#/components/schemas/authorization_error"
+          }
+        },
+        "required": [
+          "payment_type",
+          "payer_email",
+          "authorization_id"
+        ],
+        "example": {
+          "payment_type": "paypal",
+          "payer_email": "johndoe123@gmail.com",
+          "authorization_id": "PP-AUTH-987654321",
+          "payer_status": "unverified",
+          "payer_address_status": "unconfirmed",
+          "protection_eligibility": "NOT_ELIGIBLE",
+          "payment_status": "Failed",
+          "pending_reason": "none",
+          "mid": "GATEWAY_MID_PAYPAL",
+          "id": "pmt_02",
+          "acquirer_bin": "888888",
+          "authorization_error": {
+            "created_at": "2025-11-19T10:30:00Z",
+            "error_code": "GATEWAY_CODE_1001",
+            "message": "card_declined",
+            "drop_off": true
+          }
+        }
+      },
+      "bank_wire_payment_details": {
+        "title": "Bank Wire / ACH",
+        "type": "object",
+        "properties": {
+          "payment_type": {
+            "type": "string",
+            "enum": [
+              "bank_transfer",
+              "ach"
+            ],
+            "example": "bank_transfer",
+            "description": "Indicates the type of payment."
+          },
+          "account_number": {
+            "type": "string",
+            "description": "The full account number",
+            "example": "482058180408"
+          },
+          "routing_number": {
+            "type": "string",
+            "description": "The routing number (ABA) of the customer's bank",
+            "example": "134000358"
+          },
+          "token": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for Plaid Partner integration. The Plaid processor_token value created by calling /processor/token/create. Please see further documentation for Plaid integration."
+          },
+          "account_balance": {
+            "$ref": "#/components/schemas/account_balance",
+            "description": "An object containing account balance information as provided by the Payment Service Provider or bank. If provided, this object should contain all required fields."
+          },
+          "account_identity": {
+            "$ref": "#/components/schemas/account_identity",
+            "description": "An object containing identity information about the purchasing customer as provided by the Payment Service Provider or bank."
+          }
+        },
+        "required": [
+          "payment_type",
+          "account_number",
+          "routing_number"
+        ],
+        "example": {
+          "payment_type": "bank_transfer",
+          "account_number": "482058180408",
+          "routing_number": "134000358",
+          "token": "processor-token-plaid-xyz",
+          "account_balance": {
+            "available_balance": 2450,
+            "service_name": "plaid",
+            "updated_at": "2025-03-11T09:42:11Z",
+            "currency_code": "USD"
+          },
+          "account_identity": {
+            "names": [
+              "John Test"
+            ],
+            "addresses": [
+              {
+                "address1": "123 Smart St",
+                "city": "Los Angeles",
+                "province_code": "CA",
+                "zip": "90210",
+                "country_code": "US"
+              }
+            ],
+            "phone_numbers": [
+              "+143873984567290"
+            ],
+            "emails": [
+              "test@mailmail.com"
+            ]
+          }
+        }
+      },
+      "charge_free_payment_details": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount"
+          },
+          "gateway": {
+            "type": "string",
+            "description": "Payment gateway"
+          }
+        },
+        "example": {
+          "amount": 50,
+          "gateway": "giftcard"
+        }
+      },
+      "physical_line_item": {
+        "type": "object",
+        "description": "A line item that is a physical product. This is the default type of line item.",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain one the following value: physical.",
+            "enum": [
+              "physical"
+            ],
+            "example": "physical"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": true,
+            "description": "States whether or not the item requires shipping. This field is important for merchants dealing with digital goods."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping"
+        ],
+        "example": {
+          "price": 20,
+          "quantity": 1,
+          "title": "Tempered Glass Guard for Apple iPhone X",
+          "product_id": "ABC123",
+          "category": "On Sale",
+          "brand": "Complete Cover",
+          "product_type": "physical",
+          "requires_shipping": true,
+          "sku": "sj18fn402",
+          "sub_category": "Super Sale",
+          "condition": "new",
+          "seller": null,
+          "delivered_at": "2025-12-01T10:00:00Z",
+          "delivered_to": "shipping_address",
+          "drop_point": null,
+          "size": "Small",
+          "registry_type": null,
+          "shipping_address_id": "addr_ship_01"
+        }
+      },
+      "digital_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: digital",
+            "enum": [
+              "digital"
+            ],
+            "example": "digital"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "Should be `false` for digital items. States whether or not the item requires shipping."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "sender_name": {
+            "type": "string",
+            "description": "The sender name."
+          },
+          "photo_uploaded": {
+            "type": "boolean",
+            "description": "Indicating whether a photo was uploaded."
+          },
+          "photo_url": {
+            "type": "string",
+            "description": "The photo url (if uploaded)."
+          },
+          "message": {
+            "type": "string",
+            "description": "The card's message."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name."
+          },
+          "greeting_photo_url": {
+            "type": "string",
+            "description": "The greeting photo url (if exists)."
+          },
+          "greeting_message": {
+            "type": "string",
+            "description": "The greeting message."
+          },
+          "card_type": {
+            "type": "string",
+            "description": "The card's type."
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/recipient",
+            "description": "Recipient details"
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "recipient"
+        ],
+        "example": {
+          "price": 200,
+          "quantity": 1,
+          "title": "Digital Item",
+          "product_id": "51217",
+          "category": "Card",
+          "brand": "Apple",
+          "product_type": "digital",
+          "requires_shipping": false,
+          "sku": "69536334",
+          "sub_category": "Digital Item",
+          "sender_name": "Jane Doe",
+          "message": "This is a test.",
+          "recipient": {
+            "email": "test@mailmail.com",
+            "phone": "11234567890"
+          },
+          "photo_uploaded": true,
+          "photo_url": "https://example.com/photo/card-bg-123.jpg",
+          "display_name": "Gift for John",
+          "card_type": "birthday",
+          "condition": "new",
+          "seller": null,
+          "delivered_at": "2025-11-26T12:00:00Z",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null
+        }
+      },
+      "giftcard_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: giftcard",
+            "enum": [
+              "giftcard"
+            ],
+            "example": "giftcard"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "States whether or not the item requires shipping. Set to True for a physical gift card and False for a digital gift card."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "sender_name": {
+            "type": "string",
+            "description": "The sender name."
+          },
+          "photo_uploaded": {
+            "type": "boolean",
+            "description": "Indicating whether a photo was uploaded."
+          },
+          "photo_url": {
+            "type": "string",
+            "description": "The photo url (if uploaded)."
+          },
+          "message": {
+            "type": "string",
+            "description": "The card's message."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name."
+          },
+          "greeting_photo_url": {
+            "type": "string",
+            "description": "The greeting photo url (if exists)."
+          },
+          "greeting_message": {
+            "type": "string",
+            "description": "The greeting message."
+          },
+          "card_type": {
+            "type": "string",
+            "description": "The card's type."
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/recipient",
+            "description": "Recipient details"
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "recipient"
+        ],
+        "example": {
+          "price": 200,
+          "quantity": 1,
+          "title": "Gift Card",
+          "product_id": "51217",
+          "category": "Gift Card",
+          "brand": "Apple",
+          "product_type": "giftcard",
+          "requires_shipping": false,
+          "sku": "69536334",
+          "sub_category": "Digital Gift Card",
+          "sender_name": "Jane Doe",
+          "message": "This is a test.",
+          "recipient": {
+            "email": "test@mailmail.com",
+            "phone": "11234567890"
+          },
+          "photo_uploaded": true,
+          "photo_url": "https://example.com/photo/card-bg-123.jpg",
+          "display_name": "Gift for John",
+          "card_type": "birthday",
+          "condition": "new",
+          "seller": null,
+          "delivered_at": "2025-11-26T12:00:00Z",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null
+        }
+      },
+      "travel_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: travel.",
+            "enum": [
+              "travel"
+            ],
+            "example": "travel"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "Should be `false` for travel items that don't require shipping."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "leg_id": {
+            "type": "string",
+            "description": "The current leg id.For flight tickets, flight number (e.g. '101').For bus tickets, bus number (e.g: 'A7')."
+          },
+          "departure_city": {
+            "type": "string",
+            "description": "The name of the city of departure for the current leg."
+          },
+          "departure_country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) for the departure country of the current leg."
+          },
+          "arrival_city": {
+            "type": "string",
+            "description": "The name of the city of arrival for the current leg."
+          },
+          "arrival_country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) for the arrival country of the current leg."
+          },
+          "departure_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time of departure for the current leg. Add corresponding timezone indication or ensure correct UTC standardization (ISO8601) e.g. 2019-07-24T20:55:00+2:00"
+          },
+          "carrier_code": {
+            "type": "string",
+            "description": "A publicly agreed code describing the carrier/company conducting the current leg. For Flights: The IATA 2 letter carrier code."
+          },
+          "route_index": {
+            "type": "integer",
+            "description": "A running index (starts with 1), describing the order of routes by time.\nEach route_index and leg_index combination constitutes an individual line item. The two (2) route example below requires four (4) line items.\n\nE.g: If an order contains 2 Routes:\nNew-York->London->Paris (connection in London)\nNew-York->London should have route_index=1, leg_index=1\nLondon->Paris should have route_index=1, leg_index=2\n\nParis->London->New-York\nParis->London should have route_index=2, leg_index=1\nLondon->New-York should have route_index=2, leg_index=2"
+          },
+          "leg_index": {
+            "type": "integer",
+            "description": "A running index (starts with 1), describing the order of legs in the same route. For more details, see route_index field."
+          },
+          "transport_method": {
+            "type": "string",
+            "description": "The method of transportation.",
+            "enum": [
+              "plane",
+              "ship",
+              "bus",
+              "train",
+              "tram"
+            ]
+          },
+          "departure_port_code": {
+            "type": "string",
+            "description": "Departure port code for the current leg. For flights: the 3 letter IATA airport code."
+          },
+          "arrival_port_code": {
+            "type": "string",
+            "description": "Arrival port code for the current leg. For flights: the 3 letter IATA airport code."
+          },
+          "arrival_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "**(Conditional Requirement)** Required for Flights. Date and time of arrival for the current leg. Add corresponding timezone indication or ensure correct UTC standardization (ISO8601) e.g. 2019-07-24T20:55:00+2:00"
+          },
+          "carrier_name": {
+            "type": "string",
+            "description": "The name of the carrier/company conducting the current leg."
+          },
+          "ticket_class": {
+            "type": "string",
+            "description": "The class for this leg's ticket (e.g. business, economy, first)."
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "description": "The booking cancellation policy."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "leg_id",
+          "departure_city",
+          "departure_country_code",
+          "arrival_city",
+          "arrival_country_code",
+          "departure_date",
+          "route_index",
+          "leg_index",
+          "transport_method"
+        ],
+        "example": {
+          "price": 150,
+          "quantity": 1,
+          "title": "LIS|MAD",
+          "product_id": "12345",
+          "category": "Flight",
+          "brand": "European Air",
+          "product_type": "travel",
+          "requires_shipping": false,
+          "sku": "123456789",
+          "sub_category": "Plane Tickets",
+          "leg_id": "101",
+          "departure_city": "Lisbon",
+          "departure_country_code": "PT",
+          "arrival_city": "Madrid",
+          "arrival_country_code": "ES",
+          "departure_date": "2022-03-20T18:40Z",
+          "carrier_code": "UX",
+          "route_index": 1,
+          "leg_index": 1,
+          "transport_method": "plane",
+          "departure_port_code": "LIS",
+          "arrival_port_code": "MAD",
+          "arrival_date": "2022-03-20T21:00Z",
+          "carrier_name": "European Air",
+          "ticket_class": "A",
+          "condition": "new",
+          "seller": null,
+          "delivered_at": "2022-03-20T21:00:00Z",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null,
+          "cancellation_policy": "Non-refundable after ticketing."
+        }
+      },
+      "rides_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: ride.",
+            "enum": [
+              "ride"
+            ],
+            "example": "ride"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "Should be `false` for digital items. States whether or not the item requires shipping."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "pickup_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Ride pickup date. Add corresponding timezone indication or ensure correct UTC standardization (ISO8601) e.g. 2019-07-24T14:55:00+2:00"
+          },
+          "route_index": {
+            "type": "integer",
+            "description": "A running index (starts with 1), describing the order of routes by time.\n\n E.g: A return trip will be represented in two line_items, the onward trip line_item will be assigned with route_index = 1, the return trip line_item with route_index = 2."
+          },
+          "leg_index": {
+            "type": "integer",
+            "description": "A running index (starts with 1), describing the order of legs in the same route. E.g: Will always equal 1, unless the rider needs to change a vehicle within a route."
+          },
+          "pickup_latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The latitude part of the pickup location coordinates."
+          },
+          "pickup_longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The longitude part of the pickup location coordinates."
+          },
+          "pickup_address": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/address"
+            },
+            "description": "Pickup location address."
+          },
+          "dropoff_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Ride dropoff date. Add corresponding timezone indication or ensure correct UTC standardization (ISO8601) e.g. 2019-07-24T14:55:00+2:00"
+          },
+          "dropoff_latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The latitude part of the dropoff location coordinates."
+          },
+          "dropoff_longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The longitude part of the dropoff location coordinates."
+          },
+          "dropoff_address": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/address"
+            },
+            "description": "Dropoff location address."
+          },
+          "transport_method": {
+            "type": "string",
+            "description": "The transport method used, such as: taxi, car, rv, bus, plane, ship, train, tram, cruise",
+            "enum": [
+              "taxi",
+              "car",
+              "rv",
+              "bus",
+              "plane",
+              "ship",
+              "train",
+              "tram",
+              "cruise"
+            ]
+          },
+          "price_by": {
+            "type": "string",
+            "description": "Pricing method: meter/fixed."
+          },
+          "vehicle_class": {
+            "type": "string",
+            "description": "Vehicle class, such as: economy, executive, van, etc."
+          },
+          "carrier_name": {
+            "type": "string",
+            "description": "Ride/taxi company name."
+          },
+          "driver_id": {
+            "type": "string",
+            "description": "Driver ID/vehicle number (if self driven)."
+          },
+          "tariff": {
+            "type": "string",
+            "description": "Relevant tariff for the ride, such as: regular, night, 2, etc."
+          },
+          "note_to_driver": {
+            "type": "string",
+            "description": "Additional message to driver."
+          },
+          "meet_n_greet": {
+            "type": "string",
+            "description": "Airport/pickup meet and greet message."
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "description": "Reservation cancellation policy."
+          },
+          "authorized_payment": {
+            "type": "number",
+            "format": "float",
+            "description": "Authorized pre-payment value for this ride (order currency)."
+          },
+          "damage_excess": {
+            "type": "number",
+            "format": "float",
+            "description": "Amount the customer is liable for in case of damage to the vehicle."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "pickup_date",
+          "route_index",
+          "leg_index"
+        ],
+        "example": {
+          "price": 45,
+          "quantity": 1,
+          "title": "Airport Transfer to Downtown",
+          "product_id": "RDE9876",
+          "category": "Rideshare",
+          "brand": "CityCab",
+          "product_type": "ride",
+          "requires_shipping": false,
+          "sku": "CC-T-45",
+          "sub_category": "Taxi",
+          "pickup_date": "2025-12-15T06:00:00-05:00",
+          "route_index": 1,
+          "leg_index": 1,
+          "pickup_latitude": 33.9416,
+          "pickup_longitude": -118.4004,
+          "pickup_address": [
+            {
+              "first_name": "John",
+              "last_name": "Test",
+              "address1": "LAX Terminal 1",
+              "country": "United States",
+              "country_code": "US",
+              "phone": "+143873984567290",
+              "city": "Los Angeles",
+              "zip": "90045",
+              "province": "California"
+            }
+          ],
+          "dropoff_date": "2025-12-15T06:45:00-05:00",
+          "dropoff_latitude": 34.0522,
+          "dropoff_longitude": -118.2437,
+          "dropoff_address": [
+            {
+              "first_name": "John",
+              "last_name": "Test",
+              "address1": "456 Main St",
+              "country": "United States",
+              "country_code": "US",
+              "phone": "+143873984567290",
+              "city": "Los Angeles",
+              "zip": "90012",
+              "province": "California"
+            }
+          ],
+          "transport_method": "car",
+          "price_by": "fixed",
+          "vehicle_class": "executive",
+          "carrier_name": "RideShare XYZ",
+          "driver_id": "DRV-678",
+          "tariff": "standard",
+          "note_to_driver": "Meet at Terminal B, Door 3.",
+          "meet_n_greet": "Sign with customer name.",
+          "cancellation_policy": "Free if cancelled 2 hours prior.",
+          "authorized_payment": 45,
+          "damage_excess": 0,
+          "condition": null,
+          "seller": null,
+          "delivered_at": "2025-12-15T06:45:00-05:00",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null
+        }
+      },
+      "events_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: event",
+            "enum": [
+              "event"
+            ],
+            "example": "event"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "Should be equal to `false` for the digital items that don't require shipping."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "event_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time (ISO8601) of the event."
+          },
+          "city": {
+            "type": "string",
+            "description": "The city where the event will take place in."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) of the country where the event takes place."
+          },
+          "section": {
+            "type": "string",
+            "description": "The assigned seating section in the venue."
+          },
+          "latitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The latitude part of the coordinates of the event location."
+          },
+          "longitude": {
+            "type": "number",
+            "format": "float",
+            "description": "The longitude part of the coordinates of the event location."
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "description": "The booking cancellation policy."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "event_date",
+          "city",
+          "country_code"
+        ],
+        "example": {
+          "price": 150,
+          "quantity": 1,
+          "title": "Rock Band Concert",
+          "product_id": "12345",
+          "category": "Concerts",
+          "brand": "Ticket Seller",
+          "product_type": "event",
+          "requires_shipping": false,
+          "sku": "123456789",
+          "sub_category": "Rock",
+          "event_date": "2022-05-07T00:00:00Z",
+          "city": "Dallas",
+          "country_code": "US",
+          "section": "general",
+          "latitude": 32.7767,
+          "longitude": -96.797,
+          "recipient": {
+            "email": "test@mailmail.com",
+            "phone": "11234567890"
+          },
+          "seller": {
+            "customer": {
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "last_name": "Doe",
+              "id": "d8fjv234",
+              "created_at": "2019-02-20T15:09:00Z",
+              "updated_at": "2019-02-20T15:09:00Z",
+              "total_spent": 1000,
+              "orders_count": 10,
+              "account_type": "registered",
+              "phone": "+143873984567290"
+            },
+            "correspondence": 5,
+            "price_negotiated": false,
+            "starting_price": "150.00"
+          },
+          "condition": "new",
+          "delivered_at": "2022-05-07T00:00:00Z",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null,
+          "cancellation_policy": "Full refund if cancelled 48 hours before the event."
+        }
+      },
+      "accommodation_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of one unit of the product."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The number of items that were ordered."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the item."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category of the item. For event tickets, the category of the event."
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "The product type should contain the following value: ccommodation",
+            "enum": [
+              "accommodation"
+            ],
+            "example": "accommodation"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "example": false,
+            "description": "Should be `false` for the items that don't require shipping."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "description": "The planned delivery date of the product or item."
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "check_in_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The room check-in date (ISO8601)."
+          },
+          "city": {
+            "type": "string",
+            "description": "The accommodation city."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) of the country where the accommodation is located."
+          },
+          "check_out_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The room check-out date."
+          },
+          "accommodation_type": {
+            "type": "string",
+            "description": "The accommodation type, such as hotel, B&B, etc."
+          },
+          "room_type": {
+            "type": "string",
+            "description": "The room type, such as single, double, suite, etc."
+          },
+          "number_of_guests": {
+            "type": "integer",
+            "description": "The number of guests expected in the room."
+          },
+          "rating": {
+            "type": "string",
+            "description": "The accommodation rating, as published on the merchant's website."
+          },
+          "cancellation_policy": {
+            "type": "string",
+            "description": "The booking cancellation policy."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_id",
+          "category",
+          "product_type",
+          "requires_shipping",
+          "check_in_date",
+          "city",
+          "country_code",
+          "cancellation_policy"
+        ],
+        "example": {
+          "price": 150,
+          "quantity": 3,
+          "title": "Honeymoon Suite - 3 Nights",
+          "product_id": "12345",
+          "category": "Hotel",
+          "brand": "Great Hotel Group",
+          "product_type": "accommodation",
+          "requires_shipping": false,
+          "sku": "123456789",
+          "sub_category": "Hotel Reservations",
+          "accommodation_type": "Hotel",
+          "cancellation_policy": "Full refund if cancelled before 48 hours.",
+          "check_in_date": "2022-04-14T15:00:00+00:00",
+          "check_out_date": "2022-04-17T11:00:00+00:00",
+          "city": "Riviera Maya",
+          "country_code": "MX",
+          "number_of_guests": 2,
+          "rating": "4.5 stars",
+          "room_type": "Honeymoon Suite",
+          "condition": null,
+          "delivered_at": "2022-04-14T15:00:00+00:00",
+          "delivered_to": null,
+          "drop_point": null,
+          "size": null,
+          "registry_type": null,
+          "shipping_address_id": null,
+          "seller": {
+            "customer": {
+              "email": "hotel.host@greathotelgroup.com",
+              "first_name": "Resort",
+              "last_name": "Manager",
+              "id": "HOST_5599",
+              "created_at": "2018-10-01T08:00:00Z",
+              "account_type": "business",
+              "phone": "+529841234567"
+            },
+            "correspondence": 2,
+            "price_negotiated": false,
+            "starting_price": "150.00"
+          }
+        }
+      },
+      "crypto_line_item": {
+        "type": "object",
+        "description": "Represents a cryptocurrency transaction line item.",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The amount spent (in order currency) on cryptocurrency or asset(s).",
+            "example": 420
+          },
+          "quantity": {
+            "type": "integer",
+            "enum": [
+              1
+            ],
+            "description": "Quantity must always be 1 for cryptocurrency transactions.",
+            "example": 1
+          },
+          "title": {
+            "type": "string",
+            "description": "The abbreviation of the cryptocurrency in all caps.",
+            "example": "ETH"
+          },
+          "product_id": {
+            "type": "string",
+            "description": "The full asset name of the cryptocurrency.",
+            "maxLength": 256,
+            "example": "Ethereum"
+          },
+          "product_type": {
+            "type": "string",
+            "enum": [
+              "crypto"
+            ],
+            "description": "Specifies that this line item represents a digital asset.",
+            "example": "crypto"
+          },
+          "category": {
+            "type": "string",
+            "description": "The type of cryptocurrency transaction. \n Use `checkout` if purchasing at a third party merchant using cryptocurrency.",
+            "enum": [
+              "one_time_buy",
+              "one_time_sell",
+              "one_time_order",
+              "recurring_buy",
+              "recurring_sell",
+              "checkout",
+              "nft"
+            ],
+            "example": "one_time_order"
+          },
+          "brand": {
+            "type": "string",
+            "description": "The brand name of the item."
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "enum": [
+              false,
+              true
+            ],
+            "example": false,
+            "description": "States whether or not the item requires shipping. Should be set to False unless crypto is being sent to another customer as remittance."
+          },
+          "sku": {
+            "type": "string",
+            "description": "A unique identifier of the item in the fulfillment."
+          },
+          "condition": {
+            "type": "string",
+            "description": "Description of the physical condition of the item, mostly relevant for used items."
+          },
+          "seller": {
+            "$ref": "#/components/schemas/seller",
+            "description": "**(Conditional Requirement)** Required for marketplace or guest/host accommodations. Details about the seller of the item, relevant for marketplace orders."
+          },
+          "vendor": {
+            "$ref": "#/components/schemas/vendor_line_item",
+            "description": "**(Conditional Requirement)** Required if there is a different affiliated partner for each product or line item."
+          },
+          "sub_category": {
+            "type": "string",
+            "description": "The sub-category of the item. For event tickets, the sub-category of the event."
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp indicating when the cryptocurrency was delivered to the wallet.",
+            "example": "2022-04-14T15:00:00+00:00"
+          },
+          "delivered_to": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for mixed shipment orders. The delivery type must contain one of the following values\nshipping_address: The Order's shipping address is the end user's entered address.\nstore_pickup: If the end user selects store pickup, the shipping address value should contain the store's address.",
+            "enum": [
+              "shipping_address",
+              "store_pickup"
+            ]
+          },
+          "recipient": {
+            "type": "object",
+            "description": "Recipient information for the cryptocurrency transfer.",
+            "$ref": "#/components/schemas/recipient_crypto"
+          },
+          "drop_point": {
+            "type": "string",
+            "description": "If the end user is handing the package at a drop-off point, the shipping address value should contain the drop off location address"
+          },
+          "size": {
+            "type": "string",
+            "description": "The size of the item (e.g. shirt or shoe size)"
+          },
+          "registry_type": {
+            "type": "string",
+            "description": "The registry type must contain one of the following values: wedding, baby, other",
+            "enum": [
+              "wedding",
+              "baby",
+              "other"
+            ]
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          },
+          "sender_name": {
+            "type": "string",
+            "description": "The sender name."
+          },
+          "photo_uploaded": {
+            "type": "boolean",
+            "description": "Indicating whether a photo was uploaded."
+          },
+          "photo_url": {
+            "type": "string",
+            "description": "The photo url (if uploaded)."
+          },
+          "message": {
+            "type": "string",
+            "description": "The card's message."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "The display name."
+          },
+          "greeting_photo_url": {
+            "type": "string",
+            "description": "The greeting photo url (if exists)."
+          },
+          "greeting_message": {
+            "type": "string",
+            "description": "The greeting message."
+          },
+          "card_type": {
+            "type": "string",
+            "description": "The card's type."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_type",
+          "product_id",
+          "category",
+          "requires_shipping",
+          "recipient"
+        ],
+        "example": {
+          "title": "ETH",
+          "quantity": 1,
+          "price": 420,
+          "category": "one_time_order",
+          "product_type": "crypto",
+          "product_id": "Ethereum",
+          "requires_shipping": false,
+          "delivered_at": "2022-04-14T15:00:00+00:00",
+          "recipient": {
+            "email": "user@example.com",
+            "crypto_wallet": {
+              "address": "0xc0ffee254729296a45a3885639AC7E10F9d54979",
+              "network": "ethereum",
+              "type": "primary"
+            }
+          }
+        }
+      },
+      "recipient_crypto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Recipient email address.",
+            "example": "user@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Recipient phone number.",
+            "example": "+14155552671"
+          },
+          "crypto_wallet": {
+            "$ref": "#/components/schemas/crypto_wallet",
+            "description": "Cryptocurrency wallet details."
+          }
+        },
+        "required": [
+          "crypto_wallet"
+        ]
+      },
+      "remittance_line_item": {
+        "type": "object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of the remittance line item.",
+            "example": 150
+          },
+          "quantity": {
+            "type": "integer",
+            "enum": [
+              1
+            ],
+            "example": 1,
+            "description": "Quantity must always be 1 for remittance line items."
+          },
+          "title": {
+            "type": "string",
+            "description": "Describes the remittance type (e.g., ACH Transfer, Cash Transfer, Bank Deposit, Cash at Agent, Mobile wallet).",
+            "example": "ACH Transfer"
+          },
+          "category": {
+            "type": "string",
+            "example": "ACH",
+            "description": "The category of the item: ACH, Wallet Deposit, etc."
+          },
+          "product_type": {
+            "type": "string",
+            "description": "Specifies that this line item is a remittance type.",
+            "enum": [
+              "remittance"
+            ],
+            "example": "remittance"
+          },
+          "product_id": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "The id of the item. Limited to 256 characters"
+          },
+          "requires_shipping": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "description": "Always true for remittance line items."
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/recipient_ACH",
+            "description": "Recipient bank details."
+          }
+        },
+        "required": [
+          "price",
+          "quantity",
+          "title",
+          "product_type",
+          "requires_shipping",
+          "category",
+          "product_id"
+        ],
+        "example": {
+          "title": "Bank Account Transfer",
+          "quantity": 1,
+          "requires_shipping": true,
+          "product_type": "remittance",
+          "price": 1500,
+          "product_id": "2327384328722094",
+          "category": "BANK_TRANSFER",
+          "brand": "MoneyXchange",
+          "sub_category": "International",
+          "sku": "RMT-INTL-1500",
+          "recipient": {
+            "account_number": "113401075211",
+            "routing_number": "345342175111",
+            "bank_code": "ABCD-UYTD-34567000",
+            "email": "recipient.user@example.com",
+            "created_at": 1669460400,
+            "updated_at": 1700996400,
+            "self_recipient": false
+          }
+        }
+      },
+      "line_item": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/physical_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/digital_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/travel_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/rides_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/events_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/accommodation_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/remittance_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/crypto_line_item"
+          },
+          {
+            "$ref": "#/components/schemas/giftcard_line_item"
+          }
+        ]
+      },
+      "recipient_ACH": {
+        "type": "object",
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "description": "Required for bank deposits. The full account number.",
+            "example": "113401075211"
+          },
+          "routing_number": {
+            "type": "string",
+            "description": "Required for bank deposits. The routing number (ABA) of the customer's bank.",
+            "example": "345342175111"
+          },
+          "bank_code": {
+            "type": "string",
+            "description": "Bank code.",
+            "example": "ABCD-UYTD-34567000"
+          },
+          "email": {
+            "type": "string",
+            "description": "Recipient email address"
+          },
+          "created_at": {
+            "type": "number",
+            "format": "date-time",
+            "description": "Time when recipient was added to customer's account."
+          },
+          "updated_at": {
+            "type": "number",
+            "format": "date-time",
+            "description": "Time when recipient details were last updated."
+          },
+          "self_recipient": {
+            "type": "boolean",
+            "example": false,
+            "description": "Indication if the money are transfered to the account owner."
+          }
+        },
+        "required": [
+          "account_number",
+          "routing_number"
+        ],
+        "example": {
+          "account_number": "113401075211",
+          "routing_number": "345342175111",
+          "self_recipient": false,
+          "bank_code": "ABCD-UYTD-34567000",
+          "email": "recipient.user@example.com",
+          "created_at": 1669460400,
+          "updated_at": 1700996400
+        }
+      },
+      "discount_code": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "description": "The amount of the discount."
+          },
+          "code": {
+            "type": "string",
+            "description": "The code of the discount."
+          }
+        },
+        "required": [
+          "amount"
+        ],
+        "example": {
+          "amount": 10,
+          "code": "TENOFF"
+        }
+      },
+      "shipping_line": {
+        "type": "object",
+        "description": "Details the shipping methods used to deliver the items.\n* Please note That this can either be an array or a standalone object",
+        "properties": {
+          "price": {
+            "type": "number",
+            "format": "float",
+            "description": "The price of the shipping method. Should be defaulted to 0 for money remittance."
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the shipping method. Should be \"Bank Deposit\" for money remittance."
+          },
+          "code": {
+            "type": "string",
+            "description": "Code of the shipping method."
+          },
+          "company": {
+            "type": "string",
+            "description": "The name of the shipping company."
+          },
+          "shipping_address_id": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** unique ID, is required in case of multiple shipping addresses."
+          }
+        },
+        "required": [
+          "price",
+          "title"
+        ],
+        "example": {
+          "price": 15,
+          "title": "Standard Shipping",
+          "code": "STRD_05",
+          "company": "FedEx",
+          "shipping_address_id": "addr_ship_01"
+        }
+      },
+      "client_details": {
+        "type": "object",
+        "properties": {
+          "user_agent": {
+            "type": "string",
+            "description": "The full User-Agent sent from the client."
+          },
+          "accept_language": {
+            "type": "string",
+            "description": "List of two-letter language codes sent from the client."
+          }
+        },
+        "required": [
+          "user_agent",
+          "accept_language"
+        ],
+        "example": {
+          "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36",
+          "accept_language": "en-US,en;q=0.9,he-IL;q=0.8"
+        }
+      },
+      "decision_details": {
+        "type": "object",
+        "properties": {
+          "external_status": {
+            "$ref": "#/components/schemas/decision_type",
+            "description": "The external status, valid values are:\n* approved: The order was approved by the merchant or the gateway.\n* declined: Despite Riskified recommendation to approve, the merchant decided overturn the decision and decline it.\n* cancelled: The order was cancelled due to non-fraud reasons, such as out of stock.\n* declined_fraud: The order was not fulfilled due to fraud related reasons.\n* declined_business: The order was declined by the merchant's business reasons.",
+            "example": "approved"
+          },
+          "decided_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-19T16:15:00Z",
+            "description": "When the order was decided, ISO8601 format."
+          },
+          "reason": {
+            "type": "string",
+            "example": "Approved by automated risk system",
+            "description": "A reason for the decision."
+          },
+          "amount": {
+            "type": "number",
+            "format": "float",
+            "example": 400,
+            "description": "The amount the decision is relevant on."
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD",
+            "description": "The three letter code (ISO 4217) for the currency used for the payment."
+          },
+          "notes": {
+            "type": "string",
+            "example": "No suspicious activity detected; customer history clear.",
+            "description": "Free text for describing the decision."
+          }
+        },
+        "required": [
+          "external_status"
+        ],
+        "example": {
+          "external_status": "approved",
+          "decided_at": "2025-11-19T16:15:00Z",
+          "reason": "Approved by automated risk system",
+          "amount": 400,
+          "currency": "USD",
+          "notes": "No suspicious activity detected; customer history clear."
+        }
+      },
+      "decision_type": {
+        "type": "string",
+        "enum": [
+          "approved",
+          "declined",
+          "cancelled",
+          "declined_fraud",
+          "declined_business"
+        ]
+      },
+      "authorization_error": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the checkout was denied by the payment gateway."
+          },
+          "error_code": {
+            "type": "string",
+            "description": "The authorization error code received from the payment gateway."
+          },
+          "drop_off": {
+            "type": "boolean",
+            "description": "An indication for a customer drop off during a checkout flow. e.g abandoned cart"
+          },
+          "message": {
+            "type": "string",
+            "description": "The authorization response description. Please be sure to send the raw values received from the payment gateway. Examples include: incorrect_number, invalid_number, invalid_expiry_date, invalid_cvc, expired_card, incorrect_cvc, incorrect_zip, incorrect_address, card_declined, processing_error, call_issuer, pick_up_card, risk_system_declined"
+          }
+        },
+        "required": [
+          "created_at",
+          "error_code",
+          "message"
+        ],
+        "example": {
+          "created_at": "2025-11-19T10:30:00Z",
+          "error_code": "GATEWAY_CODE_1001",
+          "message": "card_declined",
+          "drop_off": true
+        }
+      },
+      "passenger": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the passenger."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name (surname) of the person associated with the address."
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of birth for the passenger. Date part only (ISO8601)."
+          },
+          "nationality_code": {
+            "type": "string",
+            "description": "The 2 letter country code (ISO 3166-1 alpha-2) matching the passenger's nationality country."
+          },
+          "document_number": {
+            "type": "string",
+            "description": "The used document (Passport,ID,Visa) identification number."
+          },
+          "document_type": {
+            "type": "string",
+            "description": "The document type used for identification of the passenger (one of [Passport,ID,Visa])."
+          },
+          "insurance_type": {
+            "type": "string",
+            "description": "The passenger's insurance type/plan for his trip."
+          },
+          "insurance_price": {
+            "type": "number",
+            "format": "float",
+            "description": "The passenger's insurance plan price matching the order currency."
+          },
+          "document_issue_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The issuing date of the passenger document (date part only using ISO8601 format)."
+          },
+          "document_expiration_date": {
+            "type": "string",
+            "format": "date",
+            "description": "The expiration date of the passenger document (date part only using ISO8601 format)."
+          },
+          "passenger_type": {
+            "type": "string",
+            "description": "Type of passenger - (Senior/Adult/Child)."
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "date_of_birth",
+          "nationality_code"
+        ],
+        "example": {
+          "first_name": "John",
+          "last_name": "Doe",
+          "date_of_birth": "2015-07-28",
+          "nationality_code": "US",
+          "passenger_type": "Child",
+          "document_number": "P12345678",
+          "document_type": "Passport",
+          "insurance_type": "Basic Travel",
+          "insurance_price": 25,
+          "document_issue_date": "2020-03-15",
+          "document_expiration_date": "2030-03-15"
+        }
+      },
+      "vendor_line_item": {
+        "type": "object",
+        "properties": {
+          "vendor_id": {
+            "type": "string",
+            "example": "VNDR7890",
+            "description": "A unique id representing the selling vendor."
+          },
+          "vendor_name": {
+            "type": "string",
+            "example": "Vendor",
+            "description": "The name of the selling vendor. Examples of affiliated partners include: metasearch engine, white label partner."
+          }
+        }
+      },
+      "seller": {
+        "type": "object",
+        "properties": {
+          "customer": {
+            "type": "object",
+            "$ref": "#/components/schemas/customer",
+            "description": "A Customer object representing the seller."
+          },
+          "correspondence": {
+            "type": "integer",
+            "description": "Number of messages sent between the customer and the seller."
+          },
+          "price_negotiated": {
+            "type": "boolean",
+            "description": "True if the seller and customer negotiated the price between themselves."
+          },
+          "starting_price": {
+            "type": "string",
+            "format": "float",
+            "description": "The original price of the order, prior to any negotiation between seller and customer."
+          }
+        },
+        "required": [
+          "customer"
+        ],
+        "example": {
+          "customer": {
+            "email": "seller.jane@marketplace.com",
+            "first_name": "Jane",
+            "last_name": "Seller",
+            "id": "seller_f4k6g8",
+            "created_at": "2020-05-10T09:00:00Z"
+          },
+          "correspondence": 12,
+          "price_negotiated": true,
+          "starting_price": "175.00"
+        }
+      },
+      "social_details": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string",
+            "description": "The name of the social network."
+          },
+          "public_username": {
+            "type": "string",
+            "description": "The customer's public username."
+          },
+          "id": {
+            "type": "string",
+            "description": "The customer's profile id."
+          },
+          "account_url": {
+            "type": "string",
+            "description": "Direct URL to the customer's profile page on the social network."
+          },
+          "community_score": {
+            "type": "integer",
+            "description": "Aggregate community score for the customer"
+          },
+          "profile_picture": {
+            "type": "string",
+            "description": "URL of the customer's profile picture."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address registered on the social network."
+          },
+          "bio": {
+            "type": "string",
+            "description": "Short biography of the customer on the social network."
+          },
+          "following": {
+            "type": "integer",
+            "description": "Number of users following the customer on the social network."
+          },
+          "followed": {
+            "type": "integer",
+            "description": "Number of users followed by the customer on the social network."
+          },
+          "posts": {
+            "type": "integer",
+            "description": "Number of posts published by the customer on the social network."
+          },
+          "auth_token": {
+            "type": "string",
+            "description": "The authentication token of the user."
+          },
+          "social_data": {
+            "type": "object",
+            "description": "The user data from the network."
+          }
+        },
+        "example": {
+          "network": "facebook",
+          "public_username": "john_test_official",
+          "id": "fb_profile_10123456789",
+          "account_url": "https://www.facebook.com/john_test_official",
+          "community_score": 85,
+          "profile_picture": "https://img.social.com/p/10123456789.jpg",
+          "email": "john.doe.social@testmail.com",
+          "bio": "Software engineer, based in NYC. Love hiking and code.",
+          "following": 450,
+          "followed": 320,
+          "posts": 155,
+          "auth_token": "ABC-123-XYZ-789-TOKEN",
+          "social_data": {
+            "join_date": "2015-08-01",
+            "verified_badge": true
+          }
+        }
+      },
+      "recipient": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Recipient email address"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Recipient phone number"
+          },
+          "social": {
+            "$ref": "#/components/schemas/social_details",
+            "description": "Recipient's known social identity."
+          },
+          "account_number": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for ACH transactions. The full account number."
+          },
+          "routing_number": {
+            "type": "string",
+            "description": "**(Conditional Requirement)** Required for ACH transactions. The routing number (ABA) of the customer's bank."
+          },
+          "crypto_wallet": {
+            "$ref": "#/components/schemas/crypto_wallet",
+            "description": "The recipient crypto wallet receiving the line item."
+          }
+        },
+        "required": [
+          "email"
+        ],
+        "example": {
+          "email": "recipient.user@example.com",
+          "phone": "+15551234567",
+          "social": {
+            "network": "facebook",
+            "id": "fb_recipient_9988",
+            "public_username": "recip_user_name",
+            "community_score": 75
+          },
+          "account_number": null,
+          "routing_number": null,
+          "crypto_wallet": {
+            "address": "0xc0ffee254729296a45a3885639AC7E10F9d54979",
+            "network": "ethereum",
+            "type": "primary"
+          }
+        }
+      },
+      "authentication_result": {
+        "type": "object",
+        "properties": {
+          "eci": {
+            "type": "string",
+            "description": "The Electronic Commerce Indicator (ECI), is a number that indicates authentication result and liability shift. For every transaction that went through a 3DS flow attempt - you must include the ECI value as recieved from the gateway. In case there was no 3DS attempt, you should not include ECI value as part of the payload.",
+            "enum": [
+              "00",
+              "01",
+              "02",
+              "05",
+              "06",
+              "07"
+            ]
+          },
+          "liability_shift": {
+            "type": "boolean",
+            "description": "A field indicating if the liability for the transaction was shifted to the Issuer."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time of the authentication."
+          },
+          "cavv": {
+            "type": "string",
+            "description": "Cardholder Authentication Verification Value (cavv) response codes, indicating authentication result and reason."
+          },
+          "trans_status": {
+            "type": "string",
+            "description": "The transStatus value as defined in the 3D Secure 2 specification.",
+            "enum": [
+              "Y",
+              "N",
+              "U",
+              "A",
+              "C",
+              "R",
+              "D",
+              "I",
+              "S"
+            ]
+          },
+          "three_d_challenge": {
+            "type": "boolean",
+            "description": "An indication on whether the user went through a 3DS challenge"
+          },
+          "TRA_exemption": {
+            "type": "boolean",
+            "description": "An indication on whether the order received a TRA exemption"
+          },
+          "trans_status_reason": {
+            "type": "string",
+            "description": "The transStatusReason value as defined in the 3D Secure 2 specification.",
+            "enum": [
+              "01",
+              "02",
+              "03",
+              "04",
+              "05",
+              "06",
+              "07",
+              "08",
+              "09",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18",
+              "19",
+              "20",
+              "21",
+              "22",
+              "23",
+              "24",
+              "25",
+              "26",
+              "27",
+              "80",
+              "99"
+            ]
+          }
+        },
+        "required": [
+          "eci",
+          "liability_shift",
+          "three_d_challenge",
+          "created_at"
+        ],
+        "example": {
+          "eci": "05",
+          "liability_shift": true,
+          "created_at": "2025-11-19T16:00:00Z",
+          "cavv": "MDAwMDAwMDAwMDE2NTE2MzU5NDY3",
+          "trans_status": "Y",
+          "three_d_challenge": false,
+          "TRA_exemption": true,
+          "trans_status_reason": "01"
+        }
+      },
+      "decide_response_approve": {
+        "type": "object",
+        "description": "Approved Decide Response",
+        "properties": {
+          "order": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID of order being acted upon. \n\n Note: This value should be later reflected also as order.id on the subsequent calls",
+                "example": "53953819"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "approved"
+                ],
+                "description": "Textual status describing the result of Riskified analysis. \n\n Always 'approve' for approved orders. Order is approved and guaranteed by Riskified"
+              },
+              "description": {
+                "type": "string",
+                "description": "Additional context on Riskified decision."
+              },
+              "old_status": {
+                "type": "string",
+                "description": "Old order status"
+              },
+              "category": {
+                "type": "string",
+                "description": "For ACH flows only, if applicable. Indication of instant fulfillment.",
+                "enum": [
+                  "Strong approve"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "description",
+              "old_status"
+            ]
+          }
+        }
+      },
+      "decide_response_decline": {
+        "type": "object",
+        "description": "Decline Decide Response",
+        "properties": {
+          "order": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID of order being acted upon. \n\n Note: This value should be later reflected also as order.id on the subsequent calls",
+                "example": "53953819"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "declined"
+                ],
+                "description": "Textual status describing the result of Riskified analysis. \n\n Always 'declined' for declined orders. Order is declined and not guaranteed"
+              },
+              "description": {
+                "type": "string",
+                "description": "Additional context on Riskified decision."
+              },
+              "old_status": {
+                "type": "string",
+                "description": "Old order status"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "Considerable Risk",
+                  "High-Risk",
+                  "Fraudulent",
+                  "Business Policy",
+                  "Technical Issue"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "description",
+              "old_status",
+              "category"
+            ]
+          }
+        }
+      },
+      "decide_response_captured": {
+        "type": "object",
+        "description": "Captured Decide Response",
+        "properties": {
+          "order": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID of order being acted upon. \n\n Note: This value should be later reflected also as order.id on the subsequent calls",
+                "example": "53953819"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "captured"
+                ],
+                "description": "Textual status describing the result of Riskified analysis. \n\n Always 'captured' for captured orders."
+              },
+              "description": {
+                "type": "string",
+                "description": "Additional context on Riskified decision."
+              }
+            },
+            "required": [
+              "id",
+              "status",
+              "description"
+            ]
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "code": {
+            "type": "string",
+            "description": "Error code"
+          },
+          "details": {
+            "type": "string",
+            "description": "Error details"
+          }
+        }
+      },
+      "error_response": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/error"
+          }
+        }
+      }
+    },
+    "examples": {
+      "physical_digital_CC_order": {
+        "description": "Order placed with a credit card having both physical and digital items.",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 410,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "authorize_net",
+            "device_id": "abcde",
+            "vendor_name": "Vendor",
+            "charge_free_payment_details": [
+              {
+                "gateway": "giftcard",
+                "amount": 50
+              }
+            ],
+            "shipping_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "customer": {
+              "account_type": "registered",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "id": "d8fjv234",
+              "last_name": "Test",
+              "phone": "+143873984567290",
+              "updated_at": "2019-02-20T15:09:00Z"
+            },
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "line_items": [
+              {
+                "brand": "Amazon",
+                "category": "Women",
+                "price": 100,
+                "product_id": "30F1G9HS7B",
+                "product_type": "physical",
+                "quantity": 2,
+                "requires_shipping": true,
+                "sku": "dfn239mndf9",
+                "sub_category": "Handbags",
+                "title": "Large Logo Belted Satchel"
+              },
+              {
+                "brand": "Complete Cover",
+                "category": "On Sale",
+                "price": 20,
+                "product_id": "ABC123",
+                "product_type": "physical",
+                "quantity": 1,
+                "requires_shipping": true,
+                "sku": "sj18fn402",
+                "sub_category": "Super Sale",
+                "title": "Tempered Glass Guard for Apple iPhone X"
+              },
+              {
+                "brand": "Apple",
+                "category": "Gift Card",
+                "price": 200,
+                "product_id": "51217",
+                "product_type": "digital",
+                "quantity": 1,
+                "requires_shipping": false,
+                "sku": "69536334",
+                "sub_category": "Digital Gift Card",
+                "title": "Gift Card",
+                "sender_name": "Jane Doe",
+                "message": "This is a test.",
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "11234567890"
+                }
+              }
+            ],
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "card",
+                "avs_result_code": "X",
+                "cvv_result_code": "M",
+                "credit_card_bin": "482932",
+                "credit_card_number": "9876",
+                "credit_card_company": "Visa",
+                "authorization_id": "12345"
+              }
+            ],
+            "shipping_lines": [
+              {
+                "code": "STRD",
+                "price": 0,
+                "title": "standard"
+              }
+            ]
+          }
+        }
+      },
+      "crypto_good_credit_card": {
+        "description": "Post authorization digital order with a crypto item, credit card payment.",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 410,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "authorize_net",
+            "device_id": "abcde",
+            "vendor_name": "Vendor",
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "customer": {
+              "account_type": "registered",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "id": "d8fjv234",
+              "last_name": "Test",
+              "phone": "+143873984567290",
+              "updated_at": "2019-02-20T15:09:00Z",
+              "date_of_birth": "2000-02-21T00:00:00Z",
+              "kyc_verified": true,
+              "kyc_details": [
+                {
+                  "vendor_name": "socure",
+                  "update_at": "2022-02-20T15:09:00Z",
+                  "kyc_verified": true,
+                  "kyc_type": "strong"
+                }
+              ],
+              "crypto_wallets": [
+                {
+                  "address": "0xc0ffee254729296a45a3885639AC7E10F9d54979",
+                  "network": "ethereum",
+                  "type": "primary"
+                }
+              ]
+            },
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "line_items": [
+              {
+                "title": "ETH",
+                "quantity": 1,
+                "price": 420,
+                "category": "one_time_order",
+                "product_type": "crypto",
+                "product_id": "Ethereum",
+                "requires_shipping": false,
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "12103940394",
+                  "crypto_wallet": {
+                    "address": "0xc0ffee254729296a45a3885639AC7E10F9d54979",
+                    "network": "ethereum",
+                    "type": "primary"
+                  }
+                }
+              }
+            ],
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "card",
+                "avs_result_code": "X",
+                "cvv_result_code": "M",
+                "credit_card_bin": "482932",
+                "credit_card_number": "9876",
+                "credit_card_company": "Visa",
+                "authorization_id": "12345"
+              }
+            ]
+          }
+        }
+      },
+      "money_transfer_ACH_payment": {
+        "description": "Money Transfer ACH order.",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 1491,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "ACH",
+            "device_id": "abcde",
+            "vendor_name": "Vendor",
+            "charge_free_payment_details": [
+              {
+                "gateway": "giftcard",
+                "amount": 50
+              }
+            ],
+            "shipping_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "customer": {
+              "account_type": "registered",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "id": "d8fjv234",
+              "last_name": "Test",
+              "phone": "+143873984567290",
+              "updated_at": "2019-02-20T15:09:00Z",
+              "date_of_birth": "2001-01-01",
+              "orders_count": 5,
+              "kyc_verified": true,
+              "kyc_details": [
+                {
+                  "vendor_name": "Socure",
+                  "update_at": "2025-03-11T09:42:11Z",
+                  "kyc_verified": true,
+                  "kyc_type": "soft"
+                }
+              ]
+            },
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "line_items": [
+              {
+                "title": "Bank Account Transfer",
+                "category": "ACH",
+                "quantity": 1,
+                "requires_shipping": true,
+                "product_type": "remittance",
+                "price": 1500,
+                "product_id": "2327384328722094",
+                "recipient": {
+                  "account_number": "12345678901234",
+                  "routing_number": "021000021",
+                  "email": "recipient.user@example.com",
+                  "self_recipient": false
+                }
+              }
+            ],
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "ach",
+                "account_number": "482058180408",
+                "routing_number": "134000358",
+                "account_balance": {
+                  "available_balance": 2450,
+                  "service_name": "plaid",
+                  "updated_at": "2025-03-11T09:42:11Z",
+                  "currency_code": "USD"
+                },
+                "account_identity": {
+                  "names": [
+                    "John Test"
+                  ],
+                  "addresses": [
+                    {
+                      "address1": "123 Smart St",
+                      "city": "Los Angeles",
+                      "province_code": "CA",
+                      "zip": "90210",
+                      "country_code": "US"
+                    }
+                  ],
+                  "phone_numbers": [
+                    "+143873984567290"
+                  ],
+                  "emails": [
+                    "test@mailmail.com"
+                  ]
+                }
+              }
+            ],
+            "shipping_lines": [
+              {
+                "price": 1,
+                "title": "Money Transfer"
+              }
+            ]
+          }
+        }
+      },
+      "accommodation_CC_order": {
+        "description": "Accommodation order placed with a credit card",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 160,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "authorize_net",
+            "vendor_name": "Vendor",
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "customer": {
+              "account_type": "registered",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "id": "d8fjv234",
+              "last_name": "Test",
+              "phone": "+143873984567290"
+            },
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "line_items": [
+              {
+                "accommodation_type": "Hotel",
+                "brand": "Great Hotel Group",
+                "cancellation_policy": "none",
+                "category": "Hotel",
+                "check_in_date": "2022-04-14T14:00:00Z",
+                "check_out_date": "2022-04-17T11:00:00Z",
+                "city": "Riviera Maya",
+                "country_code": "MX",
+                "number_of_guests": 2,
+                "price": 150,
+                "product_id": "12345",
+                "product_type": "accommodation",
+                "quantity": 1,
+                "rating": "4",
+                "requires_shipping": false,
+                "room_type": "Honeymoon Suite",
+                "sku": "123456789",
+                "sub_category": "Hotel Reservations",
+                "title": "Great Riviera Hotel"
+              }
+            ],
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "card",
+                "avs_result_code": "X",
+                "cvv_result_code": "M",
+                "credit_card_bin": "482932",
+                "credit_card_number": "9876",
+                "credit_card_company": "Visa",
+                "authorization_id": "12345"
+              }
+            ],
+            "passengers": [
+              {
+                "first_name": "John",
+                "last_name": "Doe",
+                "date_of_birth": "2015-07-28",
+                "nationality_code": "US"
+              },
+              {
+                "first_name": "Jane",
+                "last_name": "Doe",
+                "date_of_birth": "2014-06-15",
+                "nationality_code": "US"
+              }
+            ]
+          }
+        }
+      },
+      "travel_digital_good_paypal_order": {
+        "description": "Travel and Digital Good order through Paypal",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 160,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "PayPal",
+            "device_id": "abcde",
+            "vendor_name": "Vendor",
+            "charge_free_payment_details": [
+              {
+                "gateway": "giftcard",
+                "amount": 50
+              }
+            ],
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "customer": {
+              "account_type": "guest",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "last_name": "Test",
+              "phone": "+143873984567290",
+              "updated_at": "2019-02-20T15:09:00Z"
+            },
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "line_items": [
+              {
+                "brand": "European Air",
+                "category": "Flight",
+                "price": 150,
+                "product_id": "12345",
+                "product_type": "travel",
+                "quantity": 1,
+                "requires_shipping": false,
+                "sku": "123456789",
+                "sub_category": "Plane Tickets",
+                "title": "LIS|MAD",
+                "leg_id": "101",
+                "departure_city": "Lisbon",
+                "departure_country_code": "PT",
+                "arrival_city": "Madrid",
+                "arrival_country_code": "ES",
+                "departure_date": "2022-03-20T18:40Z",
+                "carrier_code": "UX",
+                "route_index": 1,
+                "leg_index": 1,
+                "transport_method": "plane",
+                "departure_port_code": "LIS",
+                "arrival_port_code": "MAD",
+                "arrival_date": "2022-03-20T21:00Z",
+                "carrier_name": "European Air",
+                "ticket_class": "A"
+              },
+              {
+                "brand": "Insurance",
+                "category": "Trip Insurance",
+                "price": 20,
+                "product_id": "51217",
+                "product_type": "digital",
+                "quantity": 1,
+                "requires_shipping": false,
+                "sku": "69536334",
+                "sub_category": "Digital Trip Insurance",
+                "title": "Trip Insurance",
+                "sender_name": "Jane Doe",
+                "message": "This is a test.",
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "11234567890"
+                }
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "paypal",
+                "payer_email": "johndoe123@gmail.com",
+                "authorization_id": "12345",
+                "protection_eligibility": "Eligible",
+                "payment_status": "Completed",
+                "pending_reason": "none"
+              }
+            ],
+            "passengers": [
+              {
+                "first_name": "John",
+                "last_name": "Doe",
+                "date_of_birth": "2015-07-28",
+                "nationality_code": "US",
+                "passenger_type": "Adult"
+              }
+            ]
+          }
+        }
+      },
+      "event_digital_good_CC_post_order": {
+        "description": "Post authorization event and digital good order with credit card payment",
+        "value": {
+          "order": {
+            "id": "12345",
+            "source": "desktop_web",
+            "total_price": 390,
+            "total_discounts": 10,
+            "updated_at": "2022-02-20T15:09:00Z",
+            "browser_ip": "183.34.15.26",
+            "cart_token": "dsh1298sdfvjn123487",
+            "created_at": "2022-02-20T15:09:00Z",
+            "currency": "USD",
+            "email": "test@mailmail.com",
+            "gateway": "authorize_net",
+            "device_id": "ABC123",
+            "billing_address": [
+              {
+                "address1": "123 smart st",
+                "city": "Los Angeles",
+                "company": "My Company",
+                "country": "USA",
+                "country_code": "US",
+                "first_name": "John",
+                "last_name": "Test",
+                "phone": "+143873984567290",
+                "province": "California",
+                "province_code": "CA",
+                "zip": "90210"
+              }
+            ],
+            "charge_free_payment_details": [
+              {
+                "gateway": "giftcard",
+                "amount": 50
+              }
+            ],
+            "client_details": {
+              "accept_language": "en-US",
+              "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
+            },
+            "customer": {
+              "account_type": "registered",
+              "created_at": "2019-02-20T15:09:00Z",
+              "email": "test@mailmail.com",
+              "first_name": "John",
+              "id": "d8fjv234",
+              "last_name": "Test",
+              "phone": "+143873984567290",
+              "updated_at": "2019-02-20T15:09:00Z"
+            },
+            "discount_codes": [
+              {
+                "amount": 10,
+                "code": "TENOFF"
+              }
+            ],
+            "line_items": [
+              {
+                "brand": "Ticket Seller",
+                "category": "Concerts",
+                "city": "Dallas",
+                "country_code": "US",
+                "event_date": "2022-05-07T00:00:00Z",
+                "price": 150,
+                "product_id": "12345",
+                "product_type": "event",
+                "quantity": 1,
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "11234567890"
+                },
+                "requires_shipping": false,
+                "section": "general",
+                "sku": "123456789",
+                "sub_category": "Rock",
+                "title": "Rock Band Concert",
+                "seller": {
+                  "customer": {
+                    "email": "test@mailmail.com",
+                    "first_name": "John",
+                    "last_name": "Doe",
+                    "id": "d8fjv234",
+                    "created_at": "2019-02-20T15:09:00Z",
+                    "updated_at": "2019-02-20T15:09:00Z",
+                    "total_spent": 1000,
+                    "orders_count": 10,
+                    "account_type": "registered",
+                    "phone": "+143873984567290"
+                  },
+                  "correspondence": 5,
+                  "price_negotiated": false,
+                  "starting_price": 150
+                }
+              },
+              {
+                "brand": "Ticket Seller",
+                "category": "Insurance",
+                "price": 200,
+                "product_id": "51217",
+                "product_type": "digital",
+                "quantity": 1,
+                "requires_shipping": false,
+                "sku": "69536334",
+                "sub_category": "Event Insurance",
+                "title": "Concert Insurance",
+                "recipient": {
+                  "email": "test@mailmail.com",
+                  "phone": "11234567890"
+                }
+              }
+            ],
+            "payment_details": [
+              {
+                "payment_type": "card",
+                "avs_result_code": "X",
+                "cvv_result_code": "M",
+                "credit_card_bin": "482932",
+                "credit_card_number": "9876",
+                "credit_card_company": "Visa",
+                "authorization_id": "12345"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "parameters": {
+      "RiskifiedShopDomain": {
+        "name": "x-riskified-shop-domain",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "merchant.example.com"
+        },
+        "description": "The merchant shop domain registered with Riskified."
+      },
+      "RiskifiedSignature": {
+        "name": "x-riskified-hmac-sha256",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "b1946ac92492d2347c6235b4d2611184"
+        },
+        "description": "Verification hash for the Request.\nGenerated by performing an SHA256 encryption on the request's POST body and calculating the HMAC hash of the result using your Riskified authentication token.\nPlease use UTF8 encoding."
+      },
+      "ContentType": {
+        "name": "Content-Type",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/json"
+          ]
+        },
+        "description": "As payloads are sent to Riskified in JSON format, value should be: `application/json`"
+      },
+      "Accept": {
+        "name": "accept",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "application/vnd.riskified.com; version=2"
+          ]
+        },
+        "description": "Specify the version of the API to target. For example, to target the latest version of the API, use the following: `application/vnd.riskified.com; version=2`"
+      }
+    }
+  }
+}

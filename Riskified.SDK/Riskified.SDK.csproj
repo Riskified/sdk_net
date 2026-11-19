@@ -9,7 +9,7 @@
     
     <!-- NuGet Package Properties -->
     <PackageId>Riskified.SDK</PackageId>
-    <Version>5.6.0</Version>
+    <Version>5.6.1</Version>
     <Authors>Riskified</Authors>
     <Company>Riskified</Company>
     <Product>Riskified.SDK</Product>
@@ -21,6 +21,10 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <None Include="../README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Riskified.SDK.Tests" />
   </ItemGroup>
 
 </Project>

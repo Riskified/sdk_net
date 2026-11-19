@@ -34,6 +34,18 @@ namespace Riskified.SDK.Utils
         }
 
         /// <summary>
+        /// The settings used to serialize every request body sent to Riskified
+        /// </summary>
+        internal static JsonSerializerSettings CreateSerializerSettings()
+        {
+            return new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
+            };
+        }
+
+        /// <summary>
         /// Sends an HTTP Post request with the json-serialized data of jsonObj as body to the received url (Riskified server),
         /// blocks and returns after successful response from server (200-OK)
         /// Throws exceptions on network errors or serialization problems
@@ -87,14 +99,7 @@ namespace Riskified.SDK.Utils
             string jsonStr;
             try
             {
-                //jsonStr = JsonConvert.SerializeObject(jsonObj,new JsonSerializerSettings{NullValueHandling = NullValueHandling.Ignore});
-                var settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    Converters = new List<JsonConverter> { new StringEnumConverter() }  // Adding the StringEnumConverter
-                };
-
-                jsonStr = JsonConvert.SerializeObject(jsonObj, settings);
+                jsonStr = JsonConvert.SerializeObject(jsonObj, CreateSerializerSettings());
             }
             catch (Exception e)
             {
