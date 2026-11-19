@@ -47,7 +47,7 @@ namespace Riskified.SDK.Utils
             var settings = new JsonSerializerSettings
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Converters = new List<JsonConverter> { new PaymentTypeConverter(), new StringEnumConverter() }
+                Converters = new List<JsonConverter> { new StringEnumConverter() }
             };
 
             if (wireOptions != null)

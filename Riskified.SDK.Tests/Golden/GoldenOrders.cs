@@ -206,7 +206,7 @@ namespace Riskified.SDK.Tests.Golden
             // New payment types go last, so the base sample's payment_details indexes stay the same.
             var order = Order();
             order.Id = "golden-5701";
-            order.PaymentDetails = [card, paypal, WalletPaymentDetails(), bankWire, buyNowPayLater, new NonChbPaymentDetails(PaymentType.GiftCard)];
+            order.PaymentDetails = [card, paypal, WalletPaymentDetails(), bankWire, buyNowPayLater];
 
             // The same Customer instance is also the first line item's seller customer.
             var customer = order.Customer;

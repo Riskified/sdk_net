@@ -59,11 +59,11 @@ namespace Riskified.SDK.Model.OrderElements
             PickupDate = pickupDate;
             PickupLatitude = pickupLatitude;
             PickupLongitude = pickupLongitude;
-            SingleOrArray.SetFirst(_pickupAddresses, pickupAddress);
+            PickupAddress = pickupAddress;
             DropoffDate = dropoffDate;
             DropoffLatitude = dropoffLatitude;
             DropoffLongitude = dropoffLongitude;
-            SingleOrArray.SetFirst(_dropoffAddresses, dropoffAddress);
+            DropoffAddress = dropoffAddress;
             TransportMethod = transportMethod;
             PriceBy = priceBy;
             VehicleClass = vehicleClass;
@@ -92,41 +92,10 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "pickup_longitude")]
         public float? PickupLongitude { get; set; }
 
-        // pickup_address / dropoff_address are documented as arrays. The single and array properties share
-        // one list each, and the private *Wire properties send it (see OrderBase.BillingAddress).
-        private readonly List<BasicAddress> _pickupAddresses = new List<BasicAddress>();
-        private readonly List<BasicAddress> _dropoffAddresses = new List<BasicAddress>();
-        private bool _legacyWireFormat;
-
-        /// <summary>
-        /// The pickup address: the first of <see cref="PickupAddresses"/>. Setting it replaces the first
-        /// pickup address; null removes it.
-        /// </summary>
-        [JsonIgnore]
-        [Obsolete("Use PickupAddresses. PickupAddress is the first pickup address; it's removed in 6.0.0.")]
-        public BasicAddress PickupAddress
-        {
-            get { return SingleOrArray.First(_pickupAddresses); }
-            set { SingleOrArray.SetFirst(_pickupAddresses, value); }
-        }
-
-        /// <summary>
-        /// The pickup addresses. The getter returns a copy; assign a new array to change them.
-        /// </summary>
-        [JsonIgnore]
-        public BasicAddress[] PickupAddresses
-        {
-            get { return SingleOrArray.ToArray(_pickupAddresses); }
-            set { SingleOrArray.ReplaceAll(_pickupAddresses, value); }
-        }
-
-        // The compatibility switch sends the 5.6.x single object.
         [JsonProperty(PropertyName = "pickup_address")]
-        private object PickupAddressWire
-        {
-            get { return SingleOrArray.ToWire(_pickupAddresses, _legacyWireFormat); }
-            set { SingleOrArray.FromWire(_pickupAddresses, value); }
-        }
+        public BasicAddress PickupAddress { get; set; }
+
+        private bool _legacyWireFormat;
 
         [JsonProperty(PropertyName = "dropoff_date")]
         public DateTime? DropoffDate { get; set; }
@@ -152,34 +121,8 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "dropoff_longitude")]
         public float? DropoffLongitude { get; set; } 
 
-        /// <summary>
-        /// The drop-off address: the first of <see cref="DropoffAddresses"/>. Setting it replaces the first
-        /// drop-off address; null removes it.
-        /// </summary>
-        [JsonIgnore]
-        [Obsolete("Use DropoffAddresses. DropoffAddress is the first drop-off address; it's removed in 6.0.0.")]
-        public BasicAddress DropoffAddress
-        {
-            get { return SingleOrArray.First(_dropoffAddresses); }
-            set { SingleOrArray.SetFirst(_dropoffAddresses, value); }
-        }
-
-        /// <summary>
-        /// The drop-off addresses. The getter returns a copy; assign a new array to change them.
-        /// </summary>
-        [JsonIgnore]
-        public BasicAddress[] DropoffAddresses
-        {
-            get { return SingleOrArray.ToArray(_dropoffAddresses); }
-            set { SingleOrArray.ReplaceAll(_dropoffAddresses, value); }
-        }
-
         [JsonProperty(PropertyName = "dropoff_address")]
-        private object DropoffAddressWire
-        {
-            get { return SingleOrArray.ToWire(_dropoffAddresses, _legacyWireFormat); }
-            set { SingleOrArray.FromWire(_dropoffAddresses, value); }
-        }
+        public BasicAddress DropoffAddress { get; set; } 
 
         [OnSerializing]
         private void OnSerializingRideTicketLineItem(StreamingContext context)

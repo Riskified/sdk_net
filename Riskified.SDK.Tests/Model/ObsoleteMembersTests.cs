@@ -18,8 +18,6 @@ namespace Riskified.SDK.Tests.Model
             { typeof(OrderBase), nameof(OrderBase.BillingAddress), nameof(OrderBase.BillingAddresses) },
             { typeof(OrderBase), nameof(OrderBase.ShippingAddress), nameof(OrderBase.ShippingAddresses) },
             { typeof(OrderBase), nameof(OrderBase.ChargeFreePaymentDetails), nameof(OrderBase.ChargeFreePaymentDetailsList) },
-            { typeof(RideTicketLineItem), nameof(RideTicketLineItem.PickupAddress), nameof(RideTicketLineItem.PickupAddresses) },
-            { typeof(RideTicketLineItem), nameof(RideTicketLineItem.DropoffAddress), nameof(RideTicketLineItem.DropoffAddresses) },
             { typeof(RideTicketLineItem), nameof(RideTicketLineItem.AuthorizedPayments), nameof(RideTicketLineItem.AuthorizedPayment) },
             { typeof(OrderCheckoutDenied), nameof(OrderCheckoutDenied.AuthorizationError), "payment details" },
             { typeof(PaypalPaymentDetails), nameof(PaypalPaymentDetails.AuthorizationResult), nameof(PaypalPaymentDetails.AuthenticationResult) },
@@ -38,14 +36,26 @@ namespace Riskified.SDK.Tests.Model
             Assert.Contains("6.0.0", obsolete.Message);
         }
 
-        [Fact]
-        public void RewardPoints_IsObsoleteAsAWarningNamingRewardsPoints()
+        [Theory]
+        [InlineData(nameof(PaymentType.GiftCard))]
+        [InlineData(nameof(PaymentType.StoreCredit))]
+        [InlineData(nameof(PaymentType.RewardPoints))]
+        public void UnsupportedPaymentType_IsObsoleteAsAWarning(string member)
         {
-            var obsolete = typeof(PaymentType).GetField(nameof(PaymentType.RewardPoints))!.GetCustomAttribute<ObsoleteAttribute>();
+            var obsolete = typeof(PaymentType).GetField(member)!.GetCustomAttribute<ObsoleteAttribute>();
 
             Assert.NotNull(obsolete);
             Assert.False(obsolete!.IsError);
-            Assert.Contains(nameof(PaymentType.RewardsPoints), obsolete.Message);
+            Assert.Contains("6.0.0", obsolete.Message);
+        }
+
+        [Fact]
+        public void ExternalStatusCheckout_IsObsoleteAsAWarning()
+        {
+            var obsolete = typeof(ExternalStatusType).GetField(nameof(ExternalStatusType.Checkout))!.GetCustomAttribute<ObsoleteAttribute>();
+
+            Assert.NotNull(obsolete);
+            Assert.False(obsolete!.IsError);
             Assert.Contains("6.0.0", obsolete.Message);
         }
     }

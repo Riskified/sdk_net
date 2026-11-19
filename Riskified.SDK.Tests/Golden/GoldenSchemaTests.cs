@@ -101,6 +101,26 @@ namespace Riskified.SDK.Tests.Golden
                 balance["type"] = "number";
             }
 
+            // The docs type seller.starting_price as a string (format: float), but the server expects the
+            // decimal the SDK sends (question 7).
+            foreach (var startingPrice in definition.Descendants().OfType<JProperty>()
+                         .Where(p => p.Name == "starting_price" && p.Value is JObject schema && schema["type"] is JValue { Value: "string" })
+                         .Select(p => (JObject)p.Value).ToList())
+            {
+                startingPrice["type"] = "number";
+                startingPrice.Remove("format");
+            }
+
+            // The docs type a ride's pickup_address and dropoff_address as arrays of addresses, but the
+            // server expects the single address object the SDK sends (question 1).
+            foreach (var rideAddress in definition.Descendants().OfType<JProperty>()
+                         .Where(p => (p.Name == "pickup_address" || p.Name == "dropoff_address")
+                                     && p.Value is JObject schema && schema["type"] is JValue { Value: "array" })
+                         .ToList())
+            {
+                rideAddress.Value = rideAddress.Value["items"]!.DeepClone();
+            }
+
             var requestSchema = (JObject)definition["paths"]!.Values().Single()
                 .Values().Single()["requestBody"]!["content"]!["application/json"]!["schema"]!;
 
