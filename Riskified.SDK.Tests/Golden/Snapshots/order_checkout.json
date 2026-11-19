@@ -82,6 +82,7 @@
               {
                 "vendor_name": "Onfido",
                 "updated_at": "2025-11-01T10:00:00-05:00",
+                "update_at": "2025-11-01T10:00:00-05:00",
                 "kyc_verified": true,
                 "kyc_type": "strong"
               }
@@ -89,7 +90,7 @@
           },
           "correspondence": 1,
           "price_negotiated": true,
-          "starting_price": 120.0
+          "starting_price": "120.00"
         },
         "sub_category": "Backpacks",
         "category": "Bags",
@@ -149,33 +150,6 @@
         "payment_type": "card"
       }
     ],
-    "billing_address": {
-      "first_name": "Ben",
-      "last_name": "Rolling",
-      "name": "Ben Philip Rolling",
-      "address1": "27 5th avenue",
-      "address2": "Apartment 5",
-      "city": "Manhattan",
-      "company": "IBM",
-      "country": "United States",
-      "country_code": "US",
-      "phone": "5554321234",
-      "province": "New York",
-      "province_code": "NY",
-      "zip": "10001"
-    },
-    "shipping_address": {
-      "first_name": "Luke",
-      "last_name": "Rolling",
-      "address1": "4 Bermingham street",
-      "city": "Cherry Hill",
-      "country": "United States",
-      "country_code": "US",
-      "phone": "55546665",
-      "province": "New Jersey",
-      "province_code": "NJ",
-      "zip": "08002"
-    },
     "customer": {
       "created_at": "2013-12-08T14:12:12-05:00",
       "updated_at": "2026-01-15T09:30:00-05:00",
@@ -233,6 +207,7 @@
         {
           "vendor_name": "Onfido",
           "updated_at": "2025-11-01T10:00:00-05:00",
+          "update_at": "2025-11-01T10:00:00-05:00",
           "kyc_verified": true,
           "kyc_type": "strong"
         }
@@ -245,6 +220,37 @@
       "accept_language": "en-CA",
       "user_agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
     },
-    "id": "golden-2001"
+    "id": "golden-2001",
+    "billing_address": [
+      {
+        "first_name": "Ben",
+        "last_name": "Rolling",
+        "name": "Ben Philip Rolling",
+        "address1": "27 5th avenue",
+        "address2": "Apartment 5",
+        "city": "Manhattan",
+        "company": "IBM",
+        "country": "United States",
+        "country_code": "US",
+        "phone": "5554321234",
+        "province": "New York",
+        "province_code": "NY",
+        "zip": "10001"
+      }
+    ],
+    "shipping_address": [
+      {
+        "first_name": "Luke",
+        "last_name": "Rolling",
+        "address1": "4 Bermingham street",
+        "city": "Cherry Hill",
+        "country": "United States",
+        "country_code": "US",
+        "phone": "55546665",
+        "province": "New Jersey",
+        "province_code": "NJ",
+        "zip": "08002"
+      }
+    ]
   }
 }

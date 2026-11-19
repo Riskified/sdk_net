@@ -1,0 +1,50 @@
+{
+  "order": {
+    "decision": {
+      "external_status": "declined_fraud",
+      "decided_at": "2026-03-04T12:00:00-05:00",
+      "reason": "used proxy and stolen credit card",
+      "amount": 100.5,
+      "currency": "USD",
+      "notes": "reviewed by fraud team"
+    },
+    "payment_details": [
+      {
+        "avs_result_code": "Y",
+        "credit_card_bin": "424242",
+        "credit_card_company": "Visa",
+        "credit_card_number": "XXXX-XXXX-XXXX-4242",
+        "cvv_result_code": "M",
+        "credit_card_token": "2233445566778899",
+        "cardholder_name": "John Doe",
+        "authorization_id": "auth-cc-1",
+        "id": "pm-cc-1",
+        "gateway": "stripe",
+        "acquirer_bin": "411111",
+        "mid": "mid-1",
+        "authentication_result": {
+          "eci": "05",
+          "trans_status": "Y",
+          "trans_status_reason": "01",
+          "created_at": "2026-03-01T15:00:00Z",
+          "liability_shift": true,
+          "cavv": "AAABAWFlmQAAAABjRWWZEEFgFz+=",
+          "three_d_challenge": true,
+          "TRA_exemption": false
+        },
+        "stored_payment_created_at": "2024-01-01T00:00:00-05:00",
+        "stored_payment_updated_at": "2025-01-01T00:00:00-05:00",
+        "installments": 3,
+        "initial_payment_amount": 400.5,
+        "payment_frequency": 30,
+        "credit_card_country": "US",
+        "acquirer_region": "NONEU",
+        "verification_type": "3ds",
+        "payment_type": "card"
+      }
+    ],
+    "submission_reason": "manual_decision",
+    "gateway": "adyen",
+    "id": "golden-5703"
+  }
+}

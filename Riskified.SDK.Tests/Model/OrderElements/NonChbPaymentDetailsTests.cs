@@ -11,6 +11,7 @@ namespace Riskified.SDK.Tests.Model.OrderElements
         [Theory]
         [InlineData(PaymentType.GiftCard, "gift_card")]
         [InlineData(PaymentType.StoreCredit, "store_credit")]
+        [InlineData(PaymentType.RewardsPoints, "rewards_points")]
         public void Serialize_SendsTheGivenPaymentType(PaymentType paymentType, string expected)
         {
             var json = JObject.Parse(JsonConvert.SerializeObject(new NonChbPaymentDetails(paymentType), HttpUtils.CreateSerializerSettings()));
