@@ -14,7 +14,7 @@ All examples are at the _Riskified.SDK.Sample_ folder. For the basics:
     - **RISKIFIED_NOTIFICATIONS_WEBHOOK_URL** - Webhook URL for notifications
 2. Build and run the sample project executable
 
-If you wish to send your own data, change the model object (Order) in the `OrderTransmissionExample.cs` [GenerateOrder method](https://github.com/Riskified/sdk_net/blob/master/Riskified.SDK.Sample/OrderTransmissionExample.cs#L650)
+If you wish to send your own data, change the model object (Order) in the `GenerateOrder` method of [`OrderTransmissionExample.cs`](https://github.com/Riskified/sdk_net/blob/master/Riskified.SDK.Sample/OrderTransmissionExample.cs). It also shows the optional fields added in 5.7.0.
 
 
 ## Migrating from older versions (prior to: API v2 - v2.0.0.0)

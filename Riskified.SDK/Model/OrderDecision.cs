@@ -44,5 +44,11 @@ namespace Riskified.SDK.Model
 
         [JsonProperty(PropertyName = "submission_reason")]
         public string SubmissionReason { get; set; }
+
+        /// <summary>
+        /// The name of the gateway used. Use it when the gateway was unknown when the order was submitted.
+        /// </summary>
+        [JsonProperty(PropertyName = "gateway")]
+        public string Gateway { get; set; }
     }
 }

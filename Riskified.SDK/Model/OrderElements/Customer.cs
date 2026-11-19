@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Riskified.SDK.Exceptions;
 using Riskified.SDK.Utils;
 
@@ -183,5 +184,82 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "kyc_details")]
         public KycDetails[] KycDetails { get; set; }
+
+        [JsonProperty(PropertyName = "phone")]
+        public string Phone { get; set; }
+
+        /// <summary>
+        /// Any tags related to the customer in the merchant's system.
+        /// </summary>
+        [JsonProperty(PropertyName = "tags")]
+        public string Tags { get; set; }
+
+        /// <summary>
+        /// Required when the site user name isn't the email address.
+        /// </summary>
+        [JsonProperty(PropertyName = "user_name")]
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// The name of the group the customer belongs to in the merchant's system.
+        /// </summary>
+        [JsonProperty(PropertyName = "group_name")]
+        public string GroupName { get; set; }
+
+        /// <summary>
+        /// The ID of the last order the customer purchased.
+        /// </summary>
+        [JsonProperty(PropertyName = "last_order_id")]
+        public string LastOrderId { get; set; }
+
+        /// <summary>
+        /// The customer ID of the customer who referred this customer to the merchant's website.
+        /// </summary>
+        [JsonProperty(PropertyName = "referrer_customer_id")]
+        public string ReferrerCustomerId { get; set; }
+
+        [JsonProperty(PropertyName = "accepts_marketing")]
+        public bool? AcceptsMarketing { get; set; }
+
+        /// <summary>
+        /// The outcome of a KYC check.
+        /// </summary>
+        [JsonProperty(PropertyName = "kyc_verified")]
+        public bool? KycVerified { get; set; }
+
+        /// <summary>
+        /// Whether a phone number was a required field during registration.
+        /// </summary>
+        [JsonProperty(PropertyName = "phone_mandatory")]
+        public bool? PhoneMandatory { get; set; }
+
+        /// <summary>
+        /// The number of attempts the customer made to buy an item in the merchant's system.
+        /// </summary>
+        [JsonProperty(PropertyName = "buy_attempts")]
+        public int? BuyAttempts { get; set; }
+
+        /// <summary>
+        /// The number of attempts the customer made to sell an item in the merchant's system.
+        /// </summary>
+        [JsonProperty(PropertyName = "sell_attempts")]
+        public int? SellAttempts { get; set; }
+
+        [JsonProperty(PropertyName = "gender")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Gender? Gender { get; set; }
+
+        /// <summary>
+        /// The social network the customer signed up with, if any.
+        /// </summary>
+        [JsonProperty(PropertyName = "social_signup_type")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public SocialType? SocialSignupType { get; set; }
+
+        /// <summary>
+        /// The crypto wallets associated with the customer's account.
+        /// </summary>
+        [JsonProperty(PropertyName = "crypto_wallets")]
+        public CryptoWallet[] CryptoWallets { get; set; }
     }
 }

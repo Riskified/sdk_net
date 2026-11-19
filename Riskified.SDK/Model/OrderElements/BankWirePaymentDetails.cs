@@ -53,5 +53,8 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "account_balance")]
         public AccountBalance AccountBalance { get; set; }
+
+        [JsonProperty(PropertyName = "token")]
+        public string Token { get; set; }
     }
 }

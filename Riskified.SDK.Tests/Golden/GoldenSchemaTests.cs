@@ -19,64 +19,80 @@ namespace Riskified.SDK.Tests.Golden
     /// </summary>
     public class GoldenSchemaTests
     {
+        // Declared before SchemasBySample, which reads them: static fields initialize in order.
+        private static readonly string[] OrderSchemas = ["pre-auth-decide", "post-auth-decide", "post-auth-submit"];
+        private static readonly string[] CheckoutDeniedSchemas = ["pre-auth-checkout_denied", "post-auth-checkout_denied"];
+
         // Sample name -> schema files (Golden/Schema/<name>.json) for the endpoints it's sent to.
         // order_checkout goes to /checkout_create and /advise, which aren't part of the alignment.
         private static readonly Dictionary<string, string[]> SchemasBySample = new Dictionary<string, string[]>
         {
-            ["order"] = ["pre-auth-decide", "post-auth-decide", "post-auth-submit"],
-            ["order_checkout_denied"] = ["pre-auth-checkout_denied", "post-auth-checkout_denied"],
+            ["order"] = OrderSchemas,
+            ["order_checkout_denied"] = CheckoutDeniedSchemas,
             ["order_decision"] = ["pre-auth-decision"],
+            ["order_5_7"] = OrderSchemas,
+            ["order_checkout_denied_5_7"] = CheckoutDeniedSchemas,
+            ["order_decision_5_7"] = ["pre-auth-decision"],
         };
 
-        private static readonly string[] OrderSchemas = ["pre-auth-decide", "post-auth-decide", "post-auth-submit"];
-        private static readonly string[] CheckoutDeniedSchemas = ["pre-auth-checkout_denied", "post-auth-checkout_denied"
-        ];
+        // The *_5_7 samples extend their base samples, so they share the base samples' gaps unless
+        // they fix one.
+        private static readonly string[] Orders = ["order", "order_5_7"];
+        private static readonly string[] CheckoutDenieds = ["order_checkout_denied", "order_checkout_denied_5_7"];
 
         // Each entry names the plan step (API_ALIGNMENT_PLAN.md) or open question that resolves it.
         private static readonly HashSet<string> KnownGaps =
         [
             .. new[]
             {
-                Gap("order", OrderSchemas, "#/order.billing_address ArrayExpected", fixedBy: "step 3.1"),
-                Gap("order", OrderSchemas, "#/order.shipping_address ArrayExpected", fixedBy: "step 3.1"),
-                Gap("order", OrderSchemas, "#/order.charge_free_payment_details ArrayExpected", fixedBy: "step 3.2"),
-                Gap("order", OrderSchemas, "#/order.line_items[6].pickup_address ArrayExpected", fixedBy: "step 3.3"),
-                Gap("order", OrderSchemas, "#/order.line_items[6].dropoff_address ArrayExpected", fixedBy: "step 3.3"),
-                Gap("order_checkout_denied", CheckoutDeniedSchemas,
-                    "#/checkout.payment_details[1].authorization_error PropertyRequired", fixedBy: "steps 2.1 and 3.4"),
-                Gap("order", OrderSchemas, "#/order.customer.kyc_details[0].update_at PropertyRequired",
+                Gap(Orders, OrderSchemas, "#/order.billing_address ArrayExpected", fixedBy: "step 3.1"),
+                Gap(Orders, OrderSchemas, "#/order.shipping_address ArrayExpected", fixedBy: "step 3.1"),
+                Gap(Orders, OrderSchemas, "#/order.charge_free_payment_details ArrayExpected", fixedBy: "step 3.2"),
+                Gap(Orders, OrderSchemas, "#/order.line_items[6].pickup_address ArrayExpected", fixedBy: "step 3.3"),
+                Gap(Orders, OrderSchemas, "#/order.line_items[6].dropoff_address ArrayExpected", fixedBy: "step 3.3"),
+                // order_checkout_denied_5_7 sets the wallet's own error (step 2.1); this one relies on the root error.
+                Gap(["order_checkout_denied"], CheckoutDeniedSchemas,
+                    "#/checkout.payment_details[1].authorization_error PropertyRequired", fixedBy: "step 3.4"),
+                Gap(Orders, OrderSchemas, "#/order.customer.kyc_details[0].update_at PropertyRequired",
                     fixedBy: "step 3.5"),
-                Gap("order", OrderSchemas,
+                Gap(Orders, OrderSchemas,
                     "#/order.line_items[0].seller.customer.kyc_details[0].update_at PropertyRequired",
                     fixedBy: "step 3.5"),
-                Gap("order_checkout_denied", ["post-auth-checkout_denied"],
+                Gap(CheckoutDenieds, ["post-auth-checkout_denied"],
                     "#/checkout.customer.kyc_details[0].update_at PropertyRequired", fixedBy: "step 3.5"),
-                Gap("order", OrderSchemas, "#/order.line_items[0].seller.starting_price StringExpected",
+                Gap(Orders, OrderSchemas, "#/order.line_items[0].seller.starting_price StringExpected",
                     fixedBy: "step 3.8"),
 
                 // The docs type these as date-only (format: date); the SDK sends a full date-time.
-                Gap("order", OrderSchemas, "#/order.customer.date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap("order", OrderSchemas, "#/order.line_items[0].seller.customer.date_of_birth DateExpected",
+                Gap(Orders, OrderSchemas, "#/order.customer.date_of_birth DateExpected", fixedBy: "question 9"),
+                Gap(Orders, OrderSchemas, "#/order.line_items[0].seller.customer.date_of_birth DateExpected",
                     fixedBy: "question 9"),
-                Gap("order_checkout_denied", ["post-auth-checkout_denied"],
+                Gap(CheckoutDenieds, ["post-auth-checkout_denied"],
                     "#/checkout.customer.date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap("order", OrderSchemas, "#/order.passengers[0].date_of_birth DateExpected", fixedBy: "question 9"),
-                Gap("order", OrderSchemas, "#/order.passengers[0].document_issue_date DateExpected",
+                Gap(Orders, OrderSchemas, "#/order.passengers[0].date_of_birth DateExpected", fixedBy: "question 9"),
+                Gap(Orders, OrderSchemas, "#/order.passengers[0].document_issue_date DateExpected",
                     fixedBy: "question 9"),
-                Gap("order", OrderSchemas, "#/order.passengers[0].document_expiration_date DateExpected",
+                Gap(Orders, OrderSchemas, "#/order.passengers[0].document_expiration_date DateExpected",
                     fixedBy: "question 9"),
 
+                // recipient_ACH types these as "number" with format date-time; the SDK sends a date-time
+                // string like every other created_at / updated_at.
+                Gap(["order_5_7"], OrderSchemas, "#/order.line_items[1].recipient.created_at NumberExpected",
+                    fixedBy: "question 11"),
+                Gap(["order_5_7"], OrderSchemas, "#/order.line_items[1].recipient.updated_at NumberExpected",
+                    fixedBy: "question 11"),
+
                 // Pre-auth /decide documents an integer, post-auth a number.
-                Gap("order", ["pre-auth-decide"],
+                Gap(Orders, ["pre-auth-decide"],
                     "#/order.payment_details[3].account_balance.available_balance IntegerExpected",
                     fixedBy: "question 10"),
             }.SelectMany(gap => gap)
         ];
 
         // fixedBy is documentation only; it isn't part of the matched string.
-        private static IEnumerable<string> Gap(string sample, string[] schemas, string error, string fixedBy)
+        private static IEnumerable<string> Gap(string[] samples, string[] schemas, string error, string fixedBy)
         {
-            return schemas.Select(schema => $"{sample} {schema}: {error}");
+            return samples.SelectMany(sample => schemas.Select(schema => $"{sample} {schema}: {error}"));
         }
 
         public static TheoryData<string, string> SampleSchemaPairs()

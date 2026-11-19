@@ -94,5 +94,24 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "zip")]
         public string ZipCode { get; set; }
+
+        /// <summary>
+        /// A unique ID for the address. Required when an order has multiple shipping addresses.
+        /// </summary>
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// The district or city division of the address.
+        /// </summary>
+        [JsonProperty(PropertyName = "neighborhood")]
+        public string Neighborhood { get; set; }
+
+        // double, not float: float keeps only about 7 significant digits, which loses precision in coordinates.
+        [JsonProperty(PropertyName = "latitude")]
+        public double? Latitude { get; set; }
+
+        [JsonProperty(PropertyName = "longitude")]
+        public double? Longitude { get; set; }
     }
 }

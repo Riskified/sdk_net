@@ -140,7 +140,12 @@ namespace Riskified.SDK.Model.OrderElements
         public int? RouteIndex { get; set; }
 
         [JsonProperty(PropertyName = "leg_index")]
-        public int? LegIndex { get; set; } 
+        public int? LegIndex { get; set; }
 
+        /// <summary>
+        /// The amount the customer is liable for if the vehicle is damaged.
+        /// </summary>
+        [JsonProperty(PropertyName = "damage_excess")]
+        public float? DamageExcess { get; set; }
     }
 }

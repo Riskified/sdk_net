@@ -70,5 +70,32 @@ namespace Riskified.SDK.Model.OrderElements
 
         [JsonProperty(PropertyName = "wallet")]
         public Wallet Wallet { get; set; }
+
+        /// <summary>
+        /// The recipient's crypto wallet.
+        /// </summary>
+        [JsonProperty(PropertyName = "crypto_wallet")]
+        public CryptoWallet CryptoWallet { get; set; }
+
+        [JsonProperty(PropertyName = "bank_code")]
+        public string BankCode { get; set; }
+
+        /// <summary>
+        /// When the recipient was added to the customer's account.
+        /// </summary>
+        [JsonProperty(PropertyName = "created_at")]
+        public DateTimeOffset? CreatedAt { get; set; }
+
+        /// <summary>
+        /// When the recipient's details were last updated.
+        /// </summary>
+        [JsonProperty(PropertyName = "updated_at")]
+        public DateTimeOffset? UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Whether the money is transferred to the account owner.
+        /// </summary>
+        [JsonProperty(PropertyName = "self_recipient")]
+        public bool? SelfRecipient { get; set; }
     }
 }
