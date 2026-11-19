@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.Serialization;
 
 namespace Riskified.SDK.Model.OrderElements
@@ -35,9 +36,10 @@ namespace Riskified.SDK.Model.OrderElements
         [EnumMember(Value = "invoice")]
         Invoice,
         /// <summary>
-        /// Sent as reward_points. The API reference documents rewards_points; see <see cref="RewardsPoints"/>.
+        /// Sent as reward_points. The API expects rewards_points; use <see cref="RewardsPoints"/>.
         /// </summary>
         [EnumMember(Value = "reward_points")]
+        [Obsolete("Use RewardsPoints, which sends the documented rewards_points; RewardPoints sends reward_points and is removed in 6.0.0.")]
         RewardPoints,
         [EnumMember(Value = "mobile_carrier")]
         MobileCarrier,

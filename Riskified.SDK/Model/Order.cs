@@ -84,8 +84,8 @@ namespace Riskified.SDK.Model
         {
             LineItems = lineItems;
             ShippingLines = shippingLines;
-            BillingAddress = billingAddress;
-            ShippingAddress = shippingAddress;
+            BillingAddresses = billingAddress == null ? null : new[] { billingAddress };
+            ShippingAddresses = shippingAddress == null ? null : new[] { shippingAddress };
             Customer = customer;
             Email = email;
             CustomerBrowserIp = customerBrowserIp;
@@ -115,7 +115,7 @@ namespace Riskified.SDK.Model
             Decision = decisionDetails;
             ClientDetails = clientDetails;
             Custom = custom;
-            ChargeFreePaymentDetails = chargeFreePaymentDetails;
+            ChargeFreePaymentDetailsList = chargeFreePaymentDetails == null ? null : new[] { chargeFreePaymentDetails };
             Name = name;
             ReferringSite = referringSite;
             Note = note;
@@ -131,6 +131,7 @@ namespace Riskified.SDK.Model
         /// </summary>
         /// <param name="isWeak">Should use weak validations or strong</param>
         /// <exception cref="OrderFieldBadFormatException">throws an exception if one of the parameters doesn't match the expected format</exception>
+#pragma warning disable CS0618 // Validation is out of scope for the alignment; it still reads the first address.
         public override void Validate(Validations validationType = Validations.Weak)
         {
             base.Validate(validationType);
@@ -208,6 +209,7 @@ namespace Riskified.SDK.Model
                 InputValidators.ValidateDateNotDefault(ClosedAt.Value, "Closed At");
             }
         }
+#pragma warning restore CS0618
 
         /// <summary>
         /// The unique identifier of the Checkout that created this order.

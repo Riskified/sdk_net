@@ -19,7 +19,7 @@ namespace Riskified.SDK.Model.OrderElements
         }
 
         [JsonProperty(PropertyName = "payment_type")]
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(PaymentTypeConverter))]
         public PaymentType PaymentType { get; } = PaymentType.Bnpl;
 
         /// <summary>

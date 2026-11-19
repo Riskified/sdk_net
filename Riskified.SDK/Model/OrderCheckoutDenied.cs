@@ -19,7 +19,7 @@ namespace Riskified.SDK.Model
         public OrderCheckoutDenied(string merchantOrderId, AuthorizationError authorizationError)
             : base(merchantOrderId)
         {
-            this.AuthorizationError = authorizationError;
+            _authorizationError = authorizationError;
         }
 
         /// <summary>
@@ -40,6 +40,19 @@ namespace Riskified.SDK.Model
         /// @Deprecated property, please use PaymentDetails.AuthorizationError
         /// </summary>
         [JsonProperty(PropertyName = "authorization_error")]
-        public AuthorizationError AuthorizationError { get; set; }
+        [Obsolete("Set AuthorizationError on the card or wallet payment details instead; the order-level AuthorizationError is removed in 6.0.0.")]
+        public AuthorizationError AuthorizationError
+        {
+            get { return _authorizationError; }
+            set { _authorizationError = value; }
+        }
+
+        private AuthorizationError _authorizationError;
+
+        // For HttpUtils, which copies it into card and wallet payment details on the wire.
+        internal AuthorizationError OrderLevelAuthorizationError
+        {
+            get { return _authorizationError; }
+        }
     }
 }
