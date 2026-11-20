@@ -100,7 +100,7 @@ namespace Riskified.SDK.Model.OrderElements
         [JsonProperty(PropertyName = "dropoff_date")]
         public DateTime? DropoffDate { get; set; }
 
-        [JsonProperty(PropertyName = "dropoff_latitiude")]
+        [JsonProperty(PropertyName = "dropoff_latitude")]
         public float? DropoffLatitude { get; set; }
 
         // The documented spelling; the misspelled key above is still sent too. Not sent with the
